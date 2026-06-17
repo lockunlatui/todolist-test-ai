@@ -46,7 +46,6 @@ export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemPr
         />
         <span
           className="todo-item__title"
-          style={todo.completed ? { textDecoration: 'line-through' } : undefined}
         >
           {todo.title}
         </span>

@@ -323,6 +323,57 @@ describe('useTodos', () => {
     expect(result.current.error).toBeNull();
   });
 
+  it('clears error banner automatically when the next PATCH succeeds', async () => {
+    // Backend becomes available
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve([]),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.addTodo('Error then success'));
+    const id = result.current.todos[0].id;
+
+    // First toggle — PATCH fails → banner appears
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: false, status: 500 } as Response);
+    act(() => result.current.toggleTodo(id));
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+
+    // Second toggle — PATCH succeeds → banner must be cleared automatically
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: true } as Response);
+    act(() => result.current.toggleTodo(id));
+    await waitFor(() => expect(result.current.error).toBeNull());
+  });
+
+  it('clears error banner automatically when the next DELETE succeeds', async () => {
+    // Backend becomes available
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve([]),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.addTodo('First'));
+    act(() => result.current.addTodo('Second'));
+
+    const firstId = result.current.todos[0].id;
+    const secondId = result.current.todos[1].id;
+
+    // Delete first item — fails → banner appears
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: false, status: 500 } as Response);
+    act(() => result.current.deleteTodo(firstId));
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+
+    // Delete second item — succeeds → banner must be cleared automatically
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: true } as Response);
+    act(() => result.current.deleteTodo(secondId));
+    await waitFor(() => expect(result.current.error).toBeNull());
+  });
+
   it('does NOT rollback when no backend is deployed (fire-and-forget offline mode)', async () => {
     // Default setup: GET returns 503, backendAvailableRef stays false
     const { result } = renderHook(() => useTodos());

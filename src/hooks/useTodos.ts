@@ -129,6 +129,7 @@ export function useTodos(): UseTodosReturn {
     fetch(`${API_URL}/${id}`, { method: 'DELETE' })
       .then((res) => {
         if (!res.ok) throw new Error(`DELETE ${API_URL}/${id} → ${res.status}`);
+        setError(null);
       })
       .catch(() => {
         if (backendAvailableRef.current) {
@@ -152,6 +153,7 @@ export function useTodos(): UseTodosReturn {
       })
         .then((res) => {
           if (!res.ok) throw new Error(`PATCH ${API_URL}/${id} → ${res.status}`);
+          setError(null);
         })
         .catch(() => {
           if (backendAvailableRef.current) {
