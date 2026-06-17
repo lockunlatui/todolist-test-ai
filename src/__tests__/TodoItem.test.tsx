@@ -59,6 +59,22 @@ describe('TodoItem', () => {
     expect(container.querySelector('.todo-item')).toHaveClass('todo-item--completed');
   });
 
+  it('checkbox aria-label says "Đánh dấu" when todo is not completed', () => {
+    render(<TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />);
+    expect(
+      screen.getByRole('checkbox', { name: /đánh dấu "uống nước đủ 2 lít" hoàn thành/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('checkbox aria-label says "Bỏ đánh dấu" when todo is completed', () => {
+    render(
+      <TodoItem todo={{ ...mockTodo, completed: true }} onToggle={vi.fn()} onDelete={vi.fn()} />,
+    );
+    expect(
+      screen.getByRole('checkbox', { name: /bỏ đánh dấu "uống nước đủ 2 lít" hoàn thành/i }),
+    ).toBeInTheDocument();
+  });
+
   it('delete button visible symbol is wrapped in aria-hidden (WCAG 2.1 AA)', () => {
     const { container } = render(
       <TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />,

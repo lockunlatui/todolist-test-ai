@@ -91,6 +91,52 @@ describe('useTodos', () => {
     expect(result.current.todos[0].createdAt).toBeInstanceOf(Date);
   });
 
+  it('fetch returns 5 todos — renders 5 items', async () => {
+    const apiTodos = Array.from({ length: 5 }, (_, i) => ({
+      id: `t${i}`,
+      title: `Công việc ${i + 1}`,
+      completed: false,
+      createdAt: new Date().toISOString(),
+    }));
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(apiTodos),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.todos).toHaveLength(5));
+    expect(result.current.todos.map((t) => t.title)).toEqual(
+      Array.from({ length: 5 }, (_, i) => `Công việc ${i + 1}`),
+    );
+  });
+
+  it('fetch returns [] — todos list is empty (empty state)', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve([]),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.todos).toHaveLength(0);
+  });
+
+  it('fetch returns 25 todos — all 25 items available (scrollable list)', async () => {
+    const apiTodos = Array.from({ length: 25 }, (_, i) => ({
+      id: `item${i}`,
+      title: `Todo ${i + 1}`,
+      completed: i % 3 === 0,
+      createdAt: new Date().toISOString(),
+    }));
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(apiTodos),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.todos).toHaveLength(25));
+  });
+
   it('keeps localStorage data when fetch returns non-OK response', async () => {
     localStorage.setItem(
       'todolist_todos',
@@ -177,6 +223,8 @@ describe('useTodos', () => {
     const hook: UseTodosReturn = result.current;
     expect(Array.isArray(hook.todos)).toBe(true);
     expect(typeof hook.loading).toBe('boolean');
+    expect(hook.error).toBeNull();
+    expect(typeof hook.clearError).toBe('function');
     expect(typeof hook.addTodo).toBe('function');
     expect(typeof hook.deleteTodo).toBe('function');
     expect(typeof hook.toggleTodo).toBe('function');
@@ -198,5 +246,99 @@ describe('useTodos', () => {
       ),
     );
     expect(result.current.todos).toHaveLength(0);
+  });
+
+  // --- rollback when backend is reachable but returns an error ---
+
+  it('rolls back toggle and sets error when PATCH fails (backend was reachable)', async () => {
+    // Initial GET succeeds — backend is marked as available
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve([]),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.addTodo('Rollback test'));
+    const id = result.current.todos[0].id;
+
+    // PATCH will fail
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: false, status: 500 } as Response);
+
+    act(() => result.current.toggleTodo(id));
+
+    // Optimistic update fires immediately
+    expect(result.current.todos[0].completed).toBe(true);
+
+    // After PATCH fails, state rolls back and error is set
+    await waitFor(() => expect(result.current.todos[0].completed).toBe(false));
+    expect(result.current.error).toBe('Cập nhật không thành công. Vui lòng thử lại.');
+  });
+
+  it('rolls back delete and sets error when DELETE fails (backend was reachable)', async () => {
+    // Initial GET succeeds — backend is marked as available
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve([]),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.addTodo('Will be restored'));
+    const id = result.current.todos[0].id;
+
+    // DELETE will fail
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: false, status: 500 } as Response);
+
+    act(() => result.current.deleteTodo(id));
+
+    // Optimistic removal fires immediately
+    expect(result.current.todos).toHaveLength(0);
+
+    // After DELETE fails, state rolls back
+    await waitFor(() => expect(result.current.todos).toHaveLength(1));
+    expect(result.current.todos[0].id).toBe(id);
+    expect(result.current.error).toBe('Xóa không thành công. Vui lòng thử lại.');
+  });
+
+  it('clearError resets the error state', async () => {
+    // Trigger an error via failed PATCH (backend was reachable)
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve([]),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.addTodo('Clear error test'));
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: false, status: 500 } as Response);
+    act(() => result.current.toggleTodo(result.current.todos[0].id));
+
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+
+    act(() => result.current.clearError());
+    expect(result.current.error).toBeNull();
+  });
+
+  it('does NOT rollback when no backend is deployed (fire-and-forget offline mode)', async () => {
+    // Default setup: GET returns 503, backendAvailableRef stays false
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.addTodo('Offline task'));
+    const id = result.current.todos[0].id;
+
+    // toggleTodo fires PATCH which returns 503 (default mock), but no rollback expected
+    act(() => result.current.toggleTodo(id));
+
+    // Give the microtask queue time to flush
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
+
+    // Optimistic state is preserved (no rollback in offline-first mode)
+    expect(result.current.todos[0].completed).toBe(true);
+    expect(result.current.error).toBeNull();
   });
 });

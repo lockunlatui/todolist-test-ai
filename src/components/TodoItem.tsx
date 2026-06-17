@@ -38,7 +38,11 @@ export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemPr
           className="todo-item__checkbox"
           checked={todo.completed}
           onChange={() => onToggle(todo.id)}
-          aria-label={`Đánh dấu "${todo.title}" hoàn thành`}
+          aria-label={
+            todo.completed
+              ? `Bỏ đánh dấu "${todo.title}" hoàn thành`
+              : `Đánh dấu "${todo.title}" hoàn thành`
+          }
         />
         <span className="todo-item__title">{todo.title}</span>
       </label>

@@ -4,6 +4,8 @@ import type { Todo, TodoAction } from '../types/todo';
 // NOTE: This app works offline-first via localStorage.
 // The GET /todos call below is for future backend integration.
 // If no backend is available the fetch fails silently and localStorage data is used.
+// Once the backend responds successfully, PATCH/DELETE failures will rollback optimistic
+// updates and surface an inline error message so users are not misled.
 const STORAGE_KEY = 'todolist_todos';
 const API_URL = '/todos';
 
@@ -66,6 +68,9 @@ function todosReducer(state: Todo[], action: TodoAction): Todo[] {
 export interface UseTodosReturn {
   todos: Todo[];
   loading: boolean;
+  /** Non-null when a PATCH or DELETE request failed after the backend was reachable. */
+  error: string | null;
+  clearError: () => void;
   addTodo: (title: string) => void;
   deleteTodo: (id: string) => void;
   toggleTodo: (id: string) => void;
@@ -74,10 +79,17 @@ export interface UseTodosReturn {
 export function useTodos(): UseTodosReturn {
   const [todos, dispatch] = useReducer(todosReducer, undefined, loadFromStorage);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Keep a ref to always-current todos so callbacks don't go stale
   const todosRef = useRef(todos);
   todosRef.current = todos;
+
+  // Track whether the backend has ever responded successfully.
+  // Only rollback optimistic updates when the backend is known to be reachable
+  // (i.e. the initial GET /todos returned 200). When no backend is deployed,
+  // PATCH/DELETE are fire-and-forget and all data stays in localStorage.
+  const backendAvailableRef = useRef(false);
 
   // Sync from backend on mount; silently fall back to localStorage on failure
   useEffect(() => {
@@ -91,6 +103,7 @@ export function useTodos(): UseTodosReturn {
       })
       .then((data) => {
         if (!cancelled) {
+          backendAvailableRef.current = true;
           dispatch({ type: 'LOAD', todos: parseApiTodos(data) });
         }
       })
@@ -111,23 +124,46 @@ export function useTodos(): UseTodosReturn {
   }, []);
 
   const deleteTodo = useCallback((id: string) => {
+    const snapshot = todosRef.current;
     dispatch({ type: 'DELETE', id });
-    // Optimistic: fire-and-forget sync to backend; errors are silent
-    fetch(`${API_URL}/${id}`, { method: 'DELETE' }).catch(() => {});
+    fetch(`${API_URL}/${id}`, { method: 'DELETE' })
+      .then((res) => {
+        if (!res.ok) throw new Error(`DELETE ${API_URL}/${id} → ${res.status}`);
+      })
+      .catch(() => {
+        if (backendAvailableRef.current) {
+          // Backend was reachable but rejected — undo the optimistic delete
+          dispatch({ type: 'LOAD', todos: snapshot });
+          setError('Xóa không thành công. Vui lòng thử lại.');
+        }
+      });
   }, []);
 
   const toggleTodo = useCallback((id: string) => {
+    const snapshot = todosRef.current;
     dispatch({ type: 'TOGGLE', id });
-    // Compute new completed value from ref (avoids stale closure)
-    const todo = todosRef.current.find((t) => t.id === id);
+    // Compute new completed value from snapshot (avoids stale closure)
+    const todo = snapshot.find((t) => t.id === id);
     if (todo) {
       fetch(`${API_URL}/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ completed: !todo.completed }),
-      }).catch(() => {});
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error(`PATCH ${API_URL}/${id} → ${res.status}`);
+        })
+        .catch(() => {
+          if (backendAvailableRef.current) {
+            // Backend was reachable but rejected — undo the optimistic toggle
+            dispatch({ type: 'LOAD', todos: snapshot });
+            setError('Cập nhật không thành công. Vui lòng thử lại.');
+          }
+        });
     }
   }, []);
 
-  return { todos, loading, addTodo, deleteTodo, toggleTodo };
+  const clearError = useCallback(() => setError(null), []);
+
+  return { todos, loading, error, clearError, addTodo, deleteTodo, toggleTodo };
 }

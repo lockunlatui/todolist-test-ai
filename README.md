@@ -49,6 +49,14 @@ src/
 └── test/setup.ts     # Vitest global setup (jest-dom matchers, fetch mock)
 ```
 
+## Hành vi offline-first
+
+Khi **không có backend**, tất cả thao tác (thêm, xóa, đánh dấu hoàn thành) chỉ được lưu vào `localStorage`. Fetch tới `PATCH /todos/:id` và `DELETE /todos/:id` sẽ thất bại lặng lẽ — dữ liệu vẫn được giữ nguyên trên thiết bị. Không có rollback hay thông báo lỗi trong chế độ offline-first này.
+
+Khi backend **đã triển khai và phản hồi** (tức là `GET /todos` ban đầu trả về 200), mọi lỗi từ `PATCH`/`DELETE` (response không `ok`) sẽ:
+1. **Rollback** state về trạng thái trước thao tác (undo optimistic update).
+2. **Hiển thị thông báo lỗi** inline để người dùng biết cần thử lại.
+
 ## Tích hợp backend (tuỳ chọn)
 
 Hook `useTodos` gọi `GET /todos` khi mount. Nếu endpoint trả về danh sách todo (JSON array), dữ liệu sẽ được dùng làm nguồn chính và lưu lại vào `localStorage` làm cache offline. Nếu không có backend, fetch thất bại lặng lẽ và `localStorage` được dùng thay thế.

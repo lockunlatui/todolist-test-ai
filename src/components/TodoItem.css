@@ -66,6 +66,19 @@
   background: #fef2f2;
 }
 
+/* ── Accessibility: respect reduced-motion preference (WCAG 2.1 AA SC 2.3.3) ── */
+@media (prefers-reduced-motion: reduce) {
+  .todo-item {
+    transition: none;
+  }
+
+  .todo-item--deleting {
+    transition: none;
+    /* Still hide the item, just without motion */
+    opacity: 0;
+  }
+}
+
 /* Exit animation when a todo is being deleted */
 .todo-item--deleting {
   opacity: 0;

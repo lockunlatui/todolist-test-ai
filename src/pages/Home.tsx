@@ -4,7 +4,7 @@ import { TodoList } from '../components/TodoList';
 import './Home.css';
 
 export function Home() {
-  const { todos, loading, addTodo, deleteTodo, toggleTodo } = useTodos();
+  const { todos, loading, error, clearError, addTodo, deleteTodo, toggleTodo } = useTodos();
 
   return (
     <div className="home">
@@ -14,6 +14,19 @@ export function Home() {
       </header>
 
       <main className="home__main">
+        {error && (
+          <div className="home__error" role="alert" aria-live="assertive">
+            <span className="home__error-text">{error}</span>
+            <button
+              className="home__error-dismiss"
+              onClick={clearError}
+              aria-label="Đóng thông báo lỗi"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+        )}
+
         <div className="home__add-section">
           <AddTodo onAdd={addTodo} />
         </div>
