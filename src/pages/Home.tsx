@@ -4,7 +4,7 @@ import { TodoList } from '../components/TodoList';
 import './Home.css';
 
 export function Home() {
-  const { todos, addTodo, deleteTodo, toggleTodo } = useTodos();
+  const { todos, loading, addTodo, deleteTodo, toggleTodo } = useTodos();
 
   return (
     <div className="home">
@@ -19,7 +19,14 @@ export function Home() {
         </div>
 
         <div className="home__list-section">
-          <TodoList todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
+          {loading ? (
+            <div className="home__loading" role="status" aria-label="Đang tải danh sách công việc">
+              <span className="home__spinner" aria-hidden="true" />
+              <span className="home__loading-text">Đang tải...</span>
+            </div>
+          ) : (
+            <TodoList todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
+          )}
         </div>
       </main>
     </div>

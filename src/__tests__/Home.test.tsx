@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Home } from '../pages/Home';
@@ -13,9 +13,19 @@ describe('Home page (integration)', () => {
     expect(screen.getByRole('heading', { name: /todolist/i })).toBeInTheDocument();
   });
 
-  it('shows empty state on first load', () => {
+  it('shows loading spinner before API responds', () => {
+    // Suspend fetch so loading stays true during the assertion
+    vi.mocked(fetch).mockImplementationOnce(() => new Promise(() => {}));
     render(<Home />);
-    expect(screen.getByText(/chưa có công việc nào/i)).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: /đang tải/i })).toBeInTheDocument();
+  });
+
+  it('shows empty state after loading completes with no todos', async () => {
+    render(<Home />);
+    // Default mock returns 503, so hook falls back to empty localStorage
+    await waitFor(() =>
+      expect(screen.getByText(/chưa có công việc nào/i)).toBeInTheDocument(),
+    );
   });
 
   it('adds a todo and displays it in the list', async () => {

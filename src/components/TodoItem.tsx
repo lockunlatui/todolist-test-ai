@@ -6,16 +6,19 @@ interface TodoItemProps {
   todo: Todo;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  /** Called synchronously when the delete animation starts (before the item is removed). */
+  onStartDelete?: (id: string) => void;
 }
 
 /** Duration must match the longest transition in `.todo-item--deleting` CSS. */
 const DELETE_ANIMATION_MS = 300;
 
-export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
+export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   function handleDelete() {
     setIsDeleting(true);
+    onStartDelete?.(todo.id); // notify parent immediately so EmptyState can appear
     setTimeout(() => onDelete(todo.id), DELETE_ANIMATION_MS);
   }
 

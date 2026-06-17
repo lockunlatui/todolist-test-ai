@@ -117,4 +117,75 @@ describe('useTodos', () => {
     await waitFor(() => expect(fetch).toHaveBeenCalled());
     expect(result.current.todos[0].title).toBe('Network down');
   });
+
+  // --- loading state ---
+
+  it('loading starts true while fetch is in-flight', () => {
+    // Suspend the fetch indefinitely so we can observe the initial loading state
+    vi.mocked(fetch).mockImplementationOnce(() => new Promise(() => {}));
+    const { result } = renderHook(() => useTodos());
+    expect(result.current.loading).toBe(true);
+  });
+
+  it('loading becomes false after fetch resolves (non-OK)', async () => {
+    // Default mock returns 503; loading must clear regardless
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+  });
+
+  it('loading becomes false after fetch succeeds', async () => {
+    const apiTodos = [
+      { id: 'ld-1', title: 'Loaded', completed: false, createdAt: new Date().toISOString() },
+    ];
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(apiTodos),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.todos[0].title).toBe('Loaded');
+  });
+
+  // --- PATCH / DELETE API sync ---
+
+  it('calls PATCH /todos/:id with new completed value when toggling', async () => {
+    const { result } = renderHook(() => useTodos());
+    act(() => result.current.addTodo('Toggle me'));
+    const id = result.current.todos[0].id;
+
+    // Reset fetch mock so we can assert on the PATCH call specifically
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: true } as Response);
+
+    act(() => result.current.toggleTodo(id));
+
+    await waitFor(() =>
+      expect(fetch).toHaveBeenCalledWith(
+        `/todos/${id}`,
+        expect.objectContaining({
+          method: 'PATCH',
+          body: JSON.stringify({ completed: true }),
+        }),
+      ),
+    );
+    expect(result.current.todos[0].completed).toBe(true);
+  });
+
+  it('calls DELETE /todos/:id when deleting a todo', async () => {
+    const { result } = renderHook(() => useTodos());
+    act(() => result.current.addTodo('Delete me'));
+    const id = result.current.todos[0].id;
+
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: true } as Response);
+
+    act(() => result.current.deleteTodo(id));
+
+    await waitFor(() =>
+      expect(fetch).toHaveBeenCalledWith(
+        `/todos/${id}`,
+        expect.objectContaining({ method: 'DELETE' }),
+      ),
+    );
+    expect(result.current.todos).toHaveLength(0);
+  });
 });

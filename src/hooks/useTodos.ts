@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useEffect } from 'react';
+import { useReducer, useCallback, useEffect, useState, useRef } from 'react';
 import type { Todo, TodoAction } from '../types/todo';
 
 // NOTE: This app works offline-first via localStorage.
@@ -65,6 +65,11 @@ function todosReducer(state: Todo[], action: TodoAction): Todo[] {
 
 export function useTodos() {
   const [todos, dispatch] = useReducer(todosReducer, undefined, loadFromStorage);
+  const [loading, setLoading] = useState(true);
+
+  // Keep a ref to always-current todos so callbacks don't go stale
+  const todosRef = useRef(todos);
+  todosRef.current = todos;
 
   // Sync from backend on mount; silently fall back to localStorage on failure
   useEffect(() => {
@@ -83,6 +88,9 @@ export function useTodos() {
       })
       .catch(() => {
         // Network unavailable or backend not deployed — localStorage cache is used
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
     return () => {
       cancelled = true;
@@ -96,11 +104,22 @@ export function useTodos() {
 
   const deleteTodo = useCallback((id: string) => {
     dispatch({ type: 'DELETE', id });
+    // Optimistic: fire-and-forget sync to backend; errors are silent
+    fetch(`${API_URL}/${id}`, { method: 'DELETE' }).catch(() => {});
   }, []);
 
   const toggleTodo = useCallback((id: string) => {
     dispatch({ type: 'TOGGLE', id });
+    // Compute new completed value from ref (avoids stale closure)
+    const todo = todosRef.current.find((t) => t.id === id);
+    if (todo) {
+      fetch(`${API_URL}/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: !todo.completed }),
+      }).catch(() => {});
+    }
   }, []);
 
-  return { todos, addTodo, deleteTodo, toggleTodo };
+  return { todos, loading, addTodo, deleteTodo, toggleTodo };
 }
