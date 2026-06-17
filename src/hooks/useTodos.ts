@@ -91,10 +91,15 @@ export function useTodos(): UseTodosReturn {
   // PATCH/DELETE are fire-and-forget and all data stays in localStorage.
   const backendAvailableRef = useRef(false);
 
-  // Sync from backend on mount; silently fall back to localStorage on failure
+  // Sync from backend on mount; silently fall back to localStorage on failure.
+  // An AbortController with a 5 s timeout prevents the spinner from hanging
+  // indefinitely when the server is slow or unreachable.
   useEffect(() => {
     let cancelled = false;
-    fetch(API_URL)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    fetch(API_URL, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error(`GET ${API_URL} → ${res.status}`);
         return res.json() as Promise<
@@ -108,13 +113,17 @@ export function useTodos(): UseTodosReturn {
         }
       })
       .catch(() => {
-        // Network unavailable or backend not deployed — localStorage cache is used
+        // Network unavailable, request timed out, or backend not deployed —
+        // localStorage cache is used as fallback.
       })
       .finally(() => {
+        clearTimeout(timeoutId);
         if (!cancelled) setLoading(false);
       });
     return () => {
       cancelled = true;
+      clearTimeout(timeoutId);
+      controller.abort();
     };
   }, []);
 

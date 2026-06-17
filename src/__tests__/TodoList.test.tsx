@@ -48,15 +48,28 @@ describe('TodoList', () => {
     expect(screen.getByText('0/25 công việc hoàn thành')).toBeInTheDocument();
   });
 
-  it('shows EmptyState immediately when last todo starts deleting', async () => {
-    const onDelete = vi.fn();
+  it('hides completion summary (no layout shift) when all remaining todos start deleting', async () => {
+    // onDelete is a mock — the todos prop stays static during this test so we
+    // can observe the intermediate "all pending delete" state in isolation.
     const todos = [makeTodo({ title: 'Sole task' })];
-    render(<TodoList todos={todos} onToggle={vi.fn()} onDelete={onDelete} />);
-
-    // Trigger delete — EmptyState should appear before onDelete is called
-    await userEvent.click(screen.getByRole('button', { name: /xóa/i }));
-    await waitFor(() =>
-      expect(screen.getByText(/chưa có công việc nào/i)).toBeInTheDocument(),
+    const { container } = render(
+      <TodoList todos={todos} onToggle={vi.fn()} onDelete={vi.fn()} />,
     );
+
+    // Summary is visible before any deletion starts
+    const summary = container.querySelector('.todo-list__summary') as HTMLElement;
+    expect(summary).not.toHaveStyle({ visibility: 'hidden' });
+
+    // Trigger delete — animation begins, all remaining items are now pending deletion
+    await userEvent.click(screen.getByRole('button', { name: /xóa/i }));
+
+    // Summary should be hidden (visibility:hidden keeps its space so the list
+    // height doesn't jump — no layout shift). EmptyState is NOT rendered yet;
+    // it appears only once todos.length reaches 0.
+    await waitFor(() => expect(summary).toHaveStyle({ visibility: 'hidden' }));
+
+    // The animating item is still in the DOM (ul keeps rendering for animation)
+    expect(screen.getByText('Sole task')).toBeInTheDocument();
+    expect(screen.queryByText(/chưa có công việc nào/i)).not.toBeInTheDocument();
   });
 });

@@ -15,7 +15,7 @@ export function Home() {
 
       <main className="home__main">
         {error && (
-          <div className="home__error" role="alert" aria-live="assertive">
+          <div className="home__error" role="alert">
             <span className="home__error-text">{error}</span>
             <button
               className="home__error-dismiss"

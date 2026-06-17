@@ -15,10 +15,15 @@ const DELETE_ANIMATION_MS = 300;
 
 export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  // Unique id links the checkbox to its visible label, enabling "click title to toggle"
+  // while keeping the input's aria-label as the sole accessible name (prevents
+  // screen-reader double-announce that occurs when an aria-label'd input is nested
+  // directly inside a <label> element).
+  const checkboxId = `todo-item-checkbox-${todo.id}`;
 
   function handleDelete() {
     setIsDeleting(true);
-    onStartDelete?.(todo.id); // notify parent immediately so EmptyState can appear
+    onStartDelete?.(todo.id); // notify parent immediately so layout can adjust
     setTimeout(() => onDelete(todo.id), DELETE_ANIMATION_MS);
   }
 
@@ -32,20 +37,22 @@ export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemPr
 
   return (
     <li className={className}>
-      <label className="todo-item__label">
-        <input
-          type="checkbox"
-          className="todo-item__checkbox"
-          checked={todo.completed}
-          onChange={() => onToggle(todo.id)}
-          aria-label={
-            todo.completed
-              ? `Bỏ đánh dấu "${todo.title}" hoàn thành`
-              : `Đánh dấu "${todo.title}" hoàn thành`
-          }
-        />
+      <input
+        id={checkboxId}
+        type="checkbox"
+        className="todo-item__checkbox"
+        checked={todo.completed}
+        onChange={() => onToggle(todo.id)}
+        aria-label={
+          todo.completed
+            ? `Bỏ đánh dấu "${todo.title}" hoàn thành`
+            : `Đánh dấu "${todo.title}" hoàn thành`
+        }
+      />
+      <label htmlFor={checkboxId} className="todo-item__label">
         <span
           className="todo-item__title"
+          style={todo.completed ? { textDecoration: 'line-through' } : undefined}
         >
           {todo.title}
         </span>

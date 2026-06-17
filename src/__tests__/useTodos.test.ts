@@ -71,9 +71,12 @@ describe('useTodos', () => {
 
   // --- fetch / API integration ---
 
-  it('calls fetch on mount targeting /todos', () => {
+  it('calls fetch on mount targeting /todos (with AbortSignal for timeout)', () => {
     renderHook(() => useTodos());
-    expect(fetch).toHaveBeenCalledWith('/todos');
+    expect(fetch).toHaveBeenCalledWith(
+      '/todos',
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 
   it('loads todos from API when fetch succeeds', async () => {
