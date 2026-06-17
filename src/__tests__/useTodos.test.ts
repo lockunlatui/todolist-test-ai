@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useTodos } from '../hooks/useTodos';
+import type { UseTodosReturn } from '../hooks/useTodos';
 
 // Ensure localStorage is clean between tests
 beforeEach(() => {
@@ -169,6 +170,16 @@ describe('useTodos', () => {
       ),
     );
     expect(result.current.todos[0].completed).toBe(true);
+  });
+
+  it('return value satisfies UseTodosReturn shape', () => {
+    const { result } = renderHook(() => useTodos());
+    const hook: UseTodosReturn = result.current;
+    expect(Array.isArray(hook.todos)).toBe(true);
+    expect(typeof hook.loading).toBe('boolean');
+    expect(typeof hook.addTodo).toBe('function');
+    expect(typeof hook.deleteTodo).toBe('function');
+    expect(typeof hook.toggleTodo).toBe('function');
   });
 
   it('calls DELETE /todos/:id when deleting a todo', async () => {

@@ -63,7 +63,15 @@ function todosReducer(state: Todo[], action: TodoAction): Todo[] {
   return next;
 }
 
-export function useTodos() {
+export interface UseTodosReturn {
+  todos: Todo[];
+  loading: boolean;
+  addTodo: (title: string) => void;
+  deleteTodo: (id: string) => void;
+  toggleTodo: (id: string) => void;
+}
+
+export function useTodos(): UseTodosReturn {
   const [todos, dispatch] = useReducer(todosReducer, undefined, loadFromStorage);
   const [loading, setLoading] = useState(true);
 

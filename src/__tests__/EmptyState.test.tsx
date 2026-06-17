@@ -12,4 +12,14 @@ describe('EmptyState', () => {
     render(<EmptyState />);
     expect(screen.getByText(/thêm/i)).toBeInTheDocument();
   });
+
+  it('does not carry role="status" (avoids aria-live conflict with loading spinner)', () => {
+    const { container } = render(<EmptyState />);
+    expect(container.querySelector('[role="status"]')).toBeNull();
+  });
+
+  it('has aria-live="polite" so screen readers announce the empty state', () => {
+    const { container } = render(<EmptyState />);
+    expect(container.querySelector('[aria-live="polite"]')).toBeInTheDocument();
+  });
 });

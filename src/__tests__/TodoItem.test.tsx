@@ -58,4 +58,13 @@ describe('TodoItem', () => {
     );
     expect(container.querySelector('.todo-item')).toHaveClass('todo-item--completed');
   });
+
+  it('delete button visible symbol is wrapped in aria-hidden (WCAG 2.1 AA)', () => {
+    const { container } = render(
+      <TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />,
+    );
+    const hiddenSpan = container.querySelector('.todo-item__delete span[aria-hidden="true"]');
+    expect(hiddenSpan).toBeInTheDocument();
+    expect(hiddenSpan?.textContent).toBe('×');
+  });
 });

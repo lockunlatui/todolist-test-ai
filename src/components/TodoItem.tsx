@@ -48,7 +48,7 @@ export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemPr
         aria-label={`Xóa "${todo.title}"`}
         title="Xóa"
       >
-        ×
+        <span aria-hidden="true">×</span>
       </button>
     </li>
   );

@@ -9,7 +9,7 @@ export function Home() {
   return (
     <div className="home">
       <header className="home__header">
-        <h1 className="home__title">📝 Todolist</h1>
+        <h1 className="home__title"><span aria-hidden="true">📝</span> Todolist</h1>
         <p className="home__subtitle">Quản lý công việc hàng ngày của bạn</p>
       </header>
 
