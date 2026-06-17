@@ -44,7 +44,12 @@ export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemPr
               : `Đánh dấu "${todo.title}" hoàn thành`
           }
         />
-        <span className="todo-item__title">{todo.title}</span>
+        <span
+          className="todo-item__title"
+          style={todo.completed ? { textDecoration: 'line-through' } : undefined}
+        >
+          {todo.title}
+        </span>
       </label>
       <button
         className="todo-item__delete"

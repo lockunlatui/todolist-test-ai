@@ -75,6 +75,20 @@ describe('TodoItem', () => {
     ).toBeInTheDocument();
   });
 
+  it('title has inline line-through style when todo is completed', () => {
+    render(
+      <TodoItem todo={{ ...mockTodo, completed: true }} onToggle={vi.fn()} onDelete={vi.fn()} />,
+    );
+    const title = screen.getByText('Uống nước đủ 2 lít');
+    expect(title).toHaveStyle({ textDecoration: 'line-through' });
+  });
+
+  it('title has no line-through style when todo is not completed', () => {
+    render(<TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />);
+    const title = screen.getByText('Uống nước đủ 2 lít');
+    expect(title).not.toHaveStyle({ textDecoration: 'line-through' });
+  });
+
   it('delete button visible symbol is wrapped in aria-hidden (WCAG 2.1 AA)', () => {
     const { container } = render(
       <TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />,
