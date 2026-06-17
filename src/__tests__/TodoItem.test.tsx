@@ -75,26 +75,30 @@ describe('TodoItem', () => {
     ).toBeInTheDocument();
   });
 
-  it('title has inline line-through style when todo is completed', () => {
+  it('completed todo title has no inline style — line-through comes from CSS class', () => {
     render(
       <TodoItem todo={{ ...mockTodo, completed: true }} onToggle={vi.fn()} onDelete={vi.fn()} />,
     );
     const title = screen.getByText('Uống nước đủ 2 lít');
-    expect(title).toHaveStyle({ textDecoration: 'line-through' });
+    // Inline style was removed; visual strikethrough is applied via
+    // `.todo-item--completed .todo-item__title` CSS rule only.
+    expect(title).not.toHaveAttribute('style');
   });
 
-  it('title has no line-through style when todo is not completed', () => {
+  it('non-completed todo title has no inline style', () => {
     render(<TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />);
     const title = screen.getByText('Uống nước đủ 2 lít');
-    expect(title).not.toHaveStyle({ textDecoration: 'line-through' });
+    expect(title).not.toHaveAttribute('style');
   });
 
-  it('delete button visible symbol is wrapped in aria-hidden (WCAG 2.1 AA)', () => {
+  it('delete button uses trash SVG icon with aria-hidden (WCAG 2.5.5 touch target)', () => {
     const { container } = render(
       <TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />,
     );
-    const hiddenSpan = container.querySelector('.todo-item__delete span[aria-hidden="true"]');
-    expect(hiddenSpan).toBeInTheDocument();
-    expect(hiddenSpan?.textContent).toBe('×');
+    // Icon SVG must be hidden from screen readers — accessible name is on the button's aria-label
+    const hiddenSvg = container.querySelector('.todo-item__delete svg[aria-hidden="true"]');
+    expect(hiddenSvg).toBeInTheDocument();
+    // No stray text content — purely SVG paths
+    expect(container.querySelector('.todo-item__delete')?.textContent?.trim()).toBe('');
   });
 });
