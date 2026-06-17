@@ -1,7 +1,11 @@
-import { useReducer, useCallback } from 'react';
+import { useReducer, useCallback, useEffect } from 'react';
 import type { Todo, TodoAction } from '../types/todo';
 
+// NOTE: This app works offline-first via localStorage.
+// The GET /todos call below is for future backend integration.
+// If no backend is available the fetch fails silently and localStorage data is used.
 const STORAGE_KEY = 'todolist_todos';
+const API_URL = '/todos';
 
 function loadFromStorage(): Todo[] {
   try {
@@ -22,9 +26,19 @@ function saveToStorage(todos: Todo[]): void {
   }
 }
 
+function parseApiTodos(
+  raw: Array<Omit<Todo, 'createdAt'> & { createdAt: string }>,
+): Todo[] {
+  return raw.map((t) => ({ ...t, createdAt: new Date(t.createdAt) }));
+}
+
 function todosReducer(state: Todo[], action: TodoAction): Todo[] {
   let next: Todo[];
   switch (action.type) {
+    case 'LOAD':
+      // API is source of truth when available; sync to localStorage as cache
+      saveToStorage(action.todos);
+      return action.todos;
     case 'ADD':
       next = [
         ...state,
@@ -51,6 +65,29 @@ function todosReducer(state: Todo[], action: TodoAction): Todo[] {
 
 export function useTodos() {
   const [todos, dispatch] = useReducer(todosReducer, undefined, loadFromStorage);
+
+  // Sync from backend on mount; silently fall back to localStorage on failure
+  useEffect(() => {
+    let cancelled = false;
+    fetch(API_URL)
+      .then((res) => {
+        if (!res.ok) throw new Error(`GET ${API_URL} → ${res.status}`);
+        return res.json() as Promise<
+          Array<Omit<Todo, 'createdAt'> & { createdAt: string }>
+        >;
+      })
+      .then((data) => {
+        if (!cancelled) {
+          dispatch({ type: 'LOAD', todos: parseApiTodos(data) });
+        }
+      })
+      .catch(() => {
+        // Network unavailable or backend not deployed — localStorage cache is used
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const addTodo = useCallback((title: string) => {
     if (!title.trim()) return;

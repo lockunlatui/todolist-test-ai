@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Todo } from '../types/todo';
 import './TodoItem.css';
 
@@ -7,9 +8,27 @@ interface TodoItemProps {
   onDelete: (id: string) => void;
 }
 
+/** Duration must match the longest transition in `.todo-item--deleting` CSS. */
+const DELETE_ANIMATION_MS = 300;
+
 export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  function handleDelete() {
+    setIsDeleting(true);
+    setTimeout(() => onDelete(todo.id), DELETE_ANIMATION_MS);
+  }
+
+  const className = [
+    'todo-item',
+    todo.completed ? 'todo-item--completed' : '',
+    isDeleting ? 'todo-item--deleting' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <li className={`todo-item${todo.completed ? ' todo-item--completed' : ''}`}>
+    <li className={className}>
       <label className="todo-item__label">
         <input
           type="checkbox"
@@ -22,7 +41,7 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
       </label>
       <button
         className="todo-item__delete"
-        onClick={() => onDelete(todo.id)}
+        onClick={handleDelete}
         aria-label={`Xóa "${todo.title}"`}
         title="Xóa"
       >

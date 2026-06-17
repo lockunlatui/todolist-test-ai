@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TodoItem } from '../components/TodoItem';
 import type { Todo } from '../types/todo';
@@ -36,11 +36,20 @@ describe('TodoItem', () => {
     expect(onToggle).toHaveBeenCalledWith('test-1');
   });
 
-  it('calls onDelete with the todo id when delete button is clicked', async () => {
+  it('calls onDelete with the todo id after delete animation completes', async () => {
     const onDelete = vi.fn();
     render(<TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={onDelete} />);
     await userEvent.click(screen.getByRole('button', { name: /xóa/i }));
-    expect(onDelete).toHaveBeenCalledWith('test-1');
+    // onDelete is called after the exit animation (≤300 ms); waitFor polls until it fires
+    await waitFor(() => expect(onDelete).toHaveBeenCalledWith('test-1'));
+  });
+
+  it('applies deleting class immediately on delete click', async () => {
+    const { container } = render(
+      <TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: /xóa/i }));
+    expect(container.querySelector('.todo-item')).toHaveClass('todo-item--deleting');
   });
 
   it('applies completed class when todo is completed', () => {

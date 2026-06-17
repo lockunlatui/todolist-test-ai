@@ -43,6 +43,7 @@
 }
 
 .todo-item--completed .todo-item__title {
+  -webkit-text-decoration: line-through; /* Safari < 12.1 */
   text-decoration: line-through;
   color: #9ca3af;
 }
@@ -63,4 +64,18 @@
 .todo-item__delete:hover {
   color: #ef4444;
   background: #fef2f2;
+}
+
+/* Exit animation when a todo is being deleted */
+.todo-item--deleting {
+  opacity: 0;
+  transform: translateX(8px);
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease,
+    padding 0.3s ease, margin 0.3s ease;
+  pointer-events: none;
 }

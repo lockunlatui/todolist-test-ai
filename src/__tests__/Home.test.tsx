@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Home } from '../pages/Home';
 
@@ -39,7 +39,8 @@ describe('Home page (integration)', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Sẽ bị xóa');
     await userEvent.click(screen.getByRole('button', { name: /thêm/i }));
     await userEvent.click(screen.getByRole('button', { name: /xóa/i }));
-    expect(screen.queryByText('Sẽ bị xóa')).not.toBeInTheDocument();
+    // Item is removed after exit animation; waitFor polls until it disappears
+    await waitFor(() => expect(screen.queryByText('Sẽ bị xóa')).not.toBeInTheDocument());
   });
 
   it('shows empty state again after all todos are deleted', async () => {
@@ -47,6 +48,8 @@ describe('Home page (integration)', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Tạm thời');
     await userEvent.click(screen.getByRole('button', { name: /thêm/i }));
     await userEvent.click(screen.getByRole('button', { name: /xóa/i }));
-    expect(screen.getByText(/chưa có công việc nào/i)).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText(/chưa có công việc nào/i)).toBeInTheDocument(),
+    );
   });
 });

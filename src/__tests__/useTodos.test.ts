@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useTodos } from '../hooks/useTodos';
 
 // Ensure localStorage is clean between tests
@@ -66,5 +66,55 @@ describe('useTodos', () => {
     const stored = JSON.parse(localStorage.getItem('todolist_todos') ?? '[]');
     expect(stored).toHaveLength(1);
     expect(stored[0].title).toBe('Saved item');
+  });
+
+  // --- fetch / API integration ---
+
+  it('calls fetch on mount targeting /todos', () => {
+    renderHook(() => useTodos());
+    expect(fetch).toHaveBeenCalledWith('/todos');
+  });
+
+  it('loads todos from API when fetch succeeds', async () => {
+    const apiTodos = [
+      { id: 'api-1', title: 'Từ API', completed: false, createdAt: new Date().toISOString() },
+    ];
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(apiTodos),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.todos).toHaveLength(1));
+    expect(result.current.todos[0].title).toBe('Từ API');
+    expect(result.current.todos[0].createdAt).toBeInstanceOf(Date);
+  });
+
+  it('keeps localStorage data when fetch returns non-OK response', async () => {
+    localStorage.setItem(
+      'todolist_todos',
+      JSON.stringify([
+        { id: 'ls-1', title: 'Offline todo', completed: false, createdAt: new Date().toISOString() },
+      ]),
+    );
+    // fetch mock already returns 503 (from setup.ts); just render
+    const { result } = renderHook(() => useTodos());
+    // Give the effect a chance to run and fail
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
+    expect(result.current.todos[0].title).toBe('Offline todo');
+  });
+
+  it('keeps localStorage data when fetch throws a network error', async () => {
+    localStorage.setItem(
+      'todolist_todos',
+      JSON.stringify([
+        { id: 'ls-2', title: 'Network down', completed: false, createdAt: new Date().toISOString() },
+      ]),
+    );
+    vi.mocked(fetch).mockRejectedValueOnce(new TypeError('Failed to fetch'));
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(fetch).toHaveBeenCalled());
+    expect(result.current.todos[0].title).toBe('Network down');
   });
 });

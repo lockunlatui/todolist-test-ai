@@ -8,4 +8,5 @@ export interface Todo {
 export type TodoAction =
   | { type: 'ADD'; title: string }
   | { type: 'DELETE'; id: string }
-  | { type: 'TOGGLE'; id: string };
+  | { type: 'TOGGLE'; id: string }
+  | { type: 'LOAD'; todos: Todo[] };
