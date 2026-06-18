@@ -395,4 +395,94 @@ describe('useTodos', () => {
     expect(result.current.todos[0].completed).toBe(true);
     expect(result.current.error).toBeNull();
   });
+
+  // --- Finding 1: setLoading(false) in both success and error branches ---
+
+  it('loading becomes false when fetch is aborted (AbortController timeout path)', async () => {
+    // Mock fetch to reject with AbortError — simulates what happens when
+    // the 5 s timeout fires and controller.abort() is called.
+    vi.mocked(fetch).mockImplementationOnce(() =>
+      Promise.reject(new DOMException('The operation was aborted.', 'AbortError')),
+    );
+
+    const { result } = renderHook(() => useTodos());
+    // loading starts true, then the AbortError is caught; loading must become false.
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    // localStorage fallback is intact; no data is lost.
+    expect(result.current.todos).toHaveLength(0);
+  });
+
+  // --- Finding 3: auto-clear error on action dispatch ---
+
+  it('clears error immediately when addTodo is called while an error banner is visible', async () => {
+    // Backend becomes available
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve([]),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.addTodo('Trigger error'));
+    const id = result.current.todos[0].id;
+
+    // PATCH fails → error banner appears
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: false, status: 500 } as Response);
+    act(() => result.current.toggleTodo(id));
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+
+    // addTodo must clear the error immediately (synchronously inside act)
+    act(() => result.current.addTodo('After error'));
+    expect(result.current.error).toBeNull();
+  });
+
+  it('clears error immediately when deleteTodo is called while an error banner is visible', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve([]),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => result.current.addTodo('Item A'));
+    act(() => result.current.addTodo('Item B'));
+    const idA = result.current.todos[0].id;
+    const idB = result.current.todos[1].id;
+
+    // Force error via failed PATCH
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: false, status: 500 } as Response);
+    act(() => result.current.toggleTodo(idA));
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+
+    // deleteTodo must clear the error immediately
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: true } as Response);
+    act(() => result.current.deleteTodo(idB));
+    expect(result.current.error).toBeNull();
+  });
+
+  // --- Finding 4: pure reducer — saveToStorage is a useEffect, not a reducer side-effect ---
+
+  it('saveToStorage runs via useEffect after state changes (todos persisted after act flushes)', () => {
+    // This test verifies that even though saveToStorage is no longer called inside
+    // the reducer, todos are still persisted because the useEffect fires during act().
+    const { result } = renderHook(() => useTodos());
+    act(() => result.current.addTodo('Effect-persisted item'));
+
+    const stored = JSON.parse(localStorage.getItem('todolist_todos') ?? '[]') as Array<{ title: string }>;
+    expect(stored).toHaveLength(1);
+    expect(stored[0].title).toBe('Effect-persisted item');
+  });
+
+  it('deleting a todo also persists the updated list via useEffect', () => {
+    const { result } = renderHook(() => useTodos());
+    act(() => result.current.addTodo('Will be removed'));
+    const id = result.current.todos[0].id;
+
+    act(() => result.current.deleteTodo(id));
+
+    const stored = JSON.parse(localStorage.getItem('todolist_todos') ?? '[]') as unknown[];
+    expect(stored).toHaveLength(0);
+  });
 });

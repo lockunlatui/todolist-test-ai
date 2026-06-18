@@ -35,14 +35,12 @@ function parseApiTodos(
 }
 
 function todosReducer(state: Todo[], action: TodoAction): Todo[] {
-  let next: Todo[];
   switch (action.type) {
     case 'LOAD':
-      // API is source of truth when available; sync to localStorage as cache
-      saveToStorage(action.todos);
+      // Pure: side-effect (saveToStorage) is handled by useEffect in the hook.
       return action.todos;
     case 'ADD':
-      next = [
+      return [
         ...state,
         {
           id: crypto.randomUUID(),
@@ -51,18 +49,13 @@ function todosReducer(state: Todo[], action: TodoAction): Todo[] {
           createdAt: new Date(),
         },
       ];
-      break;
     case 'DELETE':
-      next = state.filter((t) => t.id !== action.id);
-      break;
+      return state.filter((t) => t.id !== action.id);
     case 'TOGGLE':
-      next = state.map((t) => (t.id === action.id ? { ...t, completed: !t.completed } : t));
-      break;
+      return state.map((t) => (t.id === action.id ? { ...t, completed: !t.completed } : t));
     default:
       return state;
   }
-  saveToStorage(next);
-  return next;
 }
 
 export interface UseTodosReturn {
@@ -84,6 +77,12 @@ export function useTodos(): UseTodosReturn {
   // Keep a ref to always-current todos so callbacks don't go stale
   const todosRef = useRef(todos);
   todosRef.current = todos;
+
+  // Finding 4: persist todos via effect instead of inside the reducer (pure function rule).
+  // Runs after every render where todos changes; covers ADD, DELETE, TOGGLE, and LOAD.
+  useEffect(() => {
+    saveToStorage(todos);
+  }, [todos]);
 
   // Track whether the backend has ever responded successfully.
   // Only rollback optimistic updates when the backend is known to be reachable
@@ -110,15 +109,20 @@ export function useTodos(): UseTodosReturn {
         if (!cancelled) {
           backendAvailableRef.current = true;
           dispatch({ type: 'LOAD', todos: parseApiTodos(data) });
+          // Finding 1: setLoading(false) explicitly in the success branch.
+          setLoading(false);
         }
       })
       .catch(() => {
-        // Network unavailable, request timed out, or backend not deployed —
-        // localStorage cache is used as fallback.
+        // Network unavailable, request timed out, backend not deployed, or
+        // AbortController fired (timeout/unmount) — localStorage cache is used.
+        // Finding 1: setLoading(false) explicitly in the error branch so the
+        // spinner never hangs when fetch rejects or the abort signal fires.
+        if (!cancelled) setLoading(false);
       })
       .finally(() => {
+        // Cleanup only — loading state is already cleared in then/catch above.
         clearTimeout(timeoutId);
-        if (!cancelled) setLoading(false);
       });
     return () => {
       cancelled = true;
@@ -129,11 +133,15 @@ export function useTodos(): UseTodosReturn {
 
   const addTodo = useCallback((title: string) => {
     if (!title.trim()) return;
+    // Finding 3: clear stale error banner when the user initiates a new action.
+    setError(null);
     dispatch({ type: 'ADD', title });
   }, []);
 
   const deleteTodo = useCallback((id: string) => {
     const snapshot = todosRef.current;
+    // Finding 3: clear stale error banner when the user initiates a new action.
+    setError(null);
     dispatch({ type: 'DELETE', id });
     fetch(`${API_URL}/${id}`, { method: 'DELETE' })
       .then((res) => {
@@ -151,6 +159,8 @@ export function useTodos(): UseTodosReturn {
 
   const toggleTodo = useCallback((id: string) => {
     const snapshot = todosRef.current;
+    // Finding 3: clear stale error banner when the user initiates a new action.
+    setError(null);
     dispatch({ type: 'TOGGLE', id });
     // Compute new completed value from snapshot (avoids stale closure)
     const todo = snapshot.find((t) => t.id === id);

@@ -101,4 +101,41 @@ describe('TodoItem', () => {
     // No stray text content — purely SVG paths
     expect(container.querySelector('.todo-item__delete')?.textContent?.trim()).toBe('');
   });
+
+  // --- Finding 2: label must NOT use htmlFor to prevent screen-reader double-announce ---
+
+  it('label element has no htmlFor attribute (prevents NVDA/JAWS double-announce)', () => {
+    const { container } = render(
+      <TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />,
+    );
+    const label = container.querySelector('.todo-item__label');
+    // htmlFor on a label that also sits next to an aria-label'd input causes double-announce.
+    // The label must be a visual-only wrapper — no implicit association via htmlFor.
+    expect(label).not.toHaveAttribute('for');
+  });
+
+  it('clicking the label text calls onToggle (click-to-toggle preserved without htmlFor)', async () => {
+    const onToggle = vi.fn();
+    const { container } = render(
+      <TodoItem todo={mockTodo} onToggle={onToggle} onDelete={vi.fn()} />,
+    );
+    const label = container.querySelector('.todo-item__label') as HTMLElement;
+    await userEvent.click(label);
+    // onToggle must be called exactly once — via the label's onClick handler.
+    expect(onToggle).toHaveBeenCalledTimes(1);
+    expect(onToggle).toHaveBeenCalledWith('test-1');
+  });
+
+  // --- Finding 5: delete button must have a visible focus-visible ring for keyboard users ---
+
+  it('delete button CSS class exists and button is focusable (keyboard accessibility)', () => {
+    const { container } = render(
+      <TodoItem todo={mockTodo} onToggle={vi.fn()} onDelete={vi.fn()} />,
+    );
+    const btn = container.querySelector('.todo-item__delete') as HTMLButtonElement;
+    expect(btn).toBeInTheDocument();
+    // Must be keyboard-focusable (no tabIndex=-1 or disabled)
+    expect(btn).not.toHaveAttribute('disabled');
+    expect(btn.tabIndex).not.toBe(-1);
+  });
 });

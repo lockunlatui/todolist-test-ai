@@ -15,10 +15,10 @@ const DELETE_ANIMATION_MS = 300;
 
 export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  // Unique id links the checkbox to its visible label, enabling "click title to toggle"
-  // while keeping the input's aria-label as the sole accessible name (prevents
-  // screen-reader double-announce that occurs when an aria-label'd input is nested
-  // directly inside a <label> element).
+  // Finding 2: we use aria-label on the input as the sole accessible name.
+  // The <label> is a visual wrapper only (no htmlFor) so screen readers don't
+  // read both the aria-label and the label text (NVDA/JAWS double-announce fix).
+  // Click-to-toggle is preserved via an explicit onClick on the label element.
   const checkboxId = `todo-item-checkbox-${todo.id}`;
 
   function handleDelete() {
@@ -49,7 +49,9 @@ export function TodoItem({ todo, onToggle, onDelete, onStartDelete }: TodoItemPr
             : `Đánh dấu "${todo.title}" hoàn thành`
         }
       />
-      <label htmlFor={checkboxId} className="todo-item__label">
+      {/* No htmlFor: prevents screen-reader double-announce (aria-label on input is sole accessible name).
+          onClick restores click-to-toggle UX without the implicit label association. */}
+      <label className="todo-item__label" onClick={() => onToggle(todo.id)}>
         <span className="todo-item__title">
           {todo.title}
         </span>
