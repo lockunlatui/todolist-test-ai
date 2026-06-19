@@ -1,0 +1,107 @@
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.todo-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.todo-item--completed {
+  opacity: 0.6;
+}
+
+/* label is now a sibling of input (input moved out to prevent screen-reader
+   double-announce); gap between checkbox and label is provided by li's gap. */
+.todo-item__label {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.todo-item__checkbox {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
+.todo-item__title {
+  font-size: 0.9375rem;
+  color: #1f2937;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.todo-item--completed .todo-item__title {
+  -webkit-text-decoration: line-through; /* Safari < 12.1 */
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+/* WCAG 2.5.5: minimum 44×44 px touch target */
+.todo-item__delete {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.todo-item__delete:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+/* Finding 5: explicit focus-visible ring so keyboard users see clear focus indicator. */
+.todo-item__delete:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+/* ── Accessibility: respect reduced-motion preference (WCAG 2.1 AA SC 2.3.3) ── */
+@media (prefers-reduced-motion: reduce) {
+  .todo-item {
+    transition: none;
+  }
+
+  .todo-item--deleting {
+    transition: none;
+    /* Still hide the item, just without motion */
+    opacity: 0;
+  }
+}
+
+/* Exit animation when a todo is being deleted */
+.todo-item--deleting {
+  opacity: 0;
+  transform: translateX(8px);
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease,
+    padding 0.3s ease, margin 0.3s ease;
+  pointer-events: none;
+}

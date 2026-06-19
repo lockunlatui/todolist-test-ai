@@ -1,0 +1,52 @@
+.add-todo {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.add-todo__input {
+  flex: 1;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 0;
+  color: #1f2937;
+  background: #fff;
+}
+
+.add-todo__input::placeholder {
+  color: #9ca3af;
+}
+
+.add-todo__input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.add-todo__button {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background: #6366f1;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.add-todo__button:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.add-todo__button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.add-todo__button:disabled {
+  background: #c7d2fe;
+  cursor: not-allowed;
+}
