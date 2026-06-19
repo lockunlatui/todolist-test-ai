@@ -154,6 +154,24 @@ describe('useTodos', () => {
       expect(updated).toBeNull()
     })
 
+    it('returns the updated todo (not null) when update succeeds', () => {
+      const { result } = renderHook(() => useTodos())
+      let updated: ReturnType<typeof result.current.updateTodo> | undefined
+
+      act(() => {
+        result.current.createTodo({ title: 'Old title' })
+      })
+      const id = result.current.todos[0].id
+
+      act(() => {
+        updated = result.current.updateTodo(id, { title: 'New title' })
+      })
+
+      expect(updated).not.toBeNull()
+      expect(updated!.id).toBe(id)
+      expect(updated!.title).toBe('New title')
+    })
+
     it('does not change other todos when updating one', () => {
       const { result } = renderHook(() => useTodos())
 
@@ -230,6 +248,46 @@ describe('useTodos', () => {
 
       expect(result.current.todos).toHaveLength(1)
       expect(result.current.todos[0].title).toBe('Keep me')
+    })
+  })
+
+  describe('persistence (localStorage)', () => {
+    it('persists created todos to localStorage', () => {
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.createTodo({ title: 'Persisted todo' })
+      })
+
+      const stored = JSON.parse(localStorage.getItem('todos') ?? '[]')
+      expect(stored).toHaveLength(1)
+      expect(stored[0].title).toBe('Persisted todo')
+    })
+
+    it('rehydrates todos from localStorage on mount (survives reload)', () => {
+      const seeded = [
+        {
+          id: 'todo-seed',
+          title: 'From storage',
+          status: 'pending',
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ]
+      localStorage.setItem('todos', JSON.stringify(seeded))
+
+      const { result } = renderHook(() => useTodos())
+
+      expect(result.current.todos).toHaveLength(1)
+      expect(result.current.todos[0].title).toBe('From storage')
+    })
+
+    it('falls back to empty list when storage is corrupted', () => {
+      localStorage.setItem('todos', 'not-json')
+
+      const { result } = renderHook(() => useTodos())
+
+      expect(result.current.todos).toEqual([])
     })
   })
 

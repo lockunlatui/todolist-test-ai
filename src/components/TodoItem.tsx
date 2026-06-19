@@ -50,7 +50,7 @@ export function TodoItem({ todo, onEdit, onDelete, onToggleStatus }: Props) {
         <button
           className="btn btn-sm btn-secondary"
           onClick={() => onEdit(todo)}
-          aria-label={`Chỉnh sửa "${todo.title}"`}
+          aria-label={`Sửa "${todo.title}"`}
         >
           Sửa
         </button>

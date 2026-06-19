@@ -1,8 +1,22 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import type { Todo, CreateTodoInput, UpdateTodoInput } from '../types/todo'
+
+const STORAGE_KEY = 'todos'
 
 const generateId = (): string =>
   `todo-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+
+function loadTodos(fallback: Todo[]): Todo[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return fallback
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? (parsed as Todo[]) : fallback
+  } catch {
+    // Corrupted or unavailable storage — fall back to initial todos.
+    return fallback
+  }
+}
 
 export interface UseTodosReturn {
   todos: Todo[]
@@ -13,7 +27,16 @@ export interface UseTodosReturn {
 }
 
 export function useTodos(initialTodos: Todo[] = []): UseTodosReturn {
-  const [todos, setTodos] = useState<Todo[]>(initialTodos)
+  const [todos, setTodos] = useState<Todo[]>(() => loadTodos(initialTodos))
+
+  // Persist to localStorage so todos survive a page reload.
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+    } catch {
+      // Ignore write failures (e.g. storage full or unavailable).
+    }
+  }, [todos])
 
   const createTodo = useCallback((input: CreateTodoInput): Todo => {
     if (!input.title.trim()) {
@@ -34,25 +57,23 @@ export function useTodos(initialTodos: Todo[] = []): UseTodosReturn {
 
   const updateTodo = useCallback(
     (id: string, input: UpdateTodoInput): Todo | null => {
-      let updated: Todo | null = null
-      setTodos((prev) =>
-        prev.map((todo) => {
-          if (todo.id !== id) return todo
-          updated = {
-            ...todo,
-            ...(input.title !== undefined && { title: input.title.trim() }),
-            ...(input.description !== undefined && {
-              description: input.description.trim() || undefined,
-            }),
-            ...(input.status !== undefined && { status: input.status }),
-            updatedAt: Date.now(),
-          }
-          return updated
+      // Compute the updated todo synchronously so the return value is correct
+      // even though setTodos is asynchronous.
+      const existing = todos.find((t) => t.id === id)
+      if (!existing) return null
+      const updated: Todo = {
+        ...existing,
+        ...(input.title !== undefined && { title: input.title.trim() }),
+        ...(input.description !== undefined && {
+          description: input.description.trim() || undefined,
         }),
-      )
+        ...(input.status !== undefined && { status: input.status }),
+        updatedAt: Date.now(),
+      }
+      setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)))
       return updated
     },
-    [],
+    [todos],
   )
 
   const deleteTodo = useCallback(

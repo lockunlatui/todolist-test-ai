@@ -12,7 +12,7 @@ export function TodoList({ todos, onEdit, onDelete, onToggleStatus }: Props) {
   if (todos.length === 0) {
     return (
       <p className="empty-state" data-testid="empty-state">
-        Chưa có todo nào. Hãy tạo mới!
+        Chưa có todo
       </p>
     )
   }
