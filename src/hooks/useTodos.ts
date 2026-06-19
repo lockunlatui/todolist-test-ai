@@ -74,13 +74,15 @@ export function useTodos(): UseTodosReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Keep a ref to always-current todos so callbacks don't go stale
+  // Keep a ref to always-current todos so callbacks don't go stale.
+  // Updated in the effect below (not during render) — event-handler callbacks
+  // run after commit, so the ref is always current by the time they read it.
   const todosRef = useRef(todos);
-  todosRef.current = todos;
 
   // Finding 4: persist todos via effect instead of inside the reducer (pure function rule).
   // Runs after every render where todos changes; covers ADD, DELETE, TOGGLE, and LOAD.
   useEffect(() => {
+    todosRef.current = todos;
     saveToStorage(todos);
   }, [todos]);
 

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, type CSSProperties } from 'react';
+import { useState, useCallback, type CSSProperties } from 'react';
 import type { Todo } from '../types/todo';
 import { TodoItem } from './TodoItem';
 import { EmptyState } from './EmptyState';
@@ -16,18 +16,20 @@ export function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
   // so the user sees the empty message while items animate out — not after.
   const [pendingDelete, setPendingDelete] = useState<ReadonlySet<string>>(new Set());
 
-  const handleStartDelete = useCallback((id: string) => {
-    setPendingDelete((prev) => { const s = new Set(prev); s.add(id); return s; });
-  }, []);
-
-  // Remove entries for todos that have already been removed from the list
-  useEffect(() => {
-    const todoIds = new Set(todos.map((t) => t.id));
-    setPendingDelete((prev) => {
-      const cleaned = new Set([...prev].filter((id) => todoIds.has(id)));
-      return cleaned.size === prev.size ? prev : cleaned;
-    });
-  }, [todos]);
+  // Add the id to the pending set and, in the same update, prune any ids that
+  // have already left the list. Pruning here (an event handler) instead of in an
+  // effect keeps memory bounded without a cascading set-state-in-effect render.
+  // The item being deleted is still present in `todos` at this point (it is
+  // removed only after its animation finishes), so its id is always retained.
+  const handleStartDelete = useCallback(
+    (id: string) => {
+      const todoIds = new Set(todos.map((t) => t.id));
+      setPendingDelete((prev) =>
+        new Set([...prev, id].filter((pendingId) => todoIds.has(pendingId))),
+      );
+    },
+    [todos],
+  );
 
   if (todos.length === 0) {
     return <EmptyState />;
