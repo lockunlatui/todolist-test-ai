@@ -1,0 +1,17 @@
+packages:
+  - "."
+
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
+  - "@tailwindcss/oxide"
+  - esbuild
+  - lightningcss
+
+approvedBuilds:
+  sharp@0.34.5: true
+  unrs-resolver@1.12.2: true
+
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
