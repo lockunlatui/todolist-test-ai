@@ -47,6 +47,33 @@ export interface Course {
   testimonials: CourseTestimonial[];
 }
 
+/**
+ * Destination for the "Đăng ký ngay" CTA (AC-2).
+ *
+ * The ticket left the target as "[form đăng ký / trang thanh toán] tại URL
+ * [điền URL]" — the concrete URL was never filled in by the PO. Pending that
+ * explicit confirmation, the CTA points at the in-repo registration form route
+ * `/dang-ky` (implemented in `src/app/dang-ky/page.tsx`) because it is the only
+ * registration destination that actually exists in this codebase.
+ *
+ * Centralising it here gives a single source of truth: the CTA href and its
+ * tests can no longer drift apart, and the destination can be switched to e.g.
+ * `/checkout` in exactly one place once the PO decides.
+ */
+export const REGISTRATION_URL = "/dang-ky";
+
+/**
+ * Guard for the CTA destination. An empty/whitespace/nullish URL is treated as
+ * invalid so the CTA can degrade gracefully instead of navigating to a broken
+ * route (TOD-005 exception test case #19: "URL rỗng hoặc null → Không điều
+ * hướng").
+ */
+export function isValidRegistrationUrl(
+  url: string | null | undefined
+): url is string {
+  return typeof url === "string" && url.trim().length > 0;
+}
+
 export const DEFAULT_COURSE: Course = {
   name: "Lập Trình Web Fullstack Chuyên Sâu",
   tagline: "Từ zero đến hero — thành thạo React, Next.js, Node.js & PostgreSQL",

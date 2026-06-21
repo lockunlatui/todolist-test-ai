@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CourseLandingPage from "../CourseLandingPage";
-import { DEFAULT_COURSE, type Course } from "@/lib/course";
+import { DEFAULT_COURSE, REGISTRATION_URL, type Course } from "@/lib/course";
 
 // Mock next/link so it renders as a plain anchor in jsdom
 jest.mock("next/link", () => {
@@ -70,14 +70,19 @@ describe("CourseLandingPage — AC-1: hiển thị đầy đủ thông tin khoá
 
 describe("CourseLandingPage — API trả dữ liệu đầy đủ (data injected via props)", () => {
   // Simulates the "API trả dữ liệu đầy đủ → Render LandingPage → Hiển thị X"
-  // scenario: the server component fetches course data and passes it down as a
-  // prop. Here we inject a distinct course object to prove the component renders
-  // the API-provided data rather than a hardcoded constant.
+  // scenario (ticket test cases #1–#5): the server component fetches course
+  // data and passes it down as a prop. We inject a distinct course object to
+  // prove the component renders the API-provided data rather than a hardcoded
+  // constant, asserting each of the five required fields independently.
   const apiCourse: Course = {
     ...DEFAULT_COURSE,
     name: "Khoá Học Data Science Từ API",
     description: "Nội dung khoá học được tải động từ backend qua getCourse().",
     price: { original: 9000000, discounted: 5500000, discount: 39 },
+    curriculum: [
+      { module: 1, title: "Python cho Data Science", lessons: 18, duration: "10 giờ" },
+      { module: 2, title: "Machine Learning thực chiến", lessons: 22, duration: "16 giờ" },
+    ],
     instructors: [
       {
         name: "Đỗ Thị Mai",
@@ -88,20 +93,44 @@ describe("CourseLandingPage — API trả dữ liệu đầy đủ (data injecte
     ],
   };
 
-  test("render đúng dữ liệu khoá học nhận từ props (API)", () => {
+  beforeEach(() => {
     render(<CourseLandingPage course={apiCourse} />);
+  });
 
+  // Test case #1: Hiển thị tên khoá học (từ API)
+  test("hiển thị tên khoá học nhận từ API", () => {
     expect(screen.getByTestId("course-name")).toHaveTextContent(
       "Khoá Học Data Science Từ API"
     );
+  });
+
+  // Test case #2: Hiển thị mô tả khoá học (từ API)
+  test("hiển thị mô tả khoá học nhận từ API", () => {
     expect(screen.getByTestId("course-description")).toHaveTextContent(
       "tải động từ backend"
     );
-    // Price reflects the injected API payload (5.500.000đ), not DEFAULT_COURSE.
-    expect(screen.getByTestId("course-price").textContent).toMatch(/5.?500.?000/);
-    // Instructor list length comes from the API data.
+  });
+
+  // Test case #3: Hiển thị nội dung chương trình học (từ API)
+  test("hiển thị nội dung chương trình học nhận từ API", () => {
+    expect(screen.getByTestId("curriculum-section")).toBeInTheDocument();
+    expect(screen.getByText(/Python cho Data Science/)).toBeInTheDocument();
+    expect(screen.getByText(/Machine Learning thực chiến/)).toBeInTheDocument();
+  });
+
+  // Test case #4: Hiển thị thông tin giảng viên (từ API)
+  test("hiển thị thông tin giảng viên nhận từ API", () => {
     expect(screen.getAllByTestId("instructor-card")).toHaveLength(1);
     expect(screen.getByText("Đỗ Thị Mai")).toBeInTheDocument();
+    expect(screen.getByText("Principal Data Scientist")).toBeInTheDocument();
+  });
+
+  // Test case #5: Hiển thị giá khoá học (từ API)
+  test("hiển thị giá khoá học nhận từ API", () => {
+    // Price reflects the injected API payload (5.500.000đ), not DEFAULT_COURSE.
+    expect(screen.getByTestId("course-price").textContent).toMatch(
+      /5.?500.?000/
+    );
   });
 });
 
@@ -115,22 +144,24 @@ describe("CourseLandingPage — AC-2: nút CTA dẫn đến trang đăng ký", (
     expect(ctaButtons.length).toBeGreaterThanOrEqual(1);
   });
 
-  test("nút CTA hero trỏ đến /dang-ky", () => {
+  test("nút CTA hero trỏ đến URL đăng ký (REGISTRATION_URL)", () => {
     const heroCTA = screen.getByTestId("cta-button");
-    expect(heroCTA).toHaveAttribute("href", "/dang-ky");
+    expect(heroCTA).toHaveAttribute("href", REGISTRATION_URL);
   });
 
-  test("nút CTA pricing trỏ đến /dang-ky", () => {
+  test("nút CTA pricing trỏ đến URL đăng ký (REGISTRATION_URL)", () => {
     const pricingCTA = screen.getByTestId("cta-button-pricing");
-    expect(pricingCTA).toHaveAttribute("href", "/dang-ky");
+    expect(pricingCTA).toHaveAttribute("href", REGISTRATION_URL);
   });
 
+  // Ticket test case #6: Nhấn nút CTA 'Đăng ký ngay' → Điều hướng router →
+  // Chuyển đúng URL trang đăng ký. Driven by a real userEvent.click.
   test("Nhấn nút CTA 'Đăng ký ngay' — điều hướng đến đúng URL trang đăng ký", async () => {
     const user = userEvent.setup();
     const heroCTA = screen.getByTestId("cta-button");
 
     // Capture the actual navigation target produced by a real user click.
-    // The CTA renders as an anchor; clicking it should resolve to /dang-ky.
+    // The CTA renders as an anchor; clicking it should resolve to REGISTRATION_URL.
     let navigatedTo: string | null = null;
     heroCTA.addEventListener("click", (e) => {
       // Prevent jsdom "navigation not implemented" noise while still
@@ -142,7 +173,7 @@ describe("CourseLandingPage — AC-2: nút CTA dẫn đến trang đăng ký", (
     await user.click(heroCTA);
 
     expect(heroCTA.tagName).toBe("A");
-    expect(navigatedTo).toBe("/dang-ky");
+    expect(navigatedTo).toBe(REGISTRATION_URL);
   });
 
   test("Nhấn nút CTA pricing — điều hướng đến đúng URL trang đăng ký", async () => {
@@ -157,7 +188,44 @@ describe("CourseLandingPage — AC-2: nút CTA dẫn đến trang đăng ký", (
 
     await user.click(pricingCTA);
 
-    expect(navigatedTo).toBe("/dang-ky");
+    expect(navigatedTo).toBe(REGISTRATION_URL);
+  });
+
+  test("nút CTA có thể nhận URL đích tuỳ chỉnh qua prop (vd /checkout)", () => {
+    render(<CourseLandingPage registrationUrl="/checkout" />);
+    const checkoutCTAs = screen
+      .getAllByTestId("cta-button")
+      .filter((el) => el.getAttribute("href") === "/checkout");
+    expect(checkoutCTAs.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("CourseLandingPage — AC-2 (exception #19): URL đích không hợp lệ", () => {
+  // Ticket exception test case #19: "Nhấn CTA khi URL đích không hợp lệ →
+  // URL rỗng hoặc null → Không điều hướng, log lỗi hoặc hiển thị thông báo".
+  test("URL rỗng → CTA render thành button, KHÔNG điều hướng và log lỗi", async () => {
+    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const user = userEvent.setup();
+
+    render(<CourseLandingPage registrationUrl="" />);
+
+    const heroCTA = screen.getByTestId("cta-button");
+    // Must NOT be a navigating anchor — it should degrade to an inert button.
+    expect(heroCTA.tagName).toBe("BUTTON");
+    expect(heroCTA).not.toHaveAttribute("href");
+    expect(heroCTA).toHaveAttribute("aria-disabled", "true");
+
+    await user.click(heroCTA);
+    expect(errorSpy).toHaveBeenCalled();
+
+    errorSpy.mockRestore();
+  });
+
+  test("URL null → CTA không điều hướng", () => {
+    render(<CourseLandingPage registrationUrl={null} />);
+    const heroCTA = screen.getByTestId("cta-button");
+    expect(heroCTA.tagName).toBe("BUTTON");
+    expect(heroCTA).not.toHaveAttribute("href");
   });
 });
 

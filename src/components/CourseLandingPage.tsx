@@ -1,10 +1,60 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { DEFAULT_COURSE, type Course } from "@/lib/course";
+import {
+  DEFAULT_COURSE,
+  REGISTRATION_URL,
+  isValidRegistrationUrl,
+  type Course,
+} from "@/lib/course";
 
 export type { Course };
 
 function formatPrice(amount: number) {
   return new Intl.NumberFormat("vi-VN").format(amount) + "đ";
+}
+
+/**
+ * The "Đăng ký ngay" call-to-action (AC-2).
+ *
+ * When the destination URL is valid it renders a real navigating link to that
+ * URL. When the URL is missing/empty it renders an inert button that does NOT
+ * navigate and logs the misconfiguration instead — satisfying TOD-005
+ * exception test case #19 ("URL rỗng hoặc null → Không điều hướng, log lỗi").
+ */
+function RegisterCTA({
+  registrationUrl,
+  className,
+  testId,
+  children,
+}: {
+  registrationUrl: string | null | undefined;
+  className: string;
+  testId?: string;
+  children: ReactNode;
+}) {
+  if (!isValidRegistrationUrl(registrationUrl)) {
+    return (
+      <button
+        type="button"
+        data-testid={testId}
+        aria-disabled="true"
+        className={`${className} opacity-60 cursor-not-allowed`}
+        onClick={() =>
+          console.error(
+            "[CourseLandingPage] CTA 'Đăng ký ngay' bị vô hiệu hoá: URL đích không hợp lệ."
+          )
+        }
+      >
+        {children}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={registrationUrl} data-testid={testId} className={className}>
+      {children}
+    </Link>
+  );
 }
 
 interface CourseLandingPageProps {
@@ -14,10 +64,17 @@ interface CourseLandingPageProps {
    * testable with "API trả dữ liệu đầy đủ" and reusable across courses.
    */
   course?: Course;
+  /**
+   * Destination for every "Đăng ký ngay" CTA (AC-2). Defaults to the
+   * centralised {@link REGISTRATION_URL} single source of truth; can be
+   * overridden (or set empty to disable navigation, exception case #19).
+   */
+  registrationUrl?: string | null;
 }
 
 export default function CourseLandingPage({
   course = DEFAULT_COURSE,
+  registrationUrl = REGISTRATION_URL,
 }: CourseLandingPageProps = {}) {
   return (
     <main>
@@ -50,13 +107,13 @@ export default function CourseLandingPage({
             ))}
           </div>
 
-          <Link
-            href="/dang-ky"
-            data-testid="cta-button"
+          <RegisterCTA
+            registrationUrl={registrationUrl}
+            testId="cta-button"
             className="inline-block bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold text-lg px-10 py-4 rounded-full transition-colors"
           >
             Đăng ký ngay
-          </Link>
+          </RegisterCTA>
         </div>
       </section>
 
@@ -214,13 +271,13 @@ export default function CourseLandingPage({
               <li>✅ Chứng chỉ hoàn thành</li>
               <li>✅ Hỗ trợ 1-1 với giảng viên</li>
             </ul>
-            <Link
-              href="/dang-ky"
-              data-testid="cta-button-pricing"
+            <RegisterCTA
+              registrationUrl={registrationUrl}
+              testId="cta-button-pricing"
               className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 rounded-xl transition-colors text-center"
             >
               Đăng ký ngay
-            </Link>
+            </RegisterCTA>
             <p className="text-gray-400 text-xs mt-4">
               Hoàn tiền 100% trong 7 ngày nếu không hài lòng.
             </p>
@@ -236,12 +293,13 @@ export default function CourseLandingPage({
         <p className="text-blue-100 mb-6 text-lg">
           Hơn 2.400 học viên đã thay đổi sự nghiệp — đến lượt bạn!
         </p>
-        <Link
-          href="/dang-ky"
+        <RegisterCTA
+          registrationUrl={registrationUrl}
+          testId="cta-button-footer"
           className="inline-block bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold text-lg px-10 py-4 rounded-full transition-colors"
         >
           Đăng ký ngay
-        </Link>
+        </RegisterCTA>
       </section>
     </main>
   );
