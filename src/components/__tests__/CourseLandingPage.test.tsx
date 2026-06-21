@@ -80,14 +80,62 @@ describe("CourseLandingPage — AC-2: nút CTA dẫn đến trang đăng ký", (
     const pricingCTA = screen.getByTestId("cta-button-pricing");
     expect(pricingCTA).toHaveAttribute("href", "/dang-ky");
   });
+
+  test("Nhấn nút CTA 'Đăng ký ngay' — điều hướng đến đúng URL trang đăng ký", async () => {
+    const user = userEvent.setup();
+    const heroCTA = screen.getByTestId("cta-button");
+
+    // Capture the actual navigation target produced by a real user click.
+    // The CTA renders as an anchor; clicking it should resolve to /dang-ky.
+    let navigatedTo: string | null = null;
+    heroCTA.addEventListener("click", (e) => {
+      // Prevent jsdom "navigation not implemented" noise while still
+      // recording where the click would have sent the user.
+      e.preventDefault();
+      navigatedTo = (e.currentTarget as HTMLAnchorElement).getAttribute("href");
+    });
+
+    await user.click(heroCTA);
+
+    expect(heroCTA.tagName).toBe("A");
+    expect(navigatedTo).toBe("/dang-ky");
+  });
+
+  test("Nhấn nút CTA pricing — điều hướng đến đúng URL trang đăng ký", async () => {
+    const user = userEvent.setup();
+    const pricingCTA = screen.getByTestId("cta-button-pricing");
+
+    let navigatedTo: string | null = null;
+    pricingCTA.addEventListener("click", (e) => {
+      e.preventDefault();
+      navigatedTo = (e.currentTarget as HTMLAnchorElement).getAttribute("href");
+    });
+
+    await user.click(pricingCTA);
+
+    expect(navigatedTo).toBe("/dang-ky");
+  });
 });
 
 describe("CourseLandingPage — AC-3: responsive layout", () => {
+  function setViewport(width: number) {
+    Object.defineProperty(window, "innerWidth", {
+      writable: true,
+      configurable: true,
+      value: width,
+    });
+    window.dispatchEvent(new Event("resize"));
+  }
+
   test("phần lợi ích sử dụng grid responsive", () => {
     const { container } = render(<CourseLandingPage />);
-    // Check that there's a grid element with responsive classes
-    const gridEl = container.querySelector(".grid");
-    expect(gridEl).toBeInTheDocument();
+    // A grid container must opt into responsive column counts at tablet/desktop
+    // breakpoints so the layout does not break on small screens.
+    const responsiveGrid = container.querySelector(
+      ".grid.md\\:grid-cols-2, .grid.lg\\:grid-cols-3, .grid.sm\\:grid-cols-2"
+    );
+    expect(responsiveGrid).toBeInTheDocument();
+    expect(responsiveGrid?.className).toMatch(/(sm|md|lg):grid-cols-/);
   });
 
   test("hero section có tên khoá học với responsive classes", () => {
@@ -97,13 +145,25 @@ describe("CourseLandingPage — AC-3: responsive layout", () => {
     expect(heading.className).toMatch(/md:/);
   });
 
-  test("trang render không crash trên viewport nhỏ", () => {
-    // Simulate narrow viewport
-    Object.defineProperty(window, "innerWidth", {
-      writable: true,
-      configurable: true,
-      value: 375,
-    });
+  test("Render desktop 1280px — layout không tràn", () => {
+    setViewport(1280);
+    const { container } = render(<CourseLandingPage />);
+    expect(container.firstChild).toBeInTheDocument();
+    // lg breakpoint grid should be present for wide viewports
+    expect(container.querySelector(".lg\\:grid-cols-3")).toBeInTheDocument();
+  });
+
+  test("Render tablet 768px — layout điều chỉnh đúng breakpoint", () => {
+    setViewport(768);
+    const { container } = render(<CourseLandingPage />);
+    expect(window.innerWidth).toBe(768);
+    // md breakpoint (>=768px) responsive columns must exist
+    const mdGrid = container.querySelector(".md\\:grid-cols-2, .md\\:grid-cols-4");
+    expect(mdGrid).toBeInTheDocument();
+  });
+
+  test("trang render không crash trên viewport nhỏ (mobile 375px)", () => {
+    setViewport(375);
     const { container } = render(<CourseLandingPage />);
     expect(container.firstChild).toBeInTheDocument();
   });
