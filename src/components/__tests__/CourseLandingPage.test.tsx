@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CourseLandingPage from "../CourseLandingPage";
+import { DEFAULT_COURSE, type Course } from "@/lib/course";
 
 // Mock next/link so it renders as a plain anchor in jsdom
 jest.mock("next/link", () => {
@@ -29,11 +30,17 @@ describe("CourseLandingPage — AC-1: hiển thị đầy đủ thông tin khoá
 
   test("hiển thị tên khoá học", () => {
     expect(screen.getByTestId("course-name")).toBeInTheDocument();
-    expect(screen.getByTestId("course-name").textContent).toBeTruthy();
+    // Verify the actual course name renders, not just that the node is truthy.
+    expect(screen.getByTestId("course-name")).toHaveTextContent(
+      DEFAULT_COURSE.name
+    );
   });
 
   test("hiển thị mô tả khoá học", () => {
     expect(screen.getByTestId("course-description")).toBeInTheDocument();
+    expect(screen.getByTestId("course-description")).toHaveTextContent(
+      DEFAULT_COURSE.description
+    );
   });
 
   test("hiển thị nội dung chương trình học", () => {
@@ -58,6 +65,43 @@ describe("CourseLandingPage — AC-1: hiển thị đầy đủ thông tin khoá
 
   test("hiển thị hero section", () => {
     expect(screen.getByTestId("hero-section")).toBeInTheDocument();
+  });
+});
+
+describe("CourseLandingPage — API trả dữ liệu đầy đủ (data injected via props)", () => {
+  // Simulates the "API trả dữ liệu đầy đủ → Render LandingPage → Hiển thị X"
+  // scenario: the server component fetches course data and passes it down as a
+  // prop. Here we inject a distinct course object to prove the component renders
+  // the API-provided data rather than a hardcoded constant.
+  const apiCourse: Course = {
+    ...DEFAULT_COURSE,
+    name: "Khoá Học Data Science Từ API",
+    description: "Nội dung khoá học được tải động từ backend qua getCourse().",
+    price: { original: 9000000, discounted: 5500000, discount: 39 },
+    instructors: [
+      {
+        name: "Đỗ Thị Mai",
+        title: "Principal Data Scientist",
+        bio: "Chuyên gia ML với 12 năm kinh nghiệm.",
+        avatar: "DTM",
+      },
+    ],
+  };
+
+  test("render đúng dữ liệu khoá học nhận từ props (API)", () => {
+    render(<CourseLandingPage course={apiCourse} />);
+
+    expect(screen.getByTestId("course-name")).toHaveTextContent(
+      "Khoá Học Data Science Từ API"
+    );
+    expect(screen.getByTestId("course-description")).toHaveTextContent(
+      "tải động từ backend"
+    );
+    // Price reflects the injected API payload (5.500.000đ), not DEFAULT_COURSE.
+    expect(screen.getByTestId("course-price").textContent).toMatch(/5.?500.?000/);
+    // Instructor list length comes from the API data.
+    expect(screen.getAllByTestId("instructor-card")).toHaveLength(1);
+    expect(screen.getByText("Đỗ Thị Mai")).toBeInTheDocument();
   });
 });
 
