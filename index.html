@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Bất động sản cao cấp - Tìm ngôi nhà mơ ước của bạn với dịch vụ chuyên nghiệp" />
+  <title>Địa Ốc Việt - Bất Động Sản Cao Cấp</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="#" class="nav__logo">
+        <span class="nav__logo-icon">🏠</span>
+        Địa Ốc Việt
+      </a>
+      <ul class="nav__list" id="nav-list">
+        <li><a href="#properties" class="nav__link">Dự Án</a></li>
+        <li><a href="#features" class="nav__link">Dịch Vụ</a></li>
+        <li><a href="#stats" class="nav__link">Thành Tích</a></li>
+        <li><a href="#contact" class="nav__link nav__link--cta">Liên Hệ</a></li>
+      </ul>
+      <button class="nav__toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="hero__content container">
+        <span class="hero__badge">Bất Động Sản Hàng Đầu Việt Nam</span>
+        <h1 class="hero__title">
+          Tìm Ngôi Nhà<br />
+          <span class="hero__title--highlight">Mơ Ước Của Bạn</span>
+        </h1>
+        <p class="hero__description">
+          Hơn 10 năm kinh nghiệm, chúng tôi cung cấp các giải pháp bất động sản
+          toàn diện — từ căn hộ cao cấp đến biệt thự nghỉ dưỡng, phù hợp với
+          mọi ngân sách và nhu cầu sống.
+        </p>
+        <div class="hero__actions">
+          <a href="#properties" class="btn btn--primary">Xem Dự Án</a>
+          <a href="#contact" class="btn btn--secondary">Tư Vấn Miễn Phí</a>
+        </div>
+        <div class="hero__stats">
+          <div class="hero__stat">
+            <span class="hero__stat-number">500+</span>
+            <span class="hero__stat-label">Dự án</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-number">10K+</span>
+            <span class="hero__stat-label">Khách hàng</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-number">98%</span>
+            <span class="hero__stat-label">Hài lòng</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section class="properties" id="properties">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__badge">Dự Án Nổi Bật</span>
+          <h2 class="section__title">Bất Động Sản Cao Cấp</h2>
+          <p class="section__description">
+            Khám phá những dự án tiêu biểu được tuyển chọn kỹ lưỡng với vị trí
+            đắc địa và tiện ích vượt trội
+          </p>
+        </div>
+        <div class="properties__grid">
+          <!-- Property Card 1 -->
+          <article class="property-card" data-id="1">
+            <div class="property-card__image" style="--bg: linear-gradient(135deg,#1a6b5a 0%,#2d9c7e 100%)">
+              <div class="property-card__image-content">
+                <span class="property-card__icon">🏙️</span>
+                <span class="property-card__type">Căn hộ cao cấp</span>
+              </div>
+              <span class="property-card__badge">Hot</span>
+            </div>
+            <div class="property-card__body">
+              <h3 class="property-card__title">The Grand Palace</h3>
+              <p class="property-card__location">📍 Quận 1, TP. Hồ Chí Minh</p>
+              <p class="property-card__description">
+                Căn hộ penthouse sang trọng tầng cao, view toàn cảnh sông Sài Gòn.
+                Nội thất châu Âu cao cấp, tiện ích 5 sao đẳng cấp quốc tế.
+              </p>
+              <ul class="property-card__features">
+                <li>🛏️ 3 phòng ngủ</li>
+                <li>🚿 2 phòng tắm</li>
+                <li>📐 120 m²</li>
+                <li>🚗 2 chỗ đậu xe</li>
+              </ul>
+              <div class="property-card__footer">
+                <div class="property-card__price">
+                  <span class="property-card__price-label">Giá từ</span>
+                  <span class="property-card__price-value">8,5 tỷ VNĐ</span>
+                </div>
+                <a href="#contact" class="btn btn--primary btn--sm">Liên Hệ Ngay</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Property Card 2 -->
+          <article class="property-card" data-id="2">
+            <div class="property-card__image" style="--bg: linear-gradient(135deg,#1a3a6b 0%,#2d5f9c 100%)">
+              <div class="property-card__image-content">
+                <span class="property-card__icon">🏡</span>
+                <span class="property-card__type">Biệt thự</span>
+              </div>
+              <span class="property-card__badge property-card__badge--new">Mới</span>
+            </div>
+            <div class="property-card__body">
+              <h3 class="property-card__title">Villa Sunrise Garden</h3>
+              <p class="property-card__location">📍 Thủ Đức, TP. Hồ Chí Minh</p>
+              <p class="property-card__description">
+                Biệt thự song lập trong khu đô thị sinh thái xanh. Không gian
+                sống đẳng cấp, hài hoà thiên nhiên, an ninh 24/7.
+              </p>
+              <ul class="property-card__features">
+                <li>🛏️ 4 phòng ngủ</li>
+                <li>🚿 3 phòng tắm</li>
+                <li>📐 250 m²</li>
+                <li>🌳 Sân vườn riêng</li>
+              </ul>
+              <div class="property-card__footer">
+                <div class="property-card__price">
+                  <span class="property-card__price-label">Giá từ</span>
+                  <span class="property-card__price-value">15 tỷ VNĐ</span>
+                </div>
+                <a href="#contact" class="btn btn--primary btn--sm">Liên Hệ Ngay</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Property Card 3 -->
+          <article class="property-card" data-id="3">
+            <div class="property-card__image" style="--bg: linear-gradient(135deg,#6b1a1a 0%,#9c3d2d 100%)">
+              <div class="property-card__image-content">
+                <span class="property-card__icon">🌊</span>
+                <span class="property-card__type">Nghỉ dưỡng</span>
+              </div>
+              <span class="property-card__badge property-card__badge--sale">Ưu đãi</span>
+            </div>
+            <div class="property-card__body">
+              <h3 class="property-card__title">Ocean Bay Resort Villas</h3>
+              <p class="property-card__location">📍 Phú Quốc, Kiên Giang</p>
+              <p class="property-card__description">
+                Biệt thự nghỉ dưỡng hướng biển, bãi cát trắng riêng tư. Cam kết
+                lợi nhuận cho thuê 8-10%/năm từ ban quản lý chuyên nghiệp.
+              </p>
+              <ul class="property-card__features">
+                <li>🛏️ 2 phòng ngủ</li>
+                <li>🚿 2 phòng tắm</li>
+                <li>📐 180 m²</li>
+                <li>🏖️ Hướng biển</li>
+              </ul>
+              <div class="property-card__footer">
+                <div class="property-card__price">
+                  <span class="property-card__price-label">Giá từ</span>
+                  <span class="property-card__price-value">6,9 tỷ VNĐ</span>
+                </div>
+                <a href="#contact" class="btn btn--primary btn--sm">Liên Hệ Ngay</a>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="properties__cta">
+          <a href="#contact" class="btn btn--outline">Xem Tất Cả Dự Án</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features / Why Us -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section__header">
+          <span class="section__badge">Tại Sao Chọn Chúng Tôi</span>
+          <h2 class="section__title">Dịch Vụ Chuyên Nghiệp</h2>
+          <p class="section__description">
+            Chúng tôi cam kết mang đến trải nghiệm mua bán bất động sản
+            an toàn, minh bạch và hiệu quả nhất
+          </p>
+        </div>
+        <div class="features__grid">
+          <div class="feature-item">
+            <div class="feature-item__icon">🏆</div>
+            <h3 class="feature-item__title">Uy Tín Hàng Đầu</h3>
+            <p class="feature-item__description">
+              Được xếp hạng trong top 5 công ty bất động sản uy tín nhất
+              Việt Nam liên tục 5 năm liên tiếp
+            </p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item__icon">🔍</div>
+            <h3 class="feature-item__title">Tư Vấn Minh Bạch</h3>
+            <p class="feature-item__description">
+              Đội ngũ chuyên gia tư vấn tận tâm, cung cấp thông tin chính xác
+              và trung thực về mọi dự án
+            </p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item__icon">📋</div>
+            <h3 class="feature-item__title">Pháp Lý Đầy Đủ</h3>
+            <p class="feature-item__description">
+              100% dự án được kiểm tra pháp lý kỹ lưỡng, sổ hồng/sổ đỏ
+              đảm bảo quyền lợi khách hàng
+            </p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item__icon">💰</div>
+            <h3 class="feature-item__title">Hỗ Trợ Tài Chính</h3>
+            <p class="feature-item__description">
+              Kết nối ngân hàng đối tác, hỗ trợ vay tới 70% giá trị bất động
+              sản với lãi suất ưu đãi
+            </p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item__icon">🤝</div>
+            <h3 class="feature-item__title">Hậu Mãi Tận Tâm</h3>
+            <p class="feature-item__description">
+              Dịch vụ chăm sóc sau bán hàng chuyên nghiệp, hỗ trợ quản lý
+              cho thuê và bảo trì bất động sản
+            </p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item__icon">📱</div>
+            <h3 class="feature-item__title">Công Nghệ Hiện Đại</h3>
+            <p class="feature-item__description">
+              Tham quan nhà ảo 3D, ký hợp đồng điện tử, quản lý giao dịch
+              trực tuyến tiện lợi mọi lúc mọi nơi
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats" id="stats">
+      <div class="container">
+        <div class="stats__grid">
+          <div class="stat-item">
+            <span class="stat-item__number" data-target="500">0</span>
+            <span class="stat-item__suffix">+</span>
+            <span class="stat-item__label">Dự Án Đã Giao</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item__number" data-target="10000">0</span>
+            <span class="stat-item__suffix">+</span>
+            <span class="stat-item__label">Khách Hàng Hài Lòng</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item__number" data-target="15">0</span>
+            <span class="stat-item__suffix"></span>
+            <span class="stat-item__label">Năm Kinh Nghiệm</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item__number" data-target="63">0</span>
+            <span class="stat-item__suffix"></span>
+            <span class="stat-item__label">Tỉnh Thành Phủ Sóng</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact / Register Section -->
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="contact__wrapper">
+          <div class="contact__info">
+            <span class="section__badge">Liên Hệ Ngay</span>
+            <h2 class="section__title">Nhận Tư Vấn<br />Miễn Phí Ngay Hôm Nay</h2>
+            <p class="contact__description">
+              Đội ngũ chuyên gia của chúng tôi sẵn sàng hỗ trợ bạn
+              tìm kiếm bất động sản phù hợp nhất.
+            </p>
+            <ul class="contact__details">
+              <li>
+                <span class="contact__detail-icon">📞</span>
+                <div>
+                  <strong>Hotline</strong>
+                  <span>1800 1234 (Miễn phí)</span>
+                </div>
+              </li>
+              <li>
+                <span class="contact__detail-icon">✉️</span>
+                <div>
+                  <strong>Email</strong>
+                  <span>info@diaocviet.vn</span>
+                </div>
+              </li>
+              <li>
+                <span class="contact__detail-icon">⏰</span>
+                <div>
+                  <strong>Giờ làm việc</strong>
+                  <span>Thứ 2 – Chủ nhật: 8:00 – 20:00</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="contact__form-wrapper">
+            <form class="contact__form" id="contact-form" novalidate>
+              <h3 class="contact__form-title">Đăng Ký Tư Vấn</h3>
+              <div class="form__group">
+                <label class="form__label" for="fullname">Họ và tên <span class="required">*</span></label>
+                <input
+                  class="form__input"
+                  type="text"
+                  id="fullname"
+                  name="fullname"
+                  placeholder="Nguyễn Văn A"
+                  required
+                  autocomplete="name"
+                />
+                <span class="form__error" id="fullname-error" role="alert"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__label" for="phone">Số điện thoại <span class="required">*</span></label>
+                <input
+                  class="form__input"
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="0901 234 567"
+                  required
+                  autocomplete="tel"
+                  pattern="[0-9]{10,11}"
+                />
+                <span class="form__error" id="phone-error" role="alert"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__label" for="email">Email</label>
+                <input
+                  class="form__input"
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="example@email.com"
+                  autocomplete="email"
+                />
+                <span class="form__error" id="email-error" role="alert"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__label" for="interest">Quan tâm đến</label>
+                <select class="form__select" id="interest" name="interest">
+                  <option value="">-- Chọn loại bất động sản --</option>
+                  <option value="can-ho">Căn hộ chung cư</option>
+                  <option value="biet-thu">Biệt thự</option>
+                  <option value="nha-pho">Nhà phố</option>
+                  <option value="dat-nen">Đất nền</option>
+                  <option value="nghi-duong">Bất động sản nghỉ dưỡng</option>
+                </select>
+              </div>
+              <div class="form__group">
+                <label class="form__label" for="message">Yêu cầu của bạn</label>
+                <textarea
+                  class="form__textarea"
+                  id="message"
+                  name="message"
+                  placeholder="Mô tả nhu cầu của bạn..."
+                  rows="3"
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
+                Đăng Ký Tư Vấn Miễn Phí
+              </button>
+              <p class="form__disclaimer">
+                🔒 Thông tin của bạn được bảo mật tuyệt đối
+              </p>
+            </form>
+            <div class="contact__success" id="contact-success" aria-live="polite" hidden>
+              <span class="contact__success-icon">✅</span>
+              <h3>Đăng Ký Thành Công!</h3>
+              <p>Chuyên viên tư vấn sẽ liên hệ với bạn trong vòng 24 giờ.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="#" class="nav__logo">🏠 Địa Ốc Việt</a>
+          <p class="footer__tagline">
+            Đồng hành cùng bạn trên hành trình tìm kiếm ngôi nhà mơ ước.
+          </p>
+        </div>
+        <div class="footer__links">
+          <h4 class="footer__heading">Dự Án</h4>
+          <ul>
+            <li><a href="#properties">Căn hộ cao cấp</a></li>
+            <li><a href="#properties">Biệt thự</a></li>
+            <li><a href="#properties">Nghỉ dưỡng</a></li>
+            <li><a href="#properties">Đất nền</a></li>
+          </ul>
+        </div>
+        <div class="footer__links">
+          <h4 class="footer__heading">Dịch Vụ</h4>
+          <ul>
+            <li><a href="#features">Tư vấn mua bán</a></li>
+            <li><a href="#features">Quản lý cho thuê</a></li>
+            <li><a href="#features">Hỗ trợ tài chính</a></li>
+            <li><a href="#contact">Định giá bất động sản</a></li>
+          </ul>
+        </div>
+        <div class="footer__links">
+          <h4 class="footer__heading">Liên Hệ</h4>
+          <ul>
+            <li>📞 1800 1234</li>
+            <li>✉️ info@diaocviet.vn</li>
+            <li>🏢 123 Nguyễn Huệ, Q.1, TP.HCM</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>© 2026 Địa Ốc Việt. Tất cả quyền được bảo lưu.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

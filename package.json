@@ -1,0 +1,12 @@
+{
+  "name": "todolist-test-ai",
+  "version": "1.0.0",
+  "description": "Real estate landing page — Địa Ốc Việt",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/landing.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  }
+}
