@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Khám phá thế giới STEM – Science, Technology, Engineering, Mathematics. Học hỏi, sáng tạo và định hình tương lai cùng chúng tôi." />
+  <title>STEM – Khám Phá & Sáng Tạo Tương Lai</title>
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --clr-primary:   #1a73e8;
+      --clr-secondary: #0d47a1;
+      --clr-accent:    #00bcd4;
+      --clr-science:   #e53935;
+      --clr-tech:      #1e88e5;
+      --clr-eng:       #f4511e;
+      --clr-math:      #43a047;
+      --clr-dark:      #111827;
+      --clr-muted:     #6b7280;
+      --clr-bg:        #f9fafb;
+      --clr-white:     #ffffff;
+      --radius:        12px;
+      --shadow:        0 4px 24px rgba(0,0,0,.10);
+      --transition:    .25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--clr-dark);
+      background: var(--clr-bg);
+      line-height: 1.6;
+    }
+
+    img { display: block; max-width: 100%; }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ========== TYPOGRAPHY ========== */
+    .section-label {
+      display: inline-block;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--clr-accent);
+      margin-bottom: .75rem;
+    }
+
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; }
+    h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; }
+    h3 { font-size: 1.15rem; font-weight: 700; }
+
+    /* ========== LAYOUT ========== */
+    .container {
+      width: 100%;
+      max-width: 1160px;
+      margin-inline: auto;
+      padding-inline: 1.25rem;
+    }
+
+    section { padding: 5rem 0; }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 100;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .navbar-logo {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--clr-primary);
+      letter-spacing: -.02em;
+    }
+
+    .navbar-logo span { color: var(--clr-accent); }
+
+    .navbar-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .navbar-links a {
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--clr-dark);
+      transition: color var(--transition);
+    }
+
+    .navbar-links a:hover { color: var(--clr-primary); }
+
+    .navbar-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem 1.25rem;
+      background: var(--clr-primary);
+      color: var(--clr-white);
+      border-radius: 50px;
+      font-size: .875rem;
+      font-weight: 700;
+      transition: background var(--transition), transform var(--transition);
+    }
+
+    .navbar-cta:hover { background: var(--clr-secondary); transform: translateY(-1px); }
+
+    /* hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: .25rem;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--clr-dark);
+      border-radius: 2px;
+      transition: transform var(--transition), opacity var(--transition);
+    }
+
+    /* mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 64px 0 0 0;
+      background: var(--clr-white);
+      padding: 2rem 1.25rem;
+      z-index: 99;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--clr-dark);
+      padding: .75rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* ========== HERO ========== */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      background: linear-gradient(135deg, #0d1b3e 0%, #1a3a6e 50%, #0e4f7a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-shapes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .hero-bg-shapes::before,
+    .hero-bg-shapes::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .hero-bg-shapes::before {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0,188,212,.15) 0%, transparent 70%);
+      top: -200px;
+      right: -100px;
+    }
+
+    .hero-bg-shapes::after {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(26,115,232,.2) 0%, transparent 70%);
+      bottom: -100px;
+      left: -50px;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content { color: var(--clr-white); }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 50px;
+      padding: .375rem 1rem;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--clr-accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-content h1 { color: var(--clr-white); margin-bottom: 1.25rem; }
+
+    .hero-content h1 em {
+      font-style: normal;
+      color: var(--clr-accent);
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,.8);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .875rem 2rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+      border: 2px solid transparent;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: var(--clr-accent);
+      color: var(--clr-dark);
+    }
+
+    .btn-primary:hover { box-shadow: 0 8px 24px rgba(0,188,212,.4); }
+
+    .btn-outline {
+      background: transparent;
+      border-color: rgba(255,255,255,.5);
+      color: var(--clr-white);
+    }
+
+    .btn-outline:hover { background: rgba(255,255,255,.1); }
+
+    /* hero stats */
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,.15);
+    }
+
+    .stat-item { text-align: center; }
+
+    .stat-number {
+      display: block;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--clr-accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: .8rem;
+      color: rgba(255,255,255,.6);
+      margin-top: .25rem;
+    }
+
+    /* hero visual */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .stem-orbit {
+      position: relative;
+      width: 360px;
+      height: 360px;
+    }
+
+    .orbit-center {
+      position: absolute;
+      inset: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, var(--clr-primary), var(--clr-accent));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -.05em;
+      box-shadow: 0 0 40px rgba(0,188,212,.4);
+    }
+
+    .orbit-ring {
+      position: absolute;
+      inset: 0;
+      border: 1px dashed rgba(255,255,255,.2);
+      border-radius: 50%;
+      animation: spin linear infinite;
+    }
+
+    .orbit-ring:nth-child(2) { inset: 20px; animation-duration: 18s; }
+    .orbit-ring:nth-child(3) { inset: 60px; animation-duration: 12s; animation-direction: reverse; }
+
+    .orbit-pill {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .orbit-pill .pill-icon { font-size: 1.3rem; }
+
+    .pill-s { background: var(--clr-science); top:  -30px; left: 50%; transform: translateX(-50%); }
+    .pill-t { background: var(--clr-tech);    top:  50%; right: -30px; transform: translateY(-50%); }
+    .pill-e { background: var(--clr-eng);     bottom: -30px; left: 50%; transform: translateX(-50%); }
+    .pill-m { background: var(--clr-math);    top:  50%; left: -30px; transform: translateY(-50%); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ========== INTRO SECTION ========== */
+    #intro { background: var(--clr-white); }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .intro-text p { color: var(--clr-muted); margin-bottom: 1rem; font-size: 1.05rem; }
+
+    .intro-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      margin-top: 1.5rem;
+    }
+
+    .intro-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      font-size: .95rem;
+    }
+
+    .intro-list li::before {
+      content: '✓';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: #dcfce7;
+      color: #16a34a;
+      border-radius: 50%;
+      font-size: .75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: .1rem;
+    }
+
+    .intro-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .intro-card {
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      background: var(--clr-bg);
+      border: 1px solid #e5e7eb;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .intro-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+
+    .intro-card-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .intro-card h3 { margin-bottom: .4rem; }
+    .intro-card p { font-size: .875rem; color: var(--clr-muted); }
+
+    /* ========== HIGHLIGHTS SECTION ========== */
+    #highlights {
+      background: linear-gradient(180deg, #f0f4ff 0%, var(--clr-bg) 100%);
+      text-align: center;
+    }
+
+    #highlights h2 { margin-bottom: .75rem; }
+    #highlights > .container > p { color: var(--clr-muted); max-width: 560px; margin-inline: auto; margin-bottom: 3rem; }
+
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .highlight-card {
+      padding: 2rem 1.5rem;
+      background: var(--clr-white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: left;
+      transition: transform var(--transition), box-shadow var(--transition);
+      border-top: 4px solid transparent;
+    }
+
+    .highlight-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+    .highlight-card.science { border-color: var(--clr-science); }
+    .highlight-card.tech    { border-color: var(--clr-tech); }
+    .highlight-card.eng     { border-color: var(--clr-eng); }
+    .highlight-card.math    { border-color: var(--clr-math); }
+
+    .hcard-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .science .hcard-icon { background: #fde8e8; }
+    .tech    .hcard-icon { background: #e3f0fd; }
+    .eng     .hcard-icon { background: #fdeee8; }
+    .math    .hcard-icon { background: #e8f5e9; }
+
+    .hcard-label {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+    }
+
+    .science .hcard-label { color: var(--clr-science); }
+    .tech    .hcard-label { color: var(--clr-tech); }
+    .eng     .hcard-label { color: var(--clr-eng); }
+    .math    .hcard-label { color: var(--clr-math); }
+
+    .highlight-card h3 { margin-bottom: .6rem; }
+    .highlight-card p  { font-size: .875rem; color: var(--clr-muted); line-height: 1.65; }
+
+    .hcard-topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: 1rem;
+    }
+
+    .topic-tag {
+      padding: .2rem .65rem;
+      border-radius: 50px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    .science .topic-tag { background: #fde8e8; color: var(--clr-science); }
+    .tech    .topic-tag { background: #e3f0fd; color: var(--clr-tech); }
+    .eng     .topic-tag { background: #fdeee8; color: var(--clr-eng); }
+    .math    .topic-tag { background: #e8f5e9; color: var(--clr-math); }
+
+    /* ========== CTA SECTION ========== */
+    #cta {
+      background: linear-gradient(135deg, #0d1b3e 0%, #1a3a6e 60%, #0e4f7a 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cta::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,188,212,.12) 0%, transparent 70%);
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+      margin-inline: auto;
+    }
+
+    .cta-inner .section-label { color: var(--clr-accent); }
+    .cta-inner h2 { color: var(--clr-white); margin-bottom: 1rem; }
+    .cta-inner p  { color: rgba(255,255,255,.75); font-size: 1.05rem; margin-bottom: 2.5rem; }
+
+    .cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn-cta-primary {
+      background: var(--clr-accent);
+      color: var(--clr-dark);
+      padding: 1rem 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    .btn-cta-primary:hover { box-shadow: 0 8px 28px rgba(0,188,212,.5); }
+
+    .btn-cta-outline {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,.4);
+      color: var(--clr-white);
+      padding: 1rem 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    .btn-cta-outline:hover { background: rgba(255,255,255,.1); }
+
+    /* ========== FOOTER ========== */
+    footer {
+      background: var(--clr-dark);
+      color: rgba(255,255,255,.6);
+      padding: 2rem 0;
+      font-size: .875rem;
+    }
+
+    footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    footer a { color: rgba(255,255,255,.8); transition: color var(--transition); }
+    footer a:hover { color: var(--clr-accent); }
+
+    .footer-links { display: flex; gap: 1.5rem; }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      .highlights-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 3.5rem 0; }
+
+      /* navbar */
+      .navbar-links, .navbar-cta { display: none; }
+      .hamburger { display: flex; }
+
+      /* hero */
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-desc  { margin-inline: auto; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-visual { display: none; }
+
+      /* intro */
+      .intro-grid { grid-template-columns: 1fr; }
+      .intro-cards { grid-template-columns: 1fr; }
+
+      /* highlights */
+      .highlights-grid { grid-template-columns: 1fr; }
+
+      /* cta */
+      .cta-buttons { flex-direction: column; align-items: center; }
+
+      /* footer */
+      footer .container { flex-direction: column; text-align: center; }
+    }
+
+    @media (min-width: 769px) and (max-width: 1023px) {
+      .hero-inner { gap: 2rem; }
+      .stem-orbit  { width: 280px; height: 280px; }
+      .orbit-center { width: 80px; height: 80px; font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====== NAVBAR ====== -->
+  <nav class="navbar" role="navigation" aria-label="Điều hướng chính">
+    <div class="container">
+      <a href="#hero" class="navbar-logo" aria-label="Trang chủ STEM">ST<span>EM</span></a>
+      <ul class="navbar-links" role="list">
+        <li><a href="#intro">Giới thiệu</a></li>
+        <li><a href="#highlights">Nội dung</a></li>
+        <li><a href="#cta">Đăng ký</a></li>
+      </ul>
+      <a href="#cta" class="navbar-cta" aria-label="Bắt đầu học STEM ngay">Bắt đầu ngay</a>
+      <button class="hamburger" id="hamburger" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- mobile menu -->
+  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Menu điều hướng">
+    <a href="#intro" onclick="closeMenu()">Giới thiệu</a>
+    <a href="#highlights" onclick="closeMenu()">Nội dung nổi bật</a>
+    <a href="#cta" onclick="closeMenu()">Đăng ký học</a>
+  </div>
+
+  <!-- ====== HERO ====== -->
+  <section id="hero" aria-labelledby="hero-heading">
+    <div class="hero-bg-shapes" aria-hidden="true"></div>
+    <div class="container">
+      <div class="hero-inner">
+
+        <div class="hero-content">
+          <div class="hero-badge" aria-hidden="true">
+            <span>🚀</span> Chương trình học STEM 2026
+          </div>
+          <h1 id="hero-heading">
+            Khám phá <em>STEM</em> —<br />Định hình tương lai
+          </h1>
+          <p class="hero-desc">
+            Science · Technology · Engineering · Mathematics. Bốn trụ cột của nền kinh tế tri thức.
+            Học, thực hành và sáng tạo cùng cộng đồng STEM lớn mạnh nhất Việt Nam.
+          </p>
+          <div class="hero-actions">
+            <a href="#cta" class="btn btn-primary" id="hero-cta">
+              🎯 Đăng ký miễn phí
+            </a>
+            <a href="#intro" class="btn btn-outline">
+              Tìm hiểu thêm ↓
+            </a>
+          </div>
+          <div class="hero-stats" role="list" aria-label="Thống kê chương trình">
+            <div class="stat-item" role="listitem">
+              <span class="stat-number">12K+</span>
+              <span class="stat-label">Học viên</span>
+            </div>
+            <div class="stat-item" role="listitem">
+              <span class="stat-number">80+</span>
+              <span class="stat-label">Khoá học</span>
+            </div>
+            <div class="stat-item" role="listitem">
+              <span class="stat-number">95%</span>
+              <span class="stat-label">Hài lòng</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Animated STEM orbit (decorative) -->
+        <div class="hero-visual" aria-hidden="true">
+          <div class="stem-orbit">
+            <div class="orbit-ring"></div>
+            <div class="orbit-ring"></div>
+            <div class="orbit-center">STEM</div>
+            <div class="orbit-pill pill-s"><span class="pill-icon">🔬</span>SCIENCE</div>
+            <div class="orbit-pill pill-t"><span class="pill-icon">💻</span>TECH</div>
+            <div class="orbit-pill pill-e"><span class="pill-icon">⚙️</span>ENG</div>
+            <div class="orbit-pill pill-m"><span class="pill-icon">📐</span>MATH</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== INTRO ====== -->
+  <section id="intro" aria-labelledby="intro-heading">
+    <div class="container">
+      <div class="intro-grid">
+
+        <div class="intro-text">
+          <span class="section-label">Giới thiệu</span>
+          <h2 id="intro-heading">STEM là gì và tại sao quan trọng?</h2>
+          <p>
+            STEM là viết tắt của <strong>Science</strong> (Khoa học), <strong>Technology</strong>
+            (Công nghệ), <strong>Engineering</strong> (Kỹ thuật) và <strong>Mathematics</strong>
+            (Toán học) — bốn lĩnh vực cốt lõi đang định hình mọi ngành công nghiệp hiện đại.
+          </p>
+          <p>
+            Trong thế kỷ 21, kỹ năng STEM không còn là lợi thế — chúng là yêu cầu bắt buộc.
+            Từ trí tuệ nhân tạo đến năng lượng tái tạo, mọi đột phá lớn đều được xây dựng trên
+            nền tảng STEM vững chắc.
+          </p>
+          <ul class="intro-list" aria-label="Lợi ích của STEM">
+            <li>Tư duy phản biện và giải quyết vấn đề sáng tạo</li>
+            <li>Cơ hội nghề nghiệp cao và thu nhập vượt trội</li>
+            <li>Hiểu và đóng góp vào các công nghệ tương lai</li>
+            <li>Phát triển tư duy logic, phân tích dữ liệu</li>
+          </ul>
+        </div>
+
+        <div class="intro-cards" role="list" aria-label="Các lĩnh vực STEM">
+          <article class="intro-card" role="listitem">
+            <div class="intro-card-icon" aria-hidden="true">🔬</div>
+            <h3>Khoa học</h3>
+            <p>Vật lý, Hoá học, Sinh học và khoa học trái đất — nền tảng của mọi công nghệ.</p>
+          </article>
+          <article class="intro-card" role="listitem">
+            <div class="intro-card-icon" aria-hidden="true">💻</div>
+            <h3>Công nghệ</h3>
+            <p>Lập trình, AI, dữ liệu lớn — công cụ để giải quyết bài toán thực tế.</p>
+          </article>
+          <article class="intro-card" role="listitem">
+            <div class="intro-card-icon" aria-hidden="true">⚙️</div>
+            <h3>Kỹ thuật</h3>
+            <p>Thiết kế, xây dựng và tối ưu — biến ý tưởng thành sản phẩm hữu hình.</p>
+          </article>
+          <article class="intro-card" role="listitem">
+            <div class="intro-card-icon" aria-hidden="true">📐</div>
+            <h3>Toán học</h3>
+            <p>Ngôn ngữ phổ quát của vũ trụ — nền tảng logic cho mọi lĩnh vực STEM.</p>
+          </article>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== HIGHLIGHTS ====== -->
+  <section id="highlights" aria-labelledby="highlights-heading">
+    <div class="container">
+      <span class="section-label">Nội dung nổi bật</span>
+      <h2 id="highlights-heading">Khám phá từng lĩnh vực STEM</h2>
+      <p>Chương trình học toàn diện, được thiết kế bởi các chuyên gia hàng đầu cho mọi trình độ.</p>
+
+      <div class="highlights-grid" role="list" aria-label="Danh sách nội dung nổi bật">
+
+        <article class="highlight-card science" role="listitem">
+          <div class="hcard-icon" aria-hidden="true">🔬</div>
+          <div class="hcard-label">Science</div>
+          <h3>Khoa học tự nhiên</h3>
+          <p>Khám phá cơ chế hoạt động của thế giới qua thí nghiệm thực tế, từ nguyên tử đến thiên hà.</p>
+          <div class="hcard-topics" aria-label="Chủ đề khoa học">
+            <span class="topic-tag">Vật lý lượng tử</span>
+            <span class="topic-tag">Hoá hữu cơ</span>
+            <span class="topic-tag">Sinh học phân tử</span>
+          </div>
+        </article>
+
+        <article class="highlight-card tech" role="listitem">
+          <div class="hcard-icon" aria-hidden="true">💻</div>
+          <div class="hcard-label">Technology</div>
+          <h3>Công nghệ & Lập trình</h3>
+          <p>Xây dựng ứng dụng, phân tích dữ liệu và triển khai mô hình AI từ cơ bản đến nâng cao.</p>
+          <div class="hcard-topics" aria-label="Chủ đề công nghệ">
+            <span class="topic-tag">Python / JS</span>
+            <span class="topic-tag">Machine Learning</span>
+            <span class="topic-tag">Cloud Computing</span>
+          </div>
+        </article>
+
+        <article class="highlight-card eng" role="listitem">
+          <div class="hcard-icon" aria-hidden="true">⚙️</div>
+          <div class="hcard-label">Engineering</div>
+          <h3>Kỹ thuật & Thiết kế</h3>
+          <p>Học quy trình thiết kế kỹ thuật, từ bản vẽ CAD đến in 3D và hệ thống nhúng thực tế.</p>
+          <div class="hcard-topics" aria-label="Chủ đề kỹ thuật">
+            <span class="topic-tag">Robotics</span>
+            <span class="topic-tag">CAD / 3D Print</span>
+            <span class="topic-tag">IoT</span>
+          </div>
+        </article>
+
+        <article class="highlight-card math" role="listitem">
+          <div class="hcard-icon" aria-hidden="true">📐</div>
+          <div class="hcard-label">Mathematics</div>
+          <h3>Toán học ứng dụng</h3>
+          <p>Từ đại số tuyến tính đến thống kê xác suất — nền tảng không thể thiếu của AI và data science.</p>
+          <div class="hcard-topics" aria-label="Chủ đề toán học">
+            <span class="topic-tag">Giải tích</span>
+            <span class="topic-tag">Thống kê</span>
+            <span class="topic-tag">Tối ưu hoá</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CTA ====== -->
+  <section id="cta" aria-labelledby="cta-heading">
+    <div class="container">
+      <div class="cta-inner">
+        <span class="section-label">Bắt đầu hành trình</span>
+        <h2 id="cta-heading">Sẵn sàng chinh phục STEM?</h2>
+        <p>
+          Tham gia cùng hơn 12.000 học viên đang học STEM mỗi ngày.
+          Đăng ký miễn phí — không cần thẻ tín dụng, không cam kết.
+        </p>
+        <div class="cta-buttons">
+          <a
+            href="/dang-ky"
+            class="btn btn-cta-primary"
+            id="main-cta"
+            aria-label="Đăng ký khoá học STEM miễn phí"
+          >
+            🎓 Đăng ký ngay — Miễn phí
+          </a>
+          <a
+            href="/khoa-hoc"
+            class="btn btn-cta-outline"
+            aria-label="Xem danh sách khoá học STEM"
+          >
+            📚 Xem khoá học
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer role="contentinfo">
+    <div class="container">
+      <span>© 2026 STEM Vietnam. Mọi quyền được bảo lưu.</span>
+      <nav class="footer-links" aria-label="Liên kết footer">
+        <a href="/chinh-sach">Chính sách bảo mật</a>
+        <a href="/dieu-khoan">Điều khoản</a>
+        <a href="/lien-he">Liên hệ</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- ====== SCRIPTS ====== -->
+  <script>
+    /* ---------- Mobile hamburger toggle ---------- */
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', String(isOpen));
+      hamburger.setAttribute('aria-label', isOpen ? 'Đóng menu' : 'Mở menu');
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'Mở menu');
+      document.body.style.overflow = '';
+    }
+
+    /* Close mobile menu on outside click */
+    document.addEventListener('click', (e) => {
+      if (!mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    /* ---------- CTA click tracking (stub) ---------- */
+    document.querySelectorAll('[id$="-cta"], #main-cta').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        /* In production: replace with real analytics / routing */
+        const href = btn.getAttribute('href');
+        if (href && href.startsWith('/')) {
+          /* Allow default navigation — href already set correctly */
+        }
+      });
+    });
+
+    /* ---------- Intersection observer for section animations ---------- */
+    const observerOpts = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity  = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOpts);
+
+    document
+      .querySelectorAll('.highlight-card, .intro-card')
+      .forEach((el) => {
+        el.style.opacity   = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity .4s ease, transform .4s ease';
+        observer.observe(el);
+      });
+  </script>
+</body>
+</html>
