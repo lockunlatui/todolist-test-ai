@@ -1,0 +1,22 @@
+{
+  "name": "todolist-test-ai",
+  "version": "1.0.0",
+  "description": "PremiumLand – Real Estate Landing Page (TOD-009)",
+  "private": true,
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "main.js"
+    ]
+  }
+}
