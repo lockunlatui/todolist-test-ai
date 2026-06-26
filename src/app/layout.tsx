@@ -1,0 +1,20 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "ShopVN – Mua sắm thông minh",
+  description:
+    "Khám phá hàng ngàn sản phẩm chất lượng cao với giá tốt nhất. Giao hàng nhanh toàn quốc.",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="vi">
+      <body className="antialiased">{children}</body>
+    </html>
+  );
+}
