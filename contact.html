@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Liên hệ mua hàng hoặc tư vấn sản phẩm điện thoại tại PhoneStore" />
+  <title>Liên hệ / Đặt hàng – PhoneStore</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="contact-page">
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="index.html" class="header__logo">📱 PhoneStore</a>
+      <nav class="header__nav" aria-label="Menu chính">
+        <a href="index.html#products">Sản phẩm</a>
+        <a href="index.html#why-us">Tại sao chọn chúng tôi</a>
+        <a href="index.html" class="btn btn--outline btn--sm">← Quay lại</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== CONTACT FORM ===== -->
+  <main class="contact-main" id="main-content">
+    <div class="container">
+      <div class="contact-form-wrap">
+        <h1>Đặt hàng / Liên hệ tư vấn</h1>
+        <p class="subtitle">Điền thông tin bên dưới, chúng tôi sẽ liên hệ lại trong vòng 30 phút.</p>
+
+        <!-- Product info banner (populated via JS from query string) -->
+        <div class="product-info" id="product-info" hidden>
+          Sản phẩm quan tâm: <strong id="product-name"></strong>
+        </div>
+
+        <form id="contact-form" novalidate>
+          <div class="form-group">
+            <label for="full-name">Họ và tên <span aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="full-name"
+              name="fullName"
+              placeholder="Nguyễn Văn A"
+              autocomplete="name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Số điện thoại <span aria-hidden="true">*</span></label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="0912 345 678"
+              autocomplete="tel"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="example@email.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="product-select">Sản phẩm quan tâm</label>
+            <select id="product-select" name="product">
+              <option value="">-- Chọn sản phẩm --</option>
+              <option value="iphone-15-pro-max">iPhone 15 Pro Max – 32.990.000 ₫</option>
+              <option value="samsung-s24-ultra">Samsung Galaxy S24 Ultra – 29.990.000 ₫</option>
+              <option value="xiaomi-14-ultra">Xiaomi 14 Ultra – 22.990.000 ₫</option>
+              <option value="oppo-find-x7-pro">OPPO Find X7 Pro – 19.990.000 ₫</option>
+              <option value="google-pixel-8-pro">Google Pixel 8 Pro – 24.990.000 ₫</option>
+              <option value="iphone-14">iPhone 14 – 17.990.000 ₫</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Ghi chú / Yêu cầu thêm</label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Màu sắc, bộ nhớ, yêu cầu đặc biệt..."
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--block btn--lg">
+            Gửi yêu cầu đặt hàng
+          </button>
+        </form>
+
+        <div class="form-success" id="form-success" role="alert" aria-live="polite">
+          ✅ Yêu cầu của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ lại sớm nhất.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__brand">📱 PhoneStore</p>
+      <p class="footer__copy">© 2026 PhoneStore. Tất cả quyền được bảo lưu.</p>
+      <nav class="footer__links" aria-label="Footer navigation">
+        <a href="#">Chính sách bảo mật</a>
+        <a href="#">Điều khoản sử dụng</a>
+        <a href="contact.html">Liên hệ</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Pre-fill product from query string: ?product=iphone-15-pro-max
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var product = params.get('product');
+      if (product) {
+        var select = document.getElementById('product-select');
+        var infoBox = document.getElementById('product-info');
+        var nameEl = document.getElementById('product-name');
+
+        // Select matching option
+        for (var i = 0; i < select.options.length; i++) {
+          if (select.options[i].value === product) {
+            select.selectedIndex = i;
+            nameEl.textContent = select.options[i].text;
+            infoBox.hidden = false;
+            break;
+          }
+        }
+      }
+    })();
+
+    // Simple client-side submit handler (replace with real endpoint as needed)
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var fullName = form.fullName.value.trim();
+      var phone = form.phone.value.trim();
+
+      if (!fullName || !phone) {
+        alert('Vui lòng điền họ tên và số điện thoại.');
+        return;
+      }
+
+      // TODO: replace with actual API call / form POST
+      form.style.display = 'none';
+      document.getElementById('form-success').classList.add('visible');
+    });
+  </script>
+</body>
+</html>
