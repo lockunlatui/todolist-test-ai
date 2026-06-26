@@ -1,0 +1,21 @@
+{
+  "name": "todolist-test-ai",
+  "version": "1.0.0",
+  "description": "Real estate landing page – Vinhomes Grand Park",
+  "private": true,
+  "scripts": {
+    "test": "jest --no-coverage",
+    "test:ci": "jest"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}
