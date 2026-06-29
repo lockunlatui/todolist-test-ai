@@ -1,6 +1,36 @@
 import { render, screen } from "@testing-library/react";
 import Home from "@/app/page";
 
+// Mock Next.js Image so tests run without a real image loader
+jest.mock("next/image", () => {
+  const MockImage = ({
+    src,
+    alt,
+    fill: _fill,
+    priority: _priority,
+    sizes: _sizes,
+    quality: _quality,
+    placeholder: _placeholder,
+    blurDataURL: _blurDataURL,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    fill?: boolean;
+    priority?: boolean;
+    sizes?: string;
+    quality?: number;
+    placeholder?: string;
+    blurDataURL?: string;
+    [key: string]: unknown;
+  }) => {
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+    return <img src={src} alt={alt} {...props} />;
+  };
+  MockImage.displayName = "MockImage";
+  return MockImage;
+});
+
 // Mock Next.js Link so tests run without a router
 jest.mock("next/link", () => {
   const MockLink = ({

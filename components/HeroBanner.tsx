@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroBanner() {
@@ -6,6 +7,17 @@ export default function HeroBanner() {
       data-testid="hero-banner"
       className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-700 to-teal-500 overflow-hidden"
     >
+      {/* Hero background image */}
+      <Image
+        src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1440&q=80"
+        alt="Cảnh đẹp Việt Nam — bãi biển và thiên nhiên hùng vĩ"
+        fill
+        priority
+        className="object-cover object-center"
+        sizes="100vw"
+        data-testid="hero-image"
+      />
+
       {/* Background overlay pattern */}
       <div className="absolute inset-0 bg-black/30" aria-hidden="true" />
 
