@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FPT × Subaru — CCS Demo Session</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & tokens ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:   #0072BC;
+      --orange: #F37021;
+      --green:  #6CC24A;
+      --dark:   #0B1F33;
+      --light:  #F5F8FC;
+      --white:  #F5F8FC;
+      --grad-bo: linear-gradient(135deg, #0072BC 0%, #F37021 100%);
+
+      /* Fluid scale: clamp(min, preferred, max) */
+      --fs-hero:     clamp(2.4rem, 5vw, 5rem);
+      --fs-subtitle: clamp(1rem, 2vw, 1.9rem);
+      --fs-jp:       clamp(1.1rem, 2.2vw, 2rem);
+      --fs-meta:     clamp(0.75rem, 1.3vw, 1.1rem);
+      --fs-card-ttl: clamp(0.9rem, 1.5vw, 1.35rem);
+      --fs-card-sub: clamp(0.65rem, 1vw, 0.9rem);
+      --fs-feat:     clamp(0.6rem, 0.95vw, 0.85rem);
+      --fs-badge:    clamp(0.55rem, 0.8vw, 0.75rem);
+      --fs-step:     clamp(0.6rem, 0.9vw, 0.82rem);
+      --fs-footer:   clamp(0.65rem, 1vw, 0.9rem);
+
+      --gap:       clamp(0.5rem, 1vw, 1rem);
+      --radius:    clamp(8px, 1vw, 14px);
+      --pad-card:  clamp(0.7rem, 1.2vw, 1.2rem);
+    }
+
+    html, body {
+      width: 100%; height: 100vh;
+      overflow: hidden;
+      background: var(--dark);
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--white);
+    }
+
+    /* ─── Page shell ─────────────────────────────────────────────── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      width: 100%; height: 100vh;
+      padding: clamp(0.5rem, 1vw, 1rem) clamp(0.75rem, 1.8vw, 2rem);
+      gap: var(--gap);
+    }
+
+    /* ─── Hero ───────────────────────────────────────────────────── */
+    #hero {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: clamp(0.15rem, 0.4vw, 0.4rem);
+      padding-top: clamp(0.3rem, 0.7vw, 0.7rem);
+    }
+
+    .wordmark-row {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.5rem, 1vw, 1rem);
+      margin-bottom: clamp(0.1rem, 0.3vw, 0.3rem);
+    }
+
+    .wm-fpt {
+      font-family: 'Montserrat', 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(1.2rem, 2.4vw, 2.2rem);
+      color: var(--blue);
+      letter-spacing: 0.06em;
+      line-height: 1;
+    }
+
+    .wm-x {
+      font-size: clamp(1rem, 1.8vw, 1.7rem);
+      color: var(--orange);
+      font-weight: 700;
+    }
+
+    .wm-subaru {
+      font-family: 'Montserrat', 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(1.2rem, 2.4vw, 2.2rem);
+      color: var(--white);
+      letter-spacing: 0.08em;
+      line-height: 1;
+    }
+
+    #hero h1 {
+      font-family: 'Montserrat', 'Inter', sans-serif;
+      font-size: var(--fs-hero);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      background: var(--grad-bo);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    #hero .subtitle {
+      font-size: var(--fs-subtitle);
+      font-weight: 600;
+      color: rgba(255,255,255,0.88);
+      letter-spacing: 0.01em;
+    }
+
+    #hero .jp-greeting {
+      font-size: var(--fs-jp);
+      font-weight: 500;
+      color: var(--orange);
+      letter-spacing: 0.04em;
+    }
+
+    #hero .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(0.5rem, 1.2vw, 1.2rem);
+      margin-top: clamp(0.1rem, 0.3vw, 0.3rem);
+    }
+
+    .meta-chip {
+      font-size: var(--fs-meta);
+      font-weight: 500;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 100px;
+      padding: clamp(0.15rem, 0.3vw, 0.3rem) clamp(0.5rem, 0.9vw, 0.9rem);
+      color: rgba(255,255,255,0.78);
+      white-space: nowrap;
+    }
+
+    /* ─── Agenda timeline ────────────────────────────────────────── */
+    #timeline {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 0 clamp(1rem, 5vw, 8rem);
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.3rem, 0.6vw, 0.6rem);
+      flex: 1;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: rgba(255,255,255,0.15);
+      margin: 0 clamp(0.3rem, 0.6vw, 0.6rem);
+    }
+
+    .step-num {
+      width:  clamp(24px, 2.8vw, 38px);
+      height: clamp(24px, 2.8vw, 38px);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: clamp(0.65rem, 1vw, 0.9rem);
+      flex-shrink: 0;
+      color: var(--white);
+    }
+
+    .step-label {
+      font-size: var(--fs-step);
+      font-weight: 600;
+      color: rgba(255,255,255,0.82);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: clamp(80px, 10vw, 150px);
+    }
+
+    /* ─── Cards grid ─────────────────────────────────────────────── */
+    #cards-section {
+      flex: 1 1 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: var(--gap);
+    }
+
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(11,31,51,0.35);
+    }
+
+    /* accent top bar */
+    .card-accent-bar {
+      height: clamp(4px, 0.5vw, 6px);
+      flex-shrink: 0;
+    }
+
+    /* accent left stripe */
+    .card-inner {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: var(--pad-card);
+      border-left: clamp(3px, 0.35vw, 5px) solid var(--card-accent, var(--blue));
+      gap: clamp(0.3rem, 0.5vw, 0.5rem);
+      min-height: 0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .card-icon-title {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.3rem, 0.6vw, 0.6rem);
+    }
+
+    .card-icon {
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .card-title-group {}
+
+    .card-station-label {
+      font-size: var(--fs-badge);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.6;
+    }
+
+    .card-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: var(--fs-card-ttl);
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--white);
+    }
+
+    /* ready badge */
+    .badge-ready {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25em;
+      font-size: var(--fs-badge);
+      font-weight: 700;
+      color: var(--green);
+      border: 1px solid var(--green);
+      border-radius: 100px;
+      padding: 0.15em 0.55em;
+      white-space: nowrap;
+    }
+
+    .badge-ready::before {
+      content: '';
+      width: 0.5em; height: 0.5em;
+      background: var(--green);
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* feature list */
+    .feat-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.15rem, 0.3vw, 0.3rem);
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .feat-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      font-size: var(--fs-feat);
+      font-weight: 500;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.3;
+    }
+
+    .feat-list li::before {
+      content: '▸';
+      font-size: 0.7em;
+      flex-shrink: 0;
+      /* color set inline per card */
+    }
+
+    /* QR + button row */
+    .card-bottom {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.4rem, 0.8vw, 0.8rem);
+      flex-shrink: 0;
+      margin-top: auto;
+      padding-top: clamp(0.2rem, 0.4vw, 0.4rem);
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .qr-container {
+      flex-shrink: 0;
+      width:  clamp(48px, 6vw, 80px);
+      height: clamp(48px, 6vw, 80px);
+      background: var(--white);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .qr-container canvas,
+    .qr-container img {
+      max-width: 100%; max-height: 100%;
+    }
+
+    .qr-fallback-text {
+      font-size: clamp(0.4rem, 0.55vw, 0.55rem);
+      color: var(--dark);
+      word-break: break-all;
+      text-align: center;
+      padding: 2px;
+      line-height: 1.2;
+    }
+
+    .open-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35em;
+      font-size: var(--fs-card-sub);
+      font-weight: 700;
+      color: var(--white);
+      background: var(--card-accent, var(--blue));
+      border: none;
+      border-radius: clamp(4px, 0.5vw, 8px);
+      padding: clamp(0.35rem, 0.6vw, 0.6rem) clamp(0.5rem, 0.8vw, 0.8rem);
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .open-btn:hover { opacity: 0.85; transform: scale(1.02); }
+
+    .open-btn--gradient {
+      background: var(--grad-bo);
+    }
+
+    .open-btn--disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+      pointer-events: none;
+      background: rgba(255,255,255,0.12);
+    }
+
+    /* ─── Footer ─────────────────────────────────────────────────── */
+    #footer {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(0.3rem, 0.5vw, 0.5rem) 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: var(--fs-footer);
+      color: rgba(255,255,255,0.45);
+      flex-shrink: 0;
+    }
+
+    #footer .partner-line {
+      font-weight: 700;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── Gradient accents for card 4 ───────────────────────────── */
+    .card-accent-bar--grad {
+      background: var(--grad-bo) !important;
+    }
+
+    .card-inner--grad {
+      border-left-color: var(--orange) !important;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <section id="hero" aria-label="Welcome hero"></section>
+  <section id="timeline" aria-label="Demo agenda timeline"></section>
+  <section id="cards-section" aria-label="Demo station cards"></section>
+  <footer id="footer" aria-label="Partnership footer"></footer>
+</div>
+
+<script>
+/* ================================================================
+   CONFIG — edit this block only; no layout code below
+   ================================================================ */
+
+const SESSION = {
+  date:     'July 2026',
+  location: 'FPT Office, Ha Noi',
+  host:     'FPT Connected Car Services Team',
+};
+
+const STATIONS = [
+  {
+    id:       1,
+    icon:     '🔑',
+    title:    'Digital Key CCC4',
+    accent:   '#0072BC',
+    gradient: false,
+    url:      'https://demo.fpt-iov.com/digital-key',
+    features: [
+      'Remote lock/unlock',
+      'Owner pairing',
+      'Key sharing',
+      'Auto lock/unlock',
+      'Engine start/stop',
+      'Manage key lifecycle',
+    ],
+  },
+  {
+    id:       2,
+    icon:     '🔄',
+    title:    'OTA Management',
+    accent:   '#F37021',
+    gradient: false,
+    url:      'https://demo.fpt-iov.com/ota',
+    features: [
+      'Successful OTA update',
+      'Anti-Rollback',
+      'Fleet campaign',
+      'Resume download',
+    ],
+  },
+  {
+    id:       3,
+    icon:     '🤖',
+    title:    'AMS AI Agent',
+    accent:   '#6CC24A',
+    gradient: false,
+    url:      'https://demo.fpt-iov.com/ams',
+    features: [
+      'L1/L2/L3 maintenance service flow',
+      'Live demo L1 and L2 use cases',
+    ],
+  },
+  {
+    id:       4,
+    icon:     '🧠',
+    title:    'Nami PM AI Agent',
+    accent:   '#0072BC',   // start of gradient (used for step dot)
+    gradient: true,
+    url:      'https://demo.fpt-iov.com/nami',
+    features: [
+      'Monitor projects with AI assistant',
+      'Manage tasks/scope/risks through chat',
+    ],
+  },
+];
+
+/* ================================================================
+   RENDER HELPERS
+   ================================================================ */
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderHero() {
+  document.getElementById('hero').innerHTML = `
+    <div class="wordmark-row" aria-label="Partnership wordmarks">
+      <span class="wm-fpt">FPT</span>
+      <span class="wm-x">×</span>
+      <span class="wm-subaru">SUBARU</span>
+    </div>
+    <h1>Welcome, Subaru</h1>
+    <p class="subtitle">FPT Connected Car Services — Demo Session</p>
+    <p class="jp-greeting">ようこそ FPT へ</p>
+    <div class="meta-row" role="list" aria-label="Session details">
+      <span class="meta-chip" role="listitem">📅 ${escHtml(SESSION.date)}</span>
+      <span class="meta-chip" role="listitem">📍 ${escHtml(SESSION.location)}</span>
+      <span class="meta-chip" role="listitem">👥 ${escHtml(SESSION.host)}</span>
+    </div>
+  `;
+}
+
+function renderTimeline() {
+  const steps = STATIONS.map((s, i) => {
+    const isLast = i === STATIONS.length - 1;
+    return `
+      <div class="step" role="listitem" aria-label="Step ${s.id}: ${escHtml(s.title)}">
+        <span class="step-num" style="background:${escHtml(s.accent)}">${s.id}</span>
+        <span class="step-label">${escHtml(s.title)}</span>
+        ${!isLast ? '<span class="step-connector" aria-hidden="true"></span>' : ''}
+      </div>
+    `;
+  }).join('');
+  document.getElementById('timeline').innerHTML = `<div style="display:flex;align-items:center;width:100%;" role="list">${steps}</div>`;
+}
+
+function openBtnHtml(s) {
+  if (s.url) {
+    const btnClass = s.gradient ? 'open-btn open-btn--gradient' : 'open-btn';
+    const style    = s.gradient ? '' : `style="background:${escHtml(s.accent)}"`;
+    return `<a class="${btnClass}" ${style} href="${escHtml(s.url)}" target="_blank" rel="noopener noreferrer">↗ Open demo</a>`;
+  }
+  return `<button class="open-btn open-btn--disabled" disabled aria-disabled="true">↗ Open demo</button>`;
+}
+
+function featureListHtml(s) {
+  const items = s.features.map(f =>
+    `<li style="--feat-dot:${escHtml(s.accent)}">${escHtml(f)}</li>`
+  ).join('');
+  return `<ul class="feat-list" aria-label="Features">${items}</ul>`;
+}
+
+function renderCards() {
+  const section = document.getElementById('cards-section');
+  section.innerHTML = STATIONS.map(s => {
+    const accentBarClass  = s.gradient ? 'card-accent-bar card-accent-bar--grad' : 'card-accent-bar';
+    const innerClass      = s.gradient ? 'card-inner card-inner--grad' : 'card-inner';
+    const accentBarStyle  = s.gradient ? '' : `style="background:${escHtml(s.accent)}"`;
+    const innerStyle      = s.gradient ? '' : `style="--card-accent:${escHtml(s.accent)};border-left-color:${escHtml(s.accent)}"`;
+
+    return `
+      <article class="card" aria-label="Station ${s.id}: ${escHtml(s.title)}">
+        <div class="${accentBarClass}" ${accentBarStyle} aria-hidden="true"></div>
+        <div class="${innerClass}" ${innerStyle}>
+          <div class="card-header">
+            <div class="card-icon-title">
+              <span class="card-icon" aria-hidden="true">${s.icon}</span>
+              <div class="card-title-group">
+                <div class="card-station-label">Station ${s.id}</div>
+                <div class="card-title">${escHtml(s.title)}</div>
+              </div>
+            </div>
+            <span class="badge-ready" role="status" aria-label="Status: Ready">Ready</span>
+          </div>
+          ${featureListHtml(s)}
+          <div class="card-bottom">
+            <div class="qr-container" id="qr-${s.id}" aria-label="QR code for ${escHtml(s.title)}"></div>
+            ${openBtnHtml(s)}
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function renderFooter() {
+  document.getElementById('footer').innerHTML = `
+    <span class="partner-line">FPT × Subaru — Connected Car Services</span>
+    <span>${escHtml(SESSION.date)} · ${escHtml(SESSION.location)}</span>
+  `;
+}
+
+/* ================================================================
+   QR CODE GENERATION
+   ================================================================ */
+
+function showQRFallback(stationId, url) {
+  const container = document.getElementById('qr-' + stationId);
+  if (!container) return;
+  container.innerHTML = `<span class="qr-fallback-text">${escHtml(url || '(no URL)')}</span>`;
+}
+
+function generateQRCodes() {
+  STATIONS.forEach(s => {
+    if (!s.url) {
+      showQRFallback(s.id, '');
+      return;
+    }
+    try {
+      const container = document.getElementById('qr-' + s.id);
+      if (!container) return;
+      // QRCode is the global from qrcode.js CDN
+      new QRCode(container, {
+        text:           s.url,
+        width:          80,
+        height:         80,
+        colorDark:      '#0B1F33',
+        colorLight:     '#F5F8FC',
+        correctLevel:   QRCode.CorrectLevel.M,
+      });
+    } catch (err) {
+      showQRFallback(s.id, s.url);
+    }
+  });
+}
+
+function loadQRLibAndGenerate() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+    script.onload = () => {
+      try {
+        generateQRCodes();
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    };
+    script.onerror = () => reject(new Error('QR CDN unavailable'));
+    document.head.appendChild(script);
+  });
+}
+
+/* ================================================================
+   FEATURE-LIST ACCENT DOT COLOR (CSS custom prop fallback)
+   ================================================================ */
+
+// Apply accent colour to the ::before pseudo-element via a data attr
+// approach so pure CSS can pick it up without inline style hacks.
+function applyFeatureDotColors() {
+  document.querySelectorAll('.feat-list li').forEach(li => {
+    const color = li.style.getPropertyValue('--feat-dot');
+    if (color) {
+      li.style.color = 'rgba(255,255,255,0.78)'; // restore text
+      // inject inline style for ::before via a helper span
+      const dot = document.createElement('span');
+      dot.setAttribute('aria-hidden', 'true');
+      dot.style.cssText = `color:${color};font-size:0.7em;flex-shrink:0`;
+      dot.textContent = '▸';
+      li.prepend(dot);
+      // remove the CSS ::before now that span exists
+      li.style.setProperty('--feat-dot-applied', '1');
+    }
+  });
+  // Patch ::before to be transparent where span exists
+  const style = document.createElement('style');
+  style.textContent = '.feat-list li[style*="--feat-dot-applied"]::before { display:none; }';
+  document.head.appendChild(style);
+}
+
+/* ================================================================
+   TIMELINE CONNECTOR (inline flex fix)
+   ================================================================ */
+
+function fixTimelineConnectors() {
+  // The connector spans were rendered inside step divs;
+  // the CSS already handles step::after — remove extra spans.
+  document.querySelectorAll('.step-connector').forEach(el => el.remove());
+}
+
+/* ================================================================
+   BOOT
+   ================================================================ */
+
+(function boot() {
+  renderHero();
+  renderTimeline();
+  renderCards();
+  renderFooter();
+  fixTimelineConnectors();
+  applyFeatureDotColors();
+
+  loadQRLibAndGenerate().catch(() => {
+    // CDN failed — show URL-text fallback for all stations
+    STATIONS.forEach(s => showQRFallback(s.id, s.url));
+  });
+})();
+</script>
+</body>
+</html>
