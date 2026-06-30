@@ -972,13 +972,16 @@ setInterval(updateClock, 1000);
     card.appendChild(featureList);
 
     // ── Footer: actions + QR
-    const demoLink = el('a', {
-      className: 'btn-demo',
-      href: station.demoUrl,
-      target: '_blank',
-      rel: 'noopener noreferrer',
-      'aria-label': `Open ${station.title} demo`,
-    }, 'Open demo ↗');
+    // E-028: when demoUrl is empty, hide the button — href="" resolves to self.
+    const demoLink = el('a', Object.assign(
+      {
+        className: 'btn-demo',
+        'aria-label': `Open ${station.title} demo`,
+      },
+      station.demoUrl
+        ? { href: station.demoUrl, target: '_blank', rel: 'noopener noreferrer' }
+        : { 'aria-disabled': 'true', style: { display: 'none' } }
+    ), 'Open demo ↗');
 
     const toggleBtn = el('button', {
       className: 'btn-done-toggle',

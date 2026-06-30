@@ -87,6 +87,13 @@ check('US-3: btn-demo open demo button present', html.includes('btn-demo'));
 check('US-3: Offline fallback for QR present', html.includes('qrOffline') || html.includes('typeof QRCode'));
 check('US-3: url-fallback element present', html.includes('url-fallback'));
 
+// E-028: btn-demo must not set href="" when demoUrl is empty (resolves to self).
+// Fix: demoUrl is checked before setting href; aria-disabled used as fallback.
+check('E-028: btn-demo href guarded by demoUrl check (aria-disabled fallback present)',
+  // ternary pattern: station.demoUrl ? { href: station.demoUrl, ... } : { aria-disabled ... }
+  /station\.demoUrl\s*\?[\s\S]{0,200}href[\s\S]{0,200}aria-disabled/.test(html)
+);
+
 // US-4: Agenda maps 1:1 to cards
 check('US-4: agenda-steps built from CONFIG.stations', html.includes('CONFIG.stations'));
 check('US-4: 4 station entries in CONFIG', (html.match(/step:\s*[1-4]/g) || []).length === 4);
