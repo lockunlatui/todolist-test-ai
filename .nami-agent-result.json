@@ -1,0 +1,41 @@
+{
+  "verdict": "needs_fix",
+  "summary": "Implementation is technically solid (80/80 validation checks pass), but CONFIG still holds stale/placeholder content that will embarrass FPT in front of the Subaru delegation: sessionDate is 'July 2025' (over a year in the past as of 2026-06-30) and all four demoUrl values are fake placeholders whose QR codes will encode broken links.",
+  "findings": [
+    {
+      "severity": "major",
+      "title": "sessionDate placeholder is over a year in the past",
+      "file": "index.html",
+      "line": 713,
+      "suggestion": "Replace `sessionDate: 'July 2025'` in CONFIG with the confirmed real event date (e.g. 'July 2026' or the exact date). This value appears in the hero meta chip and footer — visible on the welcome board the moment the delegation walks in."
+    },
+    {
+      "severity": "major",
+      "title": "All four demoUrl values are placeholder URLs",
+      "file": "index.html",
+      "line": 729,
+      "suggestion": "Replace all four `demoUrl: 'https://demo.fpt-ccs.com/…'` placeholders in CONFIG.stations with the real, reachable demo URLs before the event. The QR codes encode these URLs verbatim — scanning them on the day will return 404 or DNS failure. Lines ~729 (Digital Key), ~745 (OTA), ~761 (AMS), ~775 (Nami)."
+    },
+    {
+      "severity": "minor",
+      "title": "Google Fonts CDN may be blocked on corporate network",
+      "file": "index.html",
+      "line": 9,
+      "suggestion": "If FPT Tower's corporate network restricts fonts.googleapis.com, Inter will silently fall back to system-ui — acceptable but the polished brand look suffers. Consider self-hosting a WOFF2 subset of Inter or adding it base64-inline for a true offline-safe kiosk."
+    },
+    {
+      "severity": "minor",
+      "title": "Japanese greeting missing punctuation — needs native speaker sign-off",
+      "file": "index.html",
+      "line": 709,
+      "suggestion": "Spec explicitly flags 'confirm with native speaker'. Natural Japanese courtesy phrasing is `ようこそ、FPT へ` (with the ideographic comma 、after ようこそ) or the more compact `FPT へようこそ`. The current form is intelligible but may read as slightly unnatural to a Japanese professional audience."
+    },
+    {
+      "severity": "minor",
+      "title": "Cards 3 & 4 show only 2 features each — visually sparse vs Cards 1 (6) and 2 (4)",
+      "file": "index.html",
+      "line": 762,
+      "suggestion": "In the 2×2 grid, AMS (2 features) and Nami (2 features) will have noticeably more blank whitespace than Digital Key (6 features) and OTA (4 features). Consider expanding the feature lists in CONFIG.stations[2] and CONFIG.stations[3] with sub-steps or key differentiators to balance the visual weight."
+    }
+  ]
+}
