@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FPT × Subaru — CCS Demo Session</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSi2jPwrGmXnA+HMSALtCbUFLcjETpZBq/pg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fpt-blue:    #0072BC;
+      --fpt-orange:  #F37021;
+      --fpt-green:   #6CC24A;
+      --ink:         #0D1117;
+      --ink-muted:   #4A5568;
+      --paper:       #F8FAFC;
+      --surface:     #FFFFFF;
+      --border:      #E2E8F0;
+      --radius-sm:   8px;
+      --radius-md:   14px;
+      --radius-lg:   20px;
+      --shadow-card: 0 4px 24px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.06);
+      --shadow-lift: 0 16px 48px rgba(0,0,0,.16), 0 4px 12px rgba(0,0,0,.08);
+      --font:        'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      font-family: var(--font);
+      background: var(--paper);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ─── Layout Shell ─────────────────────────────────────────────── */
+    .page {
+      display: grid;
+      grid-template-rows: auto auto auto 1fr auto auto;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* ─── Header Bar ───────────────────────────────────────────────── */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(8px, 1vh, 14px) clamp(16px, 3vw, 48px);
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-wordmarks {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: clamp(13px, 1.4vw, 18px);
+      letter-spacing: -.3px;
+    }
+
+    .wm-fpt  { color: var(--fpt-blue); }
+    .wm-sep  { color: var(--ink-muted); font-weight: 400; }
+    .wm-sub  { color: var(--ink); }
+
+    .header-clock {
+      font-size: clamp(11px, 1.2vw, 16px);
+      font-weight: 600;
+      color: var(--ink-muted);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: .5px;
+    }
+
+    /* ─── Hero ─────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding: clamp(28px, 4.5vh, 64px) clamp(16px, 5vw, 80px);
+      overflow: hidden;
+      min-height: clamp(220px, 32vh, 340px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Animated 3-color FPT gradient */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        130deg,
+        #003d66 0%,
+        var(--fpt-blue) 30%,
+        #005a94 55%,
+        #b8520f 80%,
+        #8B3A0A 100%
+      );
+      background-size: 300% 300%;
+      animation: heroGradient 12s ease infinite;
+      z-index: 0;
+    }
+
+    /* Subtle pattern overlay */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(243,112,33,.18) 0%, transparent 50%),
+        radial-gradient(circle at 80% 30%, rgba(108,194,74,.12) 0%, transparent 45%);
+      z-index: 1;
+    }
+
+    @keyframes heroGradient {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-greeting {
+      font-size: clamp(14px, 1.8vw, 22px);
+      font-weight: 300;
+      color: rgba(255,255,255,.75);
+      margin-bottom: clamp(6px, 1vh, 12px);
+      letter-spacing: .5px;
+    }
+
+    .hero-headline {
+      font-size: clamp(38px, 5.8vh, 72px);
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      text-shadow: 0 2px 24px rgba(0,0,0,.3);
+      margin-bottom: clamp(6px, 1.2vh, 14px);
+    }
+
+    .hero-subline {
+      font-size: clamp(15px, 2vh, 26px);
+      font-weight: 400;
+      color: rgba(255,255,255,.88);
+      letter-spacing: .2px;
+      margin-bottom: clamp(12px, 2.5vh, 28px);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+    }
+
+    .hero-meta-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: clamp(11px, 1.2vw, 14px);
+      font-weight: 500;
+      color: rgba(255,255,255,.92);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-meta-chip svg {
+      flex-shrink: 0;
+      opacity: .8;
+    }
+
+    /* ─── Agenda Strip ─────────────────────────────────────────────── */
+    .agenda-strip {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: clamp(12px, 1.8vh, 22px) clamp(16px, 3vw, 48px);
+    }
+
+    .agenda-strip-label {
+      font-size: clamp(10px, 1vw, 12px);
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: clamp(8px, 1.2vh, 14px);
+    }
+
+    .agenda-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .agenda-steps::-webkit-scrollbar { display: none; }
+
+    .agenda-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: clamp(8px, 1.2vh, 14px) clamp(12px, 1.8vw, 24px);
+      border-radius: var(--radius-md);
+      transition: all .25s ease;
+      flex-shrink: 0;
+      cursor: default;
+      position: relative;
+    }
+
+    .agenda-step + .agenda-step::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+    }
+
+    .agenda-step-num {
+      width: clamp(28px, 2.8vw, 36px);
+      height: clamp(28px, 2.8vw, 36px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(12px, 1.3vw, 16px);
+      font-weight: 800;
+      flex-shrink: 0;
+      transition: all .25s ease;
+      border: 2px solid var(--border);
+      color: var(--ink-muted);
+      background: var(--paper);
+    }
+
+    .agenda-step-info { flex: 1; }
+
+    .agenda-step-title {
+      font-size: clamp(11px, 1.2vw, 15px);
+      font-weight: 600;
+      color: var(--ink-muted);
+      transition: color .25s ease;
+      white-space: nowrap;
+    }
+
+    .agenda-step-subtitle {
+      font-size: clamp(9px, .9vw, 12px);
+      color: var(--ink-muted);
+      opacity: .7;
+      white-space: nowrap;
+    }
+
+    /* Active step */
+    .agenda-step.active .agenda-step-num {
+      background: var(--accent, var(--fpt-blue));
+      border-color: var(--accent, var(--fpt-blue));
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(0,114,188,.2);
+    }
+
+    .agenda-step.active .agenda-step-title {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .agenda-step.done .agenda-step-num {
+      background: var(--fpt-green);
+      border-color: var(--fpt-green);
+      color: #fff;
+    }
+
+    .agenda-step.done .agenda-step-title {
+      text-decoration: line-through;
+      opacity: .6;
+    }
+
+    /* ─── Cards Grid ───────────────────────────────────────────────── */
+    .cards-section {
+      padding: clamp(12px, 2vh, 28px) clamp(12px, 2.5vw, 36px);
+      flex: 1;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: clamp(10px, 1.5vw, 20px);
+      height: 100%;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      padding: clamp(14px, 1.8vh, 24px) clamp(14px, 1.8vw, 24px);
+      transition: transform .22s ease, box-shadow .22s ease;
+      cursor: default;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lift);
+    }
+
+    /* Accent top bar */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--card-accent, var(--fpt-blue));
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .card--gradient::before {
+      background: linear-gradient(90deg, var(--fpt-blue) 0%, var(--fpt-orange) 100%);
+    }
+
+    /* Card header */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: clamp(8px, 1.2vh, 14px);
+    }
+
+    .card-title-area { flex: 1; }
+
+    .card-step-badge {
+      width: clamp(22px, 2.2vw, 28px);
+      height: clamp(22px, 2.2vw, 28px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(10px, 1vw, 13px);
+      font-weight: 800;
+      color: #fff;
+      background: var(--card-accent, var(--fpt-blue));
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .card--gradient .card-step-badge {
+      background: linear-gradient(135deg, var(--fpt-blue), var(--fpt-orange));
+    }
+
+    .card-title {
+      font-size: clamp(14px, 1.6vw, 20px);
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.2;
+      letter-spacing: -.3px;
+    }
+
+    .card-subtitle {
+      font-size: clamp(10px, 1vw, 13px);
+      color: var(--ink-muted);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* Status + count badges */
+    .card-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: clamp(6px, 1vh, 12px);
+      flex-wrap: wrap;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: clamp(9px, .9vw, 12px);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .status-chip--ready {
+      background: rgba(108,194,74,.12);
+      color: #2d7a18;
+    }
+
+    .status-chip--live {
+      background: rgba(243,112,33,.12);
+      color: #b34a00;
+    }
+
+    .status-chip--dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-chip--live .status-chip--dot {
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .5; transform: scale(1.4); }
+    }
+
+    .feature-count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-size: clamp(9px, .9vw, 12px);
+      font-weight: 600;
+      background: var(--border);
+      color: var(--ink-muted);
+    }
+
+    .done-badge {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-size: clamp(9px, .9vw, 12px);
+      font-weight: 700;
+      background: rgba(108,194,74,.15);
+      color: #2d7a18;
+      margin-left: auto;
+    }
+
+    .card.is-done .done-badge { display: inline-flex; }
+
+    /* Features list */
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(3px, .5vh, 6px);
+      flex: 1;
+      margin-bottom: clamp(8px, 1.2vh, 14px);
+    }
+
+    .card-features li {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: clamp(10px, 1.1vw, 14px);
+      color: var(--ink-muted);
+      line-height: 1.3;
+    }
+
+    .card-features li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--card-accent, var(--fpt-blue));
+      flex-shrink: 0;
+    }
+
+    .card--gradient .card-features li::before {
+      background: linear-gradient(135deg, var(--fpt-blue), var(--fpt-orange));
+    }
+
+    /* Card footer: QR + button */
+    .card-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .card-actions { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+    .btn-demo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: clamp(6px, .9vh, 10px) clamp(12px, 1.4vw, 18px);
+      border-radius: var(--radius-sm);
+      font-size: clamp(11px, 1.1vw, 14px);
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity .18s ease, transform .18s ease;
+      background: var(--card-accent, var(--fpt-blue));
+      color: var(--btn-text, #fff);
+      letter-spacing: .2px;
+    }
+
+    .card--gradient .btn-demo {
+      background: linear-gradient(90deg, var(--fpt-blue) 0%, var(--fpt-orange) 100%);
+      color: #fff;
+    }
+
+    .btn-demo:hover { opacity: .85; transform: scale(1.02); }
+
+    .btn-done-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: clamp(5px, .8vh, 8px) clamp(10px, 1.2vw, 14px);
+      border-radius: var(--radius-sm);
+      font-size: clamp(10px, 1vw, 13px);
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--paper);
+      color: var(--ink-muted);
+      transition: all .18s ease;
+    }
+
+    .card.is-done .btn-done-toggle {
+      background: rgba(108,194,74,.1);
+      border-color: var(--fpt-green);
+      color: #2d7a18;
+    }
+
+    .btn-done-toggle:hover { border-color: var(--fpt-green); }
+
+    .url-fallback {
+      font-size: clamp(9px, .9vw, 11px);
+      color: var(--ink-muted);
+      word-break: break-all;
+      display: none;
+    }
+
+    .qr-container {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .qr-box {
+      width: clamp(52px, 5.5vw, 72px);
+      height: clamp(52px, 5.5vw, 72px);
+      background: #fff;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px;
+    }
+
+    .qr-box img, .qr-box canvas { max-width: 100%; max-height: 100%; }
+
+    .qr-label {
+      font-size: clamp(8px, .8vw, 10px);
+      color: var(--ink-muted);
+      text-align: center;
+      opacity: .7;
+    }
+
+    /* ─── Marquee Ticker ────────────────────────────────────────────── */
+    .ticker-wrap {
+      background: var(--fpt-blue);
+      color: #fff;
+      overflow: hidden;
+      padding: clamp(6px, .8vh, 10px) 0;
+      position: relative;
+    }
+
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: ticker 40s linear infinite;
+      will-change: transform;
+    }
+
+    .ticker-item {
+      white-space: nowrap;
+      padding: 0 clamp(24px, 3vw, 48px);
+      font-size: clamp(11px, 1.2vw, 14px);
+      font-weight: 500;
+      letter-spacing: .4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ticker-item .sep {
+      color: rgba(255,255,255,.4);
+      font-weight: 400;
+    }
+
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ─── Footer ────────────────────────────────────────────────────── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,.6);
+      padding: clamp(10px, 1.5vh, 18px) clamp(16px, 3vw, 48px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .footer-partnership {
+      font-size: clamp(12px, 1.3vw, 16px);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.2px;
+    }
+
+    .footer-meta {
+      font-size: clamp(10px, 1vw, 12px);
+      letter-spacing: .2px;
+    }
+
+    /* ─── Responsive ────────────────────────────────────────────────── */
+    @media (max-width: 1280px) {
+      .cards-grid { gap: 10px; }
+      .card { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page" id="page">
+
+  <!-- Header Bar -->
+  <header class="header-bar" role="banner">
+    <div class="header-wordmarks" aria-label="FPT × Subaru">
+      <span class="wm-fpt">FPT</span>
+      <span class="wm-sep">×</span>
+      <span class="wm-sub">Subaru</span>
+    </div>
+    <div class="header-clock" id="clock" aria-live="polite" aria-label="Current time"></div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" role="region" aria-label="Welcome hero">
+    <div class="hero-content">
+      <p class="hero-greeting" lang="ja" id="hero-greeting"></p>
+      <h1 class="hero-headline" id="hero-headline"></h1>
+      <p class="hero-subline" id="hero-subline"></p>
+      <div class="hero-meta" id="hero-meta" role="list"></div>
+    </div>
+  </section>
+
+  <!-- Agenda Strip -->
+  <nav class="agenda-strip" aria-label="Demo agenda">
+    <div class="agenda-strip-label">Demo Agenda</div>
+    <div class="agenda-steps" id="agenda-steps" role="list"></div>
+  </nav>
+
+  <!-- Ticker -->
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker-track" id="ticker-track"></div>
+  </div>
+
+  <!-- Cards Grid -->
+  <main class="cards-section" role="main">
+    <div class="cards-grid" id="cards-grid" aria-label="Demo stations"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer role="contentinfo">
+    <span class="footer-partnership" id="footer-partnership"></span>
+    <span class="footer-meta" id="footer-meta"></span>
+  </footer>
+
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CONFIG  — all content lives here; nothing is hard-coded in the layout
+   ═══════════════════════════════════════════════════════════════════════ */
+const CONFIG = {
+  /* Session info */
+  heroGreeting:    'ようこそ FPT へ',
+  heroHeadline:    'Welcome, Subaru',
+  heroSubline:     'FPT Connected Car Services — Demo Session',
+  sessionDate:     'July 2025',
+  sessionLocation: 'FPT Tower, Hà Nội',
+  hostTeam:        'FPT Connected Car Services',
+  footerText:      'FPT × Subaru — Connected Car Services',
+
+  /* Agenda: which step is currently active (1-based) */
+  activeStep: 1,
+
+  /* Demo stations */
+  stations: [
+    {
+      step:     1,
+      title:    'Digital Key',
+      subtitle: 'CCC4 Standard',
+      accent:   '#0072BC',
+      gradient: false,
+      status:   'Ready',
+      demoUrl:  'https://demo.fpt-ccs.com/digital-key',
+      features: [
+        'Remote lock / unlock',
+        'Owner pairing',
+        'Key sharing',
+        'Auto lock / unlock',
+        'Engine start / stop',
+        'Manage key lifecycle',
+      ],
+    },
+    {
+      step:     2,
+      title:    'OTA Management',
+      subtitle: 'Over-the-Air Updates',
+      accent:   '#F37021',
+      gradient: false,
+      status:   'Ready',
+      demoUrl:  'https://demo.fpt-ccs.com/ota-management',
+      features: [
+        'Successful OTA update',
+        'Anti-Rollback',
+        'Fleet campaign',
+        'Resume download',
+      ],
+    },
+    {
+      step:     3,
+      title:    'AMS AI Agent',
+      subtitle: 'Aftersales Maintenance Service',
+      accent:   '#6CC24A',
+      gradient: false,
+      status:   'Live',
+      demoUrl:  'https://demo.fpt-ccs.com/ams-ai-agent',
+      features: [
+        'L1 / L2 / L3 maintenance service flow',
+        'Live demo L1 and L2 use cases',
+      ],
+    },
+    {
+      step:     4,
+      title:    'Nami PM AI Agent',
+      subtitle: 'AI Project Management',
+      accent:   '#0072BC',
+      accentEnd: '#F37021',
+      gradient: true,
+      status:   'Live',
+      demoUrl:  'https://demo.fpt-ccs.com/nami-pm-ai',
+      features: [
+        'Monitor projects with AI assistant',
+        'Manage tasks / scope / risks through chat',
+      ],
+    },
+  ],
+
+  /* Ticker items (displayed in the marquee) */
+  ticker: [
+    '🚗 Digital Key — CCC4 Standard',
+    '🔄 OTA Management — Fleet Updates',
+    '🤖 AMS AI Agent — Aftersales Maintenance Service',
+    '🧠 Nami PM AI Agent — Intelligent Project Management',
+    '🤝 FPT × Subaru — Connected Car Services Demo',
+  ],
+};
+/* ═══════════════════════════════════════════════════════════════════════
+   END CONFIG
+   ═══════════════════════════════════════════════════════════════════════ */
+
+
+/* ─── Utilities ─────────────────────────────────────────────────────── */
+
+/** Return #fff or #0D1117 depending on luminance of hex colour */
+function contrastText(hex) {
+  const c = hex.replace('#', '');
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.55 ? '#0D1117' : '#FFFFFF';
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function el(tag, attrs, ...children) {
+  const node = document.createElement(tag);
+  Object.entries(attrs || {}).forEach(([k, v]) => {
+    if (k === 'className') node.className = v;
+    else if (k === 'style')   Object.assign(node.style, v);
+    else if (k === 'dataset') Object.assign(node.dataset, v);
+    else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+    else node.setAttribute(k, v);
+  });
+  children.flat().forEach(c => {
+    if (c == null) return;
+    node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+  });
+  return node;
+}
+
+
+/* ─── Clock ─────────────────────────────────────────────────────────── */
+function updateClock() {
+  const now  = new Date();
+  const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const date = now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  const clockEl = document.getElementById('clock');
+  if (clockEl) clockEl.textContent = `${date}  |  ${time}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+
+/* ─── Hero ──────────────────────────────────────────────────────────── */
+(function buildHero() {
+  document.getElementById('hero-greeting').textContent = CONFIG.heroGreeting;
+  document.getElementById('hero-headline').textContent = CONFIG.heroHeadline;
+  document.getElementById('hero-subline').textContent  = CONFIG.heroSubline;
+
+  const metaItems = [
+    { icon: calendarIcon(), text: CONFIG.sessionDate },
+    { icon: locationIcon(), text: CONFIG.sessionLocation },
+    { icon: teamIcon(),     text: CONFIG.hostTeam },
+  ];
+
+  const metaContainer = document.getElementById('hero-meta');
+  metaItems.forEach(({ icon, text }) => {
+    const chip = el('div', { className: 'hero-meta-chip', role: 'listitem' }, icon, text);
+    metaContainer.appendChild(chip);
+  });
+})();
+
+
+/* ─── Agenda Strip ──────────────────────────────────────────────────── */
+(function buildAgenda() {
+  const container = document.getElementById('agenda-steps');
+
+  CONFIG.stations.forEach((station, idx) => {
+    const stepNum  = idx + 1;
+    const isActive = stepNum === CONFIG.activeStep;
+    const isDone   = stepNum < CONFIG.activeStep;
+
+    const cls = ['agenda-step', isActive ? 'active' : '', isDone ? 'done' : '']
+      .filter(Boolean).join(' ');
+
+    const numEl = el('div', { className: 'agenda-step-num' },
+      isDone ? '✓' : String(stepNum)
+    );
+
+    const info = el('div', { className: 'agenda-step-info' },
+      el('div', { className: 'agenda-step-title' }, station.title),
+      el('div', { className: 'agenda-step-subtitle' }, station.subtitle),
+    );
+
+    const step = el('div', {
+      className: cls,
+      role: 'listitem',
+      'aria-current': isActive ? 'step' : undefined,
+      style: isActive ? { '--accent': station.gradient ? station.accent : station.accent } : {},
+    }, numEl, info);
+
+    if (isActive) {
+      step.style.setProperty('--accent', station.accent);
+      step.style.background = 'rgba(0,114,188,.06)';
+    }
+
+    container.appendChild(step);
+  });
+})();
+
+
+/* ─── Ticker ────────────────────────────────────────────────────────── */
+(function buildTicker() {
+  const track = document.getElementById('ticker-track');
+  if (!track) return;
+
+  // Duplicate items for seamless loop
+  const allItems = [...CONFIG.ticker, ...CONFIG.ticker];
+
+  allItems.forEach(text => {
+    const item = el('span', { className: 'ticker-item' },
+      text,
+      el('span', { className: 'sep' }, '·')
+    );
+    track.appendChild(item);
+  });
+})();
+
+
+/* ─── Station Cards ─────────────────────────────────────────────────── */
+(function buildCards() {
+  const grid = document.getElementById('cards-grid');
+  const qrOffline = typeof QRCode === 'undefined';
+
+  CONFIG.stations.forEach((station, idx) => {
+    const isGradient = !!station.gradient;
+    const btnTextColor = isGradient ? '#fff' : contrastText(station.accent);
+
+    // Card
+    const card = el('article', {
+      className: 'card' + (isGradient ? ' card--gradient' : ''),
+      'aria-label': `Demo station ${idx + 1}: ${station.title}`,
+      style: { '--card-accent': station.accent, '--btn-text': btnTextColor },
+    });
+
+    // ── Header
+    const stepBadge = el('div', { className: 'card-step-badge', 'aria-hidden': 'true' },
+      String(station.step)
+    );
+
+    const titleArea = el('div', { className: 'card-title-area' },
+      el('h2', { className: 'card-title' }, station.title),
+      el('div', { className: 'card-subtitle' }, station.subtitle),
+    );
+
+    card.appendChild(el('div', { className: 'card-header' }, titleArea, stepBadge));
+
+    // ── Badges row
+    const statusChip = el('span', {
+      className: `status-chip status-chip--${station.status.toLowerCase()}`,
+      role: 'status',
+    },
+      el('span', { className: 'status-chip--dot', 'aria-hidden': 'true' }),
+      station.status
+    );
+
+    const countBadge = el('span', { className: 'feature-count-badge' },
+      `${station.features.length} features`
+    );
+
+    const doneBadge = el('span', { className: 'done-badge', 'aria-live': 'polite' }, '✓ done');
+
+    card.appendChild(el('div', { className: 'card-badges' }, statusChip, countBadge, doneBadge));
+
+    // ── Features
+    const featureList = el('ul', { className: 'card-features', 'aria-label': 'Features' });
+    station.features.forEach(f => {
+      featureList.appendChild(el('li', {}, f));
+    });
+    card.appendChild(featureList);
+
+    // ── Footer: actions + QR
+    // E-028: when demoUrl is empty, hide the button — href="" resolves to self.
+    const demoLink = el('a', Object.assign(
+      {
+        className: 'btn-demo',
+        'aria-label': `Open ${station.title} demo`,
+      },
+      station.demoUrl
+        ? { href: station.demoUrl, target: '_blank', rel: 'noopener noreferrer' }
+        : { 'aria-disabled': 'true', style: { display: 'none' } }
+    ), 'Open demo ↗');
+
+    const toggleBtn = el('button', {
+      className: 'btn-done-toggle',
+      type: 'button',
+      'aria-pressed': 'false',
+      'aria-label': `Mark ${station.title} as done`,
+      onclick(e) {
+        const c = e.currentTarget.closest('.card');
+        const isDone = c.classList.toggle('is-done');
+        e.currentTarget.setAttribute('aria-pressed', String(isDone));
+        e.currentTarget.textContent = isDone ? '↩ Undo' : '☐ Mark done';
+      },
+    }, '☐ Mark done');
+
+    const urlFallback = el('span', { className: 'url-fallback' }, station.demoUrl);
+
+    const actions = el('div', { className: 'card-actions' }, demoLink, toggleBtn, urlFallback);
+
+    // QR code
+    const qrBox   = el('div', { className: 'qr-box', 'aria-hidden': 'true' });
+    const qrLabel = el('div', { className: 'qr-label' }, 'Scan QR');
+    const qrWrap  = el('div', { className: 'qr-container' }, qrBox, qrLabel);
+
+    const cardFooter = el('div', { className: 'card-footer' }, actions, qrWrap);
+    card.appendChild(cardFooter);
+
+    grid.appendChild(card);
+
+    // Render QR code (client-side, no server needed)
+    if (!qrOffline) {
+      try {
+        new QRCode(qrBox, {
+          text:          station.demoUrl,
+          width:         66,
+          height:        66,
+          colorDark:     '#0D1117',
+          colorLight:    '#FFFFFF',
+          correctLevel:  QRCode.CorrectLevel.M,
+        });
+      } catch (err) {
+        // Graceful fallback: show URL text
+        qrBox.innerHTML = '';
+        urlFallback.style.display = 'block';
+        qrLabel.style.display = 'none';
+      }
+    } else {
+      // QR lib not loaded (offline)
+      qrBox.style.display = 'none';
+      qrLabel.style.display = 'none';
+      urlFallback.style.display = 'block';
+    }
+  });
+})();
+
+
+/* ─── Footer ────────────────────────────────────────────────────────── */
+(function buildFooter() {
+  document.getElementById('footer-partnership').textContent = CONFIG.footerText;
+  document.getElementById('footer-meta').textContent =
+    `${CONFIG.sessionDate} · ${CONFIG.sessionLocation}`;
+})();
+
+
+/* ─── SVG icon helpers ──────────────────────────────────────────────── */
+function svgIcon(path, size) {
+  const s = size || 14;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width',  s);
+  svg.setAttribute('height', s);
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('aria-hidden', 'true');
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', path);
+  svg.appendChild(p);
+  return svg;
+}
+
+function calendarIcon() {
+  return svgIcon('M8 2v4m8-4v4M3 10h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z');
+}
+
+function locationIcon() {
+  return svgIcon('M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5z');
+}
+
+function teamIcon() {
+  return svgIcon('M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m22 0v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75');
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "verdict": "needs_fix",
+  "summary": "All 81 validation checks pass and the implementation is technically solid, but three event-blocking issues remain: stale 'July 2025' session date, four placeholder demoUrls that will encode broken QR codes, and a terminology collision (L1/L2/L3 means SAE driving automation levels to Subaru engineers — not service tiers).",
+  "findings": [
+    {
+      "severity": "major",
+      "title": "sessionDate is 'July 2025' — over a year stale at event time",
+      "file": "index.html",
+      "line": 712,
+      "suggestion": "Replace `sessionDate: 'July 2025'` in CONFIG with the confirmed real event date (e.g. 'July 2026' or an exact date string like '2 July 2026'). This value is rendered in the hero meta chip and footer — visible to the delegation from the moment they enter the room."
+    },
+    {
+      "severity": "major",
+      "title": "All four demoUrl values are fake placeholder domains",
+      "file": "index.html",
+      "line": 729,
+      "suggestion": "Replace demoUrl placeholders in CONFIG.stations (lines ~729, ~746, ~761, ~775) with real, reachable URLs before the event. The QR codes encode these URLs verbatim — scanning on demo day will yield DNS failures or 404s. This directly breaks the US-3 requirement ('QR code from configurable URL'). The E-028 guard that hides the button when demoUrl is empty does NOT protect against syntactically valid but non-existent URLs."
+    },
+    {
+      "severity": "major",
+      "title": "L1/L2/L3 terminology collision with SAE driving automation levels",
+      "file": "index.html",
+      "line": 763,
+      "suggestion": "For a Subaru automotive engineering delegation, 'L1 / L2 / L3' immediately connotes SAE J3016 driving automation levels (Driver Assistance / Partial Automation / Conditional Automation). Using the same notation for maintenance service tiers will cause confusion or misreading of FPT's capability. Rename to 'Tier 1 / Tier 2 / Tier 3 service flow' or 'Basic / Standard / Advanced maintenance flow' in CONFIG.stations[2].features."
+    },
+    {
+      "severity": "minor",
+      "title": "qrcodejs v1.0.0 is an unmaintained CDN package (last release 2015)",
+      "file": "index.html",
+      "line": 10,
+      "suggestion": "The cdnjs-hosted qrcodejs library has had zero updates since 2015-01-28. For a public-facing kiosk demo with executive visitors, depending on a dead library is a reputational and stability risk. SRI hash is present (good), so integrity is ensured, but the library has no known CVE fixes or API improvements since that date. If the QR feature must remain, consider inlining a minified modern alternative (qr-creator, davidshimjs fork, or a ~2 KB pure-JS implementation) to eliminate the CDN dependency entirely."
+    },
+    {
+      "severity": "minor",
+      "title": "Google Fonts CDN may be blocked on corporate network — font fallback degrades brand look",
+      "file": "index.html",
+      "line": 9,
+      "suggestion": "The page depends on fonts.googleapis.com for Inter. If FPT Tower's network restricts external CDNs (common in enterprise/automotive-adjacent environments), Inter silently falls back to system-ui — still readable but noticeably less polished for a P1 demo event. Self-hosting a WOFF2 subset inline or as a local file alongside index.html would make the page truly self-contained."
+    },
+    {
+      "severity": "minor",
+      "title": "Cards 3 & 4 have only 2 features each vs 6 and 4 for Cards 1 & 2 — visually imbalanced grid",
+      "file": "index.html",
+      "line": 762,
+      "suggestion": "In the 2×2 grid, AMS AI Agent (2 features) and Nami PM AI Agent (2 features) will show significant blank whitespace compared to Digital Key (6 features) and OTA Management (4 features). This can implicitly signal less mature products to the delegation. Expand CONFIG.stations[2].features to include sub-steps like 'Predictive maintenance alerts', 'Vehicle health dashboard', 'Parts recommendation engine'; expand CONFIG.stations[3].features with 'Sprint velocity tracking', 'Risk heatmap visualisation', 'Real-time stakeholder updates'."
+    },
+    {
+      "severity": "minor",
+      "title": "Japanese greeting needs native-speaker sign-off before delegation arrives",
+      "file": "index.html",
+      "line": 709,
+      "suggestion": "Spec explicitly flags 'confirm with native speaker'. The current form 'ようこそ FPT へ' is grammatically acceptable but informal. A more natural courtesy greeting for a business delegation is 'FPT へようこそ' (standard signage form) or 'FPT にようこそいらっしゃいました' (more formal). The ideographic comma variant 'ようこそ、FPT へ' is also acceptable. Confirm with a native speaker before the event — misphrased Japanese in a welcome board for a Japanese delegation is a significant cultural misstep."
+    }
+  ]
+}
