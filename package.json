@@ -1,0 +1,9 @@
+{
+  "name": "subaru-fpt-landing",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Landing page chào mừng đoàn Subaru đến thăm FPT Office",
+  "scripts": {
+    "test": "node --test app.test.js"
+  }
+}
