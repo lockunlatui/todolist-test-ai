@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chào mừng Subaru đến FPT Office</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body { background: #0a0e1a; color: #fff; }
+
+    /* ── Section base ─────────────────────────────────────────────────────── */
+    .section {
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      scroll-snap-align: start;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /*  SECTION 1 — WELCOME BANNER                                            */
+    /* ─────────────────────────────────────────────────────────────────────── */
+
+    #banner {
+      background: radial-gradient(ellipse at 60% 40%, #001e4d 0%, #0a0e1a 70%);
+    }
+
+    /* Particle canvas sits behind everything */
+    #particles-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .banner-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(24px, 4vh, 48px);
+      max-width: 1400px;
+      width: 100%;
+      padding: 0 clamp(24px, 5vw, 80px);
+      text-align: center;
+    }
+
+    .logos-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(32px, 6vw, 96px);
+      flex-wrap: wrap;
+    }
+
+    .logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-label {
+      font-size: clamp(11px, 1.2vw, 15px);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* SVG logo sizing */
+    .logo-fpt  svg { width: clamp(100px, 12vw, 180px); height: auto; }
+    .logo-sub  svg { width: clamp(110px, 13vw, 200px); height: auto; }
+
+    .divider-x {
+      width: 2px;
+      height: clamp(80px, 12vh, 140px);
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.35), transparent);
+      flex-shrink: 0;
+    }
+
+    .banner-title {
+      font-size: clamp(26px, 4.2vw, 64px);
+      font-weight: 700;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #ffffff 0%, #a8d8f0 60%, #009FDA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .banner-subtitle {
+      font-size: clamp(14px, 1.6vw, 22px);
+      opacity: 0.75;
+      max-width: 680px;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: clamp(20px, 3vh, 36px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.55;
+      animation: bounce 2s ease-in-out infinite;
+      z-index: 1;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .scroll-hint svg { width: 24px; height: 24px; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /*  SECTION 2 — PRODUCT SLIDES                                            */
+    /* ─────────────────────────────────────────────────────────────────────── */
+
+    #slides-section {
+      background: #080b14;
+      flex-direction: column;
+    }
+
+    .slides-header {
+      position: absolute;
+      top: clamp(16px, 2.5vh, 28px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 1.1vw, 14px);
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      white-space: nowrap;
+      z-index: 5;
+    }
+
+    /* Slide viewport */
+    .slides-viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .slides-track {
+      display: flex;
+      height: 100%;
+      transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    /* Individual slide */
+    .slide {
+      min-width: 100vw;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(40px, 6vw, 100px) clamp(24px, 5vw, 80px);
+      text-align: center;
+      position: relative;
+    }
+
+    .slide-icon {
+      width: clamp(64px, 9vw, 130px);
+      height: clamp(64px, 9vw, 130px);
+      border-radius: 28%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: clamp(20px, 3vh, 36px);
+      box-shadow: 0 8px 40px rgba(0,0,0,.5);
+    }
+
+    .slide-icon svg { width: 55%; height: 55%; }
+
+    .slide-product-label {
+      font-size: clamp(10px, 1vw, 13px);
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-size: clamp(30px, 5.5vw, 80px);
+      font-weight: 800;
+      line-height: 1.05;
+      margin-bottom: clamp(14px, 2vh, 24px);
+    }
+
+    .slide-desc {
+      font-size: clamp(14px, 1.5vw, 20px);
+      opacity: 0.7;
+      max-width: min(700px, 85vw);
+      line-height: 1.6;
+      margin-bottom: clamp(20px, 3vh, 40px);
+    }
+
+    .slide-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .tag {
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: clamp(11px, 1vw, 14px);
+      font-weight: 600;
+      border: 1.5px solid;
+      letter-spacing: .04em;
+    }
+
+    /* Slide colour themes */
+    .slide-dk    { background: radial-gradient(ellipse at 50% 60%, #0d1f3c 0%, #080b14 80%); }
+    .slide-ota   { background: radial-gradient(ellipse at 50% 40%, #0d2b1f 0%, #080b14 80%); }
+    .slide-ams   { background: radial-gradient(ellipse at 50% 50%, #1f0d33 0%, #080b14 80%); }
+    .slide-nami  { background: radial-gradient(ellipse at 50% 55%, #1f1a09 0%, #080b14 80%); }
+
+    /* Icon backgrounds */
+    .icon-dk   { background: linear-gradient(135deg, #1a4db5, #009FDA); }
+    .icon-ota  { background: linear-gradient(135deg, #0d8c50, #00d27a); }
+    .icon-ams  { background: linear-gradient(135deg, #7b2fbf, #b563f7); }
+    .icon-nami { background: linear-gradient(135deg, #b8790f, #f5a623); }
+
+    /* ── Controls ──────────────────────────────────────────────────────────── */
+
+    .slide-controls {
+      position: absolute;
+      bottom: clamp(16px, 3vh, 32px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: clamp(12px, 2vw, 24px);
+      z-index: 10;
+    }
+
+    .ctrl-btn {
+      width: clamp(38px, 4vw, 52px);
+      height: clamp(38px, 4vw, 52px);
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 200ms, border-color 200ms, transform 150ms;
+      flex-shrink: 0;
+    }
+    .ctrl-btn:hover  { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.5); }
+    .ctrl-btn:active { transform: scale(0.93); }
+    .ctrl-btn svg    { width: 40%; height: 40%; }
+
+    /* Dots */
+    .dots {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.3);
+      cursor: pointer;
+      transition: background 250ms, transform 250ms, width 250ms;
+      border: none;
+    }
+    .dot.active {
+      background: #fff;
+      transform: scale(1.35);
+      width: 22px;
+      border-radius: 4px;
+    }
+
+    /* Autoplay toggle */
+    .autoplay-btn {
+      width: clamp(38px, 4vw, 52px);
+      height: clamp(38px, 4vw, 52px);
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 200ms, border-color 200ms, transform 150ms;
+    }
+    .autoplay-btn:hover  { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.5); }
+    .autoplay-btn.playing { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.5); }
+    .autoplay-btn svg { width: 42%; height: 42%; }
+
+    /* Progress bar */
+    .progress-bar-wrap {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: rgba(255,255,255,.08);
+      z-index: 6;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #009FDA, #b563f7);
+      transition: width linear;
+    }
+
+    /* Slide counter */
+    .slide-counter {
+      position: absolute;
+      top: clamp(16px, 2.5vh, 28px);
+      right: clamp(20px, 3vw, 40px);
+      font-size: clamp(11px, 1vw, 14px);
+      opacity: 0.45;
+      font-weight: 600;
+      letter-spacing: .08em;
+      z-index: 5;
+    }
+
+    /* Arrow nav (left/right edges) */
+    .edge-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(40px, 5vw, 64px);
+      height: clamp(40px, 5vw, 64px);
+      background: rgba(255,255,255,.06);
+      border: 1.5px solid rgba(255,255,255,.15);
+      color: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: background 200ms, border-color 200ms, opacity 200ms;
+      opacity: 0.6;
+    }
+    .edge-btn:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.4); opacity: 1; }
+    .edge-btn svg { width: 45%; height: 45%; }
+    .edge-btn-left  { left: clamp(12px, 2vw, 28px); }
+    .edge-btn-right { right: clamp(12px, 2vw, 28px); }
+
+    /* ── 1920×1080 enhancement ─────────────────────────────────────────────── */
+    @media (min-width: 1920px) {
+      .banner-title    { font-size: 72px; }
+      .banner-subtitle { font-size: 24px; }
+      .slide-title     { font-size: 90px; }
+      .slide-desc      { font-size: 22px; max-width: 800px; }
+      .logos-row       { gap: 112px; }
+      .divider-x       { height: 160px; }
+      .slide-icon      { width: 150px; height: 150px; margin-bottom: 44px; }
+      .slide-tags .tag { font-size: 15px; padding: 8px 20px; }
+    }
+
+    /* ── Reduced motion ────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .slides-track { transition: none; }
+      .scroll-hint  { animation: none; }
+      .progress-bar { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!--  SECTION 1 — WELCOME BANNER                                           -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section" id="banner" aria-label="Chào mừng Subaru">
+    <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+    <div class="banner-content">
+      <div class="logos-row">
+        <!-- FPT Logo -->
+        <div class="logo-wrap logo-fpt">
+          <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="FPT Logo">
+            <!-- Hexagon shape -->
+            <polygon points="100,8 185,55 185,145 100,192 15,145 15,55" fill="#009FDA"/>
+            <!-- FPT text -->
+            <text x="100" y="115" text-anchor="middle" font-family="Arial Black,sans-serif"
+                  font-size="62" font-weight="900" fill="#ffffff" letter-spacing="2">FPT</text>
+          </svg>
+          <span class="logo-label">FPT Software</span>
+        </div>
+
+        <div class="divider-x" aria-hidden="true"></div>
+
+        <!-- Subaru Logo -->
+        <div class="logo-wrap logo-sub">
+          <svg viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Subaru Logo">
+            <!-- Outer ring -->
+            <circle cx="110" cy="80" r="76" stroke="#003087" stroke-width="6" fill="none"/>
+            <!-- Big star (left) -->
+            <ellipse cx="70" cy="68" rx="28" ry="18" fill="#003087" transform="rotate(-20 70 68)"/>
+            <ellipse cx="70" cy="68" rx="18" ry="10" fill="#6399CE" transform="rotate(-20 70 68)"/>
+            <!-- 5 small stars (cluster right) -->
+            <ellipse cx="128" cy="52" rx="16" ry="10" fill="#003087" transform="rotate(-15 128 52)"/>
+            <ellipse cx="128" cy="52" rx="9"  ry="5.5" fill="#6399CE" transform="rotate(-15 128 52)"/>
+
+            <ellipse cx="152" cy="68" rx="14" ry="9" fill="#003087" transform="rotate(10 152 68)"/>
+            <ellipse cx="152" cy="68" rx="8"  ry="5" fill="#6399CE" transform="rotate(10 152 68)"/>
+
+            <ellipse cx="148" cy="94" rx="14" ry="9" fill="#003087" transform="rotate(25 148 94)"/>
+            <ellipse cx="148" cy="94" rx="8"  ry="5" fill="#6399CE" transform="rotate(25 148 94)"/>
+
+            <ellipse cx="126" cy="106" rx="13" ry="8" fill="#003087" transform="rotate(-5 126 106)"/>
+            <ellipse cx="126" cy="106" rx="7.5" ry="4.5" fill="#6399CE" transform="rotate(-5 126 106)"/>
+
+            <ellipse cx="100" cy="96" rx="13" ry="8" fill="#003087" transform="rotate(-30 100 96)"/>
+            <ellipse cx="100" cy="96" rx="7.5" ry="4.5" fill="#6399CE" transform="rotate(-30 100 96)"/>
+
+            <!-- SUBARU text -->
+            <text x="110" y="170" text-anchor="middle" font-family="Arial,sans-serif"
+                  font-size="22" font-weight="700" fill="#003087" letter-spacing="6">SUBARU</text>
+          </svg>
+          <span class="logo-label">Subaru Corporation</span>
+        </div>
+      </div>
+
+      <h1 class="banner-title">Chào mừng Subaru<br>đến FPT Office!</h1>
+      <p class="banner-subtitle">
+        Trân trọng chào đón đoàn đại biểu Subaru thăm và làm việc cùng FPT Software.<br>
+        Cùng khám phá hành trình chuyển đổi số thế hệ mới.
+      </p>
+    </div>
+
+    <div class="scroll-hint" aria-label="Cuộn xuống để xem demo sản phẩm">
+      <span>Khám phá sản phẩm</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!--  SECTION 2 — PRODUCT SLIDES                                           -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section" id="slides-section" aria-label="Demo sản phẩm">
+    <span class="slides-header">Giải pháp công nghệ FPT Software</span>
+    <span class="slide-counter" id="slide-counter" aria-live="polite">1 / 4</span>
+
+    <div class="slides-viewport" role="region" aria-label="Product slides">
+      <div class="slides-track" id="slides-track">
+
+        <!-- Slide 1 — DK -->
+        <article class="slide slide-dk" aria-roledescription="slide" aria-label="DK">
+          <div class="slide-icon icon-dk" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="10" width="36" height="28" rx="4" stroke="#fff" stroke-width="3"/>
+              <path d="M16 24h16M16 18h10M16 30h8" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="36" cy="12" r="5" fill="#f5a623"/>
+              <text x="36" y="15.5" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">!</text>
+            </svg>
+          </div>
+          <p class="slide-product-label">Product 1</p>
+          <h2 class="slide-title" style="color:#4db8f0;">DK</h2>
+          <p class="slide-desc">
+            Nền tảng quản lý tài liệu và kiến thức số — giúp doanh nghiệp lưu trữ, tìm kiếm và chia sẻ tri thức một cách thông minh, tức thì.
+          </p>
+          <div class="slide-tags">
+            <span class="tag" style="color:#4db8f0; border-color:#4db8f066;">Document Management</span>
+            <span class="tag" style="color:#4db8f0; border-color:#4db8f066;">Knowledge Base</span>
+            <span class="tag" style="color:#4db8f0; border-color:#4db8f066;">AI Search</span>
+          </div>
+        </article>
+
+        <!-- Slide 2 — OTA -->
+        <article class="slide slide-ota" aria-roledescription="slide" aria-label="OTA">
+          <div class="slide-icon icon-ota" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="24" r="16" stroke="#fff" stroke-width="3"/>
+              <path d="M24 8v4M24 36v4M8 24h4M36 24h4" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M18 24l4 4 8-8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="slide-product-label">Product 2</p>
+          <h2 class="slide-title" style="color:#00d27a;">OTA</h2>
+          <p class="slide-desc">
+            Over-The-Air update platform cho hệ thống nhúng và thiết bị IoT — cập nhật firmware an toàn, từ xa, không gián đoạn vận hành.
+          </p>
+          <div class="slide-tags">
+            <span class="tag" style="color:#00d27a; border-color:#00d27a66;">OTA Update</span>
+            <span class="tag" style="color:#00d27a; border-color:#00d27a66;">Embedded Systems</span>
+            <span class="tag" style="color:#00d27a; border-color:#00d27a66;">IoT</span>
+          </div>
+        </article>
+
+        <!-- Slide 3 — AMS AI Agent -->
+        <article class="slide slide-ams" aria-roledescription="slide" aria-label="AMS AI Agent">
+          <div class="slide-icon icon-ams" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="20" r="10" stroke="#fff" stroke-width="3"/>
+              <path d="M24 10v-4M14 20H8M40 20h-6M17 13l-3-3M31 13l3-3" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              <path d="M14 32c0-5.5 4.5-10 10-10s10 4.5 10 10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="24" cy="20" r="4" fill="#fff" opacity=".85"/>
+            </svg>
+          </div>
+          <p class="slide-product-label">Product 3</p>
+          <h2 class="slide-title" style="color:#b563f7;">AMS AI Agent</h2>
+          <p class="slide-desc">
+            Hệ thống AI Agent cho quản lý tài sản doanh nghiệp — tự động hoá quy trình, phân tích dữ liệu và đưa ra khuyến nghị thông minh theo thời gian thực.
+          </p>
+          <div class="slide-tags">
+            <span class="tag" style="color:#b563f7; border-color:#b563f766;">AI Agent</span>
+            <span class="tag" style="color:#b563f7; border-color:#b563f766;">Asset Management</span>
+            <span class="tag" style="color:#b563f7; border-color:#b563f766;">Automation</span>
+          </div>
+        </article>
+
+        <!-- Slide 4 — Nami PM -->
+        <article class="slide slide-nami" aria-roledescription="slide" aria-label="Nami PM">
+          <div class="slide-icon icon-nami" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="8" width="32" height="32" rx="6" stroke="#fff" stroke-width="3"/>
+              <path d="M16 20h16M16 26h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="34" cy="14" r="6" fill="#f5a623"/>
+              <path d="M31 14l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="slide-product-label">Product 4</p>
+          <h2 class="slide-title" style="color:#f5a623;">Nami PM</h2>
+          <p class="slide-desc">
+            AI-powered Project Management Assistant — giúp đội ngũ lên kế hoạch, phân công task, theo dõi tiến độ và ra quyết định nhanh hơn với trợ lý AI luôn sẵn sàng.
+          </p>
+          <div class="slide-tags">
+            <span class="tag" style="color:#f5a623; border-color:#f5a62366;">Project Management</span>
+            <span class="tag" style="color:#f5a623; border-color:#f5a62366;">AI Assistant</span>
+            <span class="tag" style="color:#f5a623; border-color:#f5a62366;">Agile</span>
+          </div>
+        </article>
+      </div><!-- /slides-track -->
+    </div><!-- /slides-viewport -->
+
+    <!-- Edge navigation -->
+    <button class="edge-btn edge-btn-left" id="btn-prev" aria-label="Slide trước">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <button class="edge-btn edge-btn-right" id="btn-next" aria-label="Slide tiếp theo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
+
+    <!-- Bottom controls -->
+    <nav class="slide-controls" aria-label="Điều hướng slide">
+      <button class="ctrl-btn" id="btn-prev-sm" aria-label="Slide trước">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+
+      <div class="dots" role="tablist" aria-label="Chọn slide">
+        <button class="dot active" data-index="0" role="tab" aria-selected="true"  aria-label="DK"></button>
+        <button class="dot"        data-index="1" role="tab" aria-selected="false" aria-label="OTA"></button>
+        <button class="dot"        data-index="2" role="tab" aria-selected="false" aria-label="AMS AI Agent"></button>
+        <button class="dot"        data-index="3" role="tab" aria-selected="false" aria-label="Nami PM"></button>
+      </div>
+
+      <button class="autoplay-btn playing" id="btn-autoplay" aria-label="Dừng tự động chuyển slide" aria-pressed="true">
+        <svg id="icon-pause" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="6" y="5" width="4" height="14" rx="1"/>
+          <rect x="14" y="5" width="4" height="14" rx="1"/>
+        </svg>
+        <svg id="icon-play" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+
+      <button class="ctrl-btn" id="btn-next-sm" aria-label="Slide tiếp theo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Auto-play progress bar -->
+    <div class="progress-bar-wrap" aria-hidden="true">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </section>
+
+  <script type="module">
+    import { SlideController } from './app.js';
+
+    // ── Particle background ───────────────────────────────────────────────────
+
+    const canvas  = document.getElementById('particles-canvas');
+    const ctx     = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function makeParticle() {
+      return {
+        x:  Math.random() * canvas.width,
+        y:  Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r:  Math.random() * 1.8 + 0.4,
+        a:  Math.random() * 0.7 + 0.15,
+      };
+    }
+
+    function initParticles(n = 80) {
+      particles = Array.from({ length: n }, makeParticle);
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(100,190,255,${p.a})`;
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height)  p.vy *= -1;
+      }
+      requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+    resize();
+    initParticles();
+    drawParticles();
+
+    // ── Slide controller ──────────────────────────────────────────────────────
+
+    const TOTAL = 4;
+    const AUTO_PLAY_DELAY = 5000;
+
+    const ctrl = new SlideController(TOTAL, { autoPlayDelay: AUTO_PLAY_DELAY });
+
+    const track        = document.getElementById('slides-track');
+    const dots         = Array.from(document.querySelectorAll('.dot'));
+    const counter      = document.getElementById('slide-counter');
+    const progressBar  = document.getElementById('progress-bar');
+    const autoplayBtn  = document.getElementById('btn-autoplay');
+    const iconPause    = document.getElementById('icon-pause');
+    const iconPlay     = document.getElementById('icon-play');
+
+    // Render on change
+    ctrl.on('change', ({ to }) => renderSlide(to));
+
+    function renderSlide(index) {
+      // Move track
+      track.style.transform = `translateX(-${index * 100}vw)`;
+
+      // Update dots
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === index);
+        d.setAttribute('aria-selected', String(i === index));
+      });
+
+      // Update counter
+      counter.textContent = `${index + 1} / ${TOTAL}`;
+
+      // Restart progress bar
+      resetProgress();
+    }
+
+    // ── Progress bar ──────────────────────────────────────────────────────────
+
+    let progressStart = null;
+    let progressRaf   = null;
+
+    function resetProgress() {
+      cancelAnimationFrame(progressRaf);
+      progressBar.style.transition = 'none';
+      progressBar.style.width = '0%';
+
+      if (ctrl.isAutoPlaying()) {
+        requestAnimationFrame(() => {
+          progressBar.style.transition = `width ${AUTO_PLAY_DELAY}ms linear`;
+          progressBar.style.width = '100%';
+        });
+      }
+    }
+
+    // ── Auto-play ─────────────────────────────────────────────────────────────
+
+    ctrl.on('autoplay', ({ active }) => {
+      autoplayBtn.classList.toggle('playing', active);
+      autoplayBtn.setAttribute('aria-pressed', String(active));
+      autoplayBtn.setAttribute('aria-label', active ? 'Dừng tự động chuyển slide' : 'Bật tự động chuyển slide');
+      iconPause.style.display = active ? '' : 'none';
+      iconPlay.style.display  = active ? 'none' : '';
+      if (active) {
+        progressBar.style.transition = `width ${AUTO_PLAY_DELAY}ms linear`;
+        progressBar.style.width = '100%';
+      } else {
+        progressBar.style.transition = 'none';
+        progressBar.style.width = '0%';
+      }
+    });
+
+    ctrl.startAutoPlay();
+
+    // ── Button bindings ───────────────────────────────────────────────────────
+
+    document.getElementById('btn-prev').addEventListener('click', () => ctrl.prev());
+    document.getElementById('btn-next').addEventListener('click', () => ctrl.next());
+    document.getElementById('btn-prev-sm').addEventListener('click', () => ctrl.prev());
+    document.getElementById('btn-next-sm').addEventListener('click', () => ctrl.next());
+
+    dots.forEach(d => {
+      d.addEventListener('click', () => ctrl.goTo(Number(d.dataset.index)));
+    });
+
+    autoplayBtn.addEventListener('click', () => {
+      if (ctrl.isAutoPlaying()) ctrl.stopAutoPlay();
+      else ctrl.startAutoPlay();
+    });
+
+    // ── Keyboard navigation ───────────────────────────────────────────────────
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') ctrl.next();
+      if (e.key === 'ArrowLeft')  ctrl.prev();
+    });
+
+    // ── Touch swipe ───────────────────────────────────────────────────────────
+
+    let touchStartX = null;
+
+    document.getElementById('slides-section').addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+
+    document.getElementById('slides-section').addEventListener('touchend', e => {
+      if (touchStartX === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) dx < 0 ? ctrl.next() : ctrl.prev();
+      touchStartX = null;
+    }, { passive: true });
+
+    // Initial render
+    renderSlide(0);
+  </script>
+</body>
+</html>
