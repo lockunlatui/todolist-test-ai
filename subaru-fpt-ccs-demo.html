@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subaru × FPT CCS — Demo Session</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* ================================================================
+       DESIGN TOKENS
+    ================================================================ */
+    :root {
+      --fpt-blue:   #0072BC;
+      --fpt-orange: #F37021;
+      --fpt-green:  #6CC24A;
+      --ink:        #0B1F33;
+      --paper:      #F5F8FC;
+      --ink-60:     rgba(11, 31, 51, 0.6);
+      --ink-30:     rgba(11, 31, 51, 0.3);
+      --surface:    #FFFFFF;
+      --border:     #D6E4EF;
+
+      /* Fluid type: scales from 1080p → 4K via vw */
+      --t-xs:   clamp(0.625rem, 0.75vw,  0.8125rem);
+      --t-sm:   clamp(0.75rem,  0.9vw,   0.9375rem);
+      --t-base: clamp(0.875rem, 1.05vw,  1.0625rem);
+      --t-md:   clamp(1rem,     1.3vw,   1.3125rem);
+      --t-lg:   clamp(1.125rem, 1.6vw,   1.625rem);
+      --t-xl:   clamp(1.5rem,   2.2vw,   2.25rem);
+      --t-2xl:  clamp(2rem,     3.5vw,   3.5rem);
+      --t-hero: clamp(2.5rem,   5vw,     5rem);
+
+      --radius:  clamp(8px,  0.75vw, 14px);
+      --gap:     clamp(10px, 1.1vw,  18px);
+      --pad-h:   clamp(20px, 3vw,    56px);
+      --pad-v:   clamp(10px, 1.2vh,  18px);
+    }
+
+    /* ================================================================
+       RESET & BASE
+    ================================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      height: 100%;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ================================================================
+       HEADER
+    ================================================================ */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--pad-v) var(--pad-h);
+      background: var(--ink);
+      flex-shrink: 0;
+      gap: 12px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.2vw, 20px);
+    }
+
+    .wm-fpt {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: var(--t-lg);
+      color: #fff;
+      letter-spacing: 0.06em;
+    }
+    .wm-fpt em { color: var(--fpt-orange); font-style: normal; }
+
+    .hdr-sep {
+      width: 1px;
+      height: clamp(18px, 2.2vh, 32px);
+      background: rgba(255,255,255,0.2);
+    }
+
+    .hdr-tagline {
+      font-size: var(--t-sm);
+      font-weight: 600;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.04em;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1vw, 16px);
+    }
+
+    .wm-subaru {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: var(--t-md);
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.85);
+      text-transform: uppercase;
+    }
+
+    .hdr-badge {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: clamp(3px,0.4vh,5px) clamp(8px,0.8vw,14px);
+      border-radius: 20px;
+    }
+
+    /* ================================================================
+       HERO
+    ================================================================ */
+    .hero {
+      position: relative;
+      padding: clamp(14px, 2vh, 30px) var(--pad-h);
+      background: linear-gradient(130deg, var(--ink) 0%, #163c5a 100%);
+      color: #fff;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    /* decorative glow */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -5%;
+      width: 55vw;
+      height: 180%;
+      background: radial-gradient(ellipse at center, rgba(0,114,188,0.18) 0%, transparent 68%);
+      pointer-events: none;
+    }
+
+    /* colour strip at bottom */
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: clamp(3px, 0.3vw, 5px);
+      background: linear-gradient(90deg, var(--fpt-blue) 0%, var(--fpt-orange) 50%, var(--fpt-green) 100%);
+    }
+
+    .hero-inner { position: relative; }
+
+    .hero-greeting {
+      font-size: var(--t-md);
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      font-style: italic;
+      margin-bottom: clamp(4px, 0.5vh, 8px);
+      letter-spacing: 0.02em;
+    }
+
+    .hero-hl {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: var(--t-hero);
+      line-height: 1.04;
+      letter-spacing: -0.025em;
+      margin-bottom: clamp(6px, 0.7vh, 12px);
+    }
+
+    .hero-hl .brand-subaru { color: var(--fpt-blue); }
+
+    .hero-sub {
+      font-size: var(--t-xl);
+      font-weight: 500;
+      color: rgba(255,255,255,0.82);
+      margin-bottom: clamp(10px, 1.4vh, 20px);
+      letter-spacing: -0.01em;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(6px, 0.7vw, 12px);
+    }
+
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: clamp(5px, 0.5vw, 8px);
+      font-size: var(--t-sm);
+      font-weight: 500;
+      color: rgba(255,255,255,0.78);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: clamp(4px,0.5vh,7px) clamp(10px,1vw,16px);
+      border-radius: 20px;
+    }
+
+    .meta-chip svg {
+      width: clamp(12px, 1.2vw, 16px);
+      height: clamp(12px, 1.2vw, 16px);
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    /* ================================================================
+       AGENDA STRIP
+    ================================================================ */
+    .agenda-strip {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: clamp(8px, 1vh, 14px) var(--pad-h);
+      flex-shrink: 0;
+    }
+
+    .agenda-label {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-60);
+      margin-bottom: clamp(6px, 0.7vh, 10px);
+    }
+
+    .agenda-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      list-style: none;
+    }
+
+    .agenda-step {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: clamp(7px, 0.7vw, 12px);
+      min-width: 0;
+    }
+
+    .agenda-step + .agenda-step::before {
+      content: '';
+      width: clamp(16px, 2.5vw, 48px);
+      height: 1px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .step-num {
+      width:  clamp(26px, 2.6vw, 40px);
+      height: clamp(26px, 2.6vw, 40px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: var(--t-sm);
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .step-info { min-width: 0; }
+
+    .step-title {
+      font-size: var(--t-sm);
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .step-sub {
+      font-size: var(--t-xs);
+      color: var(--ink-60);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 1400px) { .step-sub { display: none; } }
+
+    /* ================================================================
+       STATIONS SECTION
+    ================================================================ */
+    .stations-section {
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: var(--gap) var(--pad-h);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stations-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    /* ================================================================
+       STATION CARD
+    ================================================================ */
+    .station-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.15s ease;
+      min-height: 0;
+    }
+
+    .station-card:hover {
+      box-shadow: 0 6px 28px rgba(11,31,51,0.11);
+      transform: translateY(-2px);
+    }
+
+    .station-card.done {
+      opacity: 0.65;
+    }
+
+    .card-accent-bar {
+      height: clamp(4px, 0.4vw, 6px);
+      flex-shrink: 0;
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: clamp(10px, 1.2vw, 20px);
+      min-height: 0;
+    }
+
+    /* — card header — */
+    .card-hdr {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: clamp(8px, 0.9vh, 14px);
+      flex-shrink: 0;
+    }
+
+    .card-hdr-left {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 0.8vw, 14px);
+      min-width: 0;
+    }
+
+    .card-icon {
+      width:  clamp(34px, 3.4vw, 52px);
+      height: clamp(34px, 3.4vw, 52px);
+      border-radius: clamp(6px, 0.7vw, 10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon svg {
+      width: 54%;
+      height: 54%;
+      color: #fff;
+      stroke: currentColor;
+    }
+
+    .card-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: var(--t-lg);
+      color: var(--ink);
+      line-height: 1.2;
+    }
+
+    .card-subtitle {
+      font-size: var(--t-xs);
+      font-weight: 500;
+      color: var(--ink-60);
+      margin-top: 2px;
+    }
+
+    /* — badges — */
+    .card-badges {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px clamp(8px,0.7vw,12px);
+      border-radius: 20px;
+    }
+
+    .badge-ready {
+      background: rgba(108,194,74,0.12);
+      color: #3a8520;
+      border: 1px solid rgba(108,194,74,0.35);
+    }
+
+    .badge-live {
+      background: rgba(243,112,33,0.12);
+      color: #b04e06;
+      border: 1px solid rgba(243,112,33,0.35);
+      animation: pulse-badge 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-badge {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.55; }
+    }
+
+    .done-badge {
+      display: none;
+      font-size: var(--t-xs);
+      font-weight: 700;
+      padding: 3px clamp(8px,0.7vw,12px);
+      border-radius: 20px;
+      background: rgba(108,194,74,0.18);
+      color: #3a8520;
+      border: 1px solid rgba(108,194,74,0.4);
+    }
+
+    .station-card.done .done-badge { display: block; }
+
+    /* — features — */
+    .card-features {
+      flex: 1 1 auto;
+      min-height: 0;
+      margin-bottom: clamp(8px, 0.9vh, 14px);
+    }
+
+    .features-label {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-60);
+      margin-bottom: clamp(4px, 0.5vh, 8px);
+    }
+
+    .features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(3px, 0.35vh, 6px);
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(6px, 0.6vw, 10px);
+      font-size: var(--t-sm);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    .feat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 0.46em;
+      flex-shrink: 0;
+    }
+
+    /* — card footer — */
+    .card-foot {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1vw, 16px);
+      padding-top: clamp(8px, 0.8vh, 12px);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .qr-wrap {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-wrap canvas,
+    .qr-wrap img {
+      display: block;
+      border-radius: 4px;
+    }
+
+    .qr-fallback {
+      display: none;         /* shown by JS when CDN fails */
+      width:  clamp(48px, 4.8vw, 68px);
+      height: clamp(48px, 4.8vw, 68px);
+      border: 1.5px dashed var(--border);
+      border-radius: 4px;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .qr-fallback-text {
+      font-size: 8px;
+      color: var(--ink-60);
+      text-align: center;
+      word-break: break-all;
+      line-height: 1.3;
+    }
+
+    .card-actions {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(4px, 0.5vh, 8px);
+    }
+
+    .btn-demo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(5px, 0.5vw, 8px);
+      padding: clamp(6px, 0.65vh, 9px) clamp(12px, 1.1vw, 18px);
+      border-radius: 6px;
+      font-size: var(--t-sm);
+      font-weight: 700;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .btn-demo:hover { opacity: 0.85; }
+
+    .btn-demo svg {
+      width: clamp(11px, 1.1vw, 14px);
+      height: clamp(11px, 1.1vw, 14px);
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .demo-url {
+      font-size: var(--t-xs);
+      color: var(--ink-60);
+      word-break: break-all;
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ================================================================
+       FOOTER
+    ================================================================ */
+    .site-footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--pad-v) var(--pad-h);
+      flex-shrink: 0;
+      gap: 12px;
+    }
+
+    .footer-brand {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: var(--t-base);
+      color: #fff;
+      letter-spacing: 0.04em;
+    }
+
+    .footer-brand .x { color: var(--fpt-orange); margin: 0 3px; }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 0.8vw, 14px);
+      font-size: var(--t-xs);
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--fpt-green);
+      flex-shrink: 0;
+      animation: pulse-dot 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1;   transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.75); }
+    }
+
+    /* ================================================================
+       RESPONSIVE — graceful degradation down to 1280px
+    ================================================================ */
+    @media (max-width: 1279px) {
+      .stations-grid {
+        grid-template-columns: 1fr 1fr;
+        overflow-y: auto;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .stations-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <!--
+    QR code library — loaded asynchronously.
+    If CDN is unavailable the page still works: JS falls back to showing
+    the URL text in a dashed box instead of a QR image.
+  -->
+  <script>
+    (function () {
+      'use strict';
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+      s.onload  = function () { window.__QR_READY = true;  renderQR(); };
+      s.onerror = function () { window.__QR_READY = false; showAllFallbacks(); };
+      document.head.appendChild(s);
+    }());
+  </script>
+
+  <script>
+    /* ==============================================================
+       CONFIG — single source of truth; no hard-coded data below
+    ============================================================== */
+    var CONFIG = {
+      session: {
+        date:     'July 1, 2026',
+        location: 'FPT Office, Hanoi',
+        hostTeam: 'FPT Connected Car Services'
+      },
+      stations: [
+        {
+          id:       'digital-key',
+          step:     1,
+          title:    'Digital Key',
+          subtitle: 'CCC4 Standard',
+          icon:     'key',
+          accent:   '#0072BC',
+          gradient: null,
+          status:   'Ready',
+          demoUrl:  'https://demo.fpt-iov.com/digital-key',
+          features: [
+            'Remote lock/unlock',
+            'Owner pairing',
+            'Key sharing',
+            'Auto lock/unlock (approach/walk-away)',
+            'Engine start/stop',
+            'Manage key lifecycle (issue, revoke, expire)'
+          ]
+        },
+        {
+          id:       'ota-management',
+          step:     2,
+          title:    'OTA Management',
+          subtitle: 'Fleet Software Update',
+          icon:     'cloud',
+          accent:   '#F37021',
+          gradient: null,
+          status:   'Ready',
+          demoUrl:  'https://demo.fpt-iov.com/ota',
+          features: [
+            'Successful OTA update',
+            'Anti-Rollback (downgrade prevention)',
+            'Fleet campaign (multi-VIN parallel update)',
+            'Resume download (interruption resilience)'
+          ]
+        },
+        {
+          id:       'ams-ai-agent',
+          step:     3,
+          title:    'AMS AI Agent',
+          subtitle: 'Maintenance Intelligence',
+          icon:     'wrench',
+          accent:   '#6CC24A',
+          gradient: null,
+          status:   'Live',
+          demoUrl:  'https://demo.fpt-iov.com/ams',
+          features: [
+            'L1/L2/L3 maintenance service flow concept driven by AI Agent',
+            'Live demo: L1 and L2 use cases'
+          ]
+        },
+        {
+          id:       'nami-pm',
+          step:     4,
+          title:    'Nami PM AI Agent',
+          subtitle: 'Project Intelligence',
+          icon:     'chat',
+          accent:   '#0072BC',
+          gradient: 'linear-gradient(135deg, #0072BC 0%, #F37021 100%)',
+          status:   'Live',
+          demoUrl:  'https://demo.fpt-iov.com/nami',
+          features: [
+            'Monitor projects with AI assistant',
+            'Manage tasks/scope/risks through chat conversation'
+          ]
+        }
+      ]
+    };
+
+    /* ==============================================================
+       INLINE SVG ICONS
+    ============================================================== */
+    var ICONS = {
+      key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+           '<circle cx="7.5" cy="15.5" r="5.5"/>' +
+           '<path d="M21 2l-9.6 9.6M15 8l3 3"/></svg>',
+
+      cloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+             '<polyline points="16 16 12 12 8 16"/>' +
+             '<line x1="12" y1="12" x2="12" y2="21"/>' +
+             '<path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>',
+
+      wrench: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+
+      chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+
+      calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>' +
+                '<line x1="16" y1="2" x2="16" y2="6"/>' +
+                '<line x1="8" y1="2" x2="8" y2="6"/>' +
+                '<line x1="3" y1="10" x2="21" y2="10"/></svg>',
+
+      pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+           '<path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>' +
+           '<circle cx="12" cy="10" r="3"/></svg>',
+
+      users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+             '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>' +
+             '<circle cx="9" cy="7" r="4"/>' +
+             '<path d="M23 21v-2a4 4 0 0 0-3-3.87"/>' +
+             '<path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+
+      external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+                '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>' +
+                '<polyline points="15 3 21 3 21 9"/>' +
+                '<line x1="10" y1="14" x2="21" y2="3"/></svg>'
+    };
+
+    /* ==============================================================
+       HTML ESCAPE HELPERS
+    ============================================================== */
+    function esc(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escUrl(s) {
+      /* Safely encode for use in href; preserve URL structure */
+      try { return new URL(String(s)).href; }
+      catch (_) { return '#'; }
+    }
+
+    /* ==============================================================
+       RENDER — HEADER
+    ============================================================== */
+    function renderHeader() {
+      return '<header class="site-header" role="banner">' +
+        '<div class="header-left">' +
+          '<div class="wm-fpt" aria-label="FPT">FPT<em>.</em></div>' +
+          '<div class="hdr-sep" role="separator"></div>' +
+          '<div class="hdr-tagline">Connected Car Services</div>' +
+        '</div>' +
+        '<div class="header-right">' +
+          '<div class="wm-subaru" aria-label="SUBARU">SUBARU</div>' +
+          '<div class="hdr-badge">Demo Session</div>' +
+        '</div>' +
+      '</header>';
+    }
+
+    /* ==============================================================
+       RENDER — HERO
+    ============================================================== */
+    function renderHero(session) {
+      return '<section class="hero" role="region" aria-labelledby="hero-hl">' +
+        '<div class="hero-inner">' +
+          '<p class="hero-greeting" lang="ja">ようこそ FPT へ</p>' +
+          '<h1 class="hero-hl" id="hero-hl">' +
+            'Welcome,&nbsp;<span class="brand-subaru">Subaru</span>' +
+          '</h1>' +
+          '<p class="hero-sub">FPT Connected Car Services \u2014 Demo Session</p>' +
+          '<div class="hero-meta" role="list" aria-label="Session details">' +
+            '<div class="meta-chip" role="listitem">' + ICONS.calendar + '<span>' + esc(session.date) + '</span></div>' +
+            '<div class="meta-chip" role="listitem">' + ICONS.pin      + '<span>' + esc(session.location) + '</span></div>' +
+            '<div class="meta-chip" role="listitem">' + ICONS.users    + '<span>' + esc(session.hostTeam) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+      '</section>';
+    }
+
+    /* ==============================================================
+       RENDER — AGENDA STRIP
+    ============================================================== */
+    function renderAgenda(stations) {
+      var steps = stations.map(function (s) {
+        var bg = s.gradient ? s.gradient : s.accent;
+        return '<li class="agenda-step">' +
+          '<div class="step-num" style="background:' + esc(bg) + ';" aria-hidden="true">' + s.step + '</div>' +
+          '<div class="step-info">' +
+            '<div class="step-title">' + esc(s.title) + '</div>' +
+            '<div class="step-sub">'  + esc(s.subtitle) + '</div>' +
+          '</div>' +
+        '</li>';
+      }).join('');
+
+      return '<nav class="agenda-strip" aria-label="Demo agenda">' +
+        '<div class="agenda-label">Demo Agenda</div>' +
+        '<ol class="agenda-steps">' + steps + '</ol>' +
+      '</nav>';
+    }
+
+    /* ==============================================================
+       RENDER — STATION CARD
+    ============================================================== */
+    function renderCard(station) {
+      var accentBg   = station.gradient || station.accent;
+      var accentSolid = station.accent;
+
+      var featureItems = station.features.map(function (f) {
+        return '<li>' +
+          '<span class="feat-dot" style="background:' + esc(accentSolid) + ';" aria-hidden="true"></span>' +
+          '<span>' + esc(f) + '</span>' +
+        '</li>';
+      }).join('');
+
+      var badgeClass = station.status === 'Live' ? 'badge-live' : 'badge-ready';
+
+      return '<article class="station-card"' +
+          ' data-id="' + esc(station.id) + '"' +
+          ' role="region"' +
+          ' aria-label="Demo station ' + station.step + ': ' + esc(station.title) + '"' +
+        '>' +
+        '<div class="card-accent-bar" style="background:' + esc(accentBg) + ';" aria-hidden="true"></div>' +
+        '<div class="card-body">' +
+
+          /* header */
+          '<div class="card-hdr">' +
+            '<div class="card-hdr-left">' +
+              '<div class="card-icon" style="background:' + esc(accentBg) + ';" aria-hidden="true">' +
+                (ICONS[station.icon] || ICONS.chat) +
+              '</div>' +
+              '<div>' +
+                '<div class="card-title">' + esc(station.title) + '</div>' +
+                '<div class="card-subtitle">' + esc(station.subtitle) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="card-badges">' +
+              '<span class="status-badge ' + badgeClass + '" aria-label="Status: ' + esc(station.status) + '">' +
+                esc(station.status) +
+              '</span>' +
+              '<span class="done-badge" aria-label="Completed">\u2713 Done</span>' +
+            '</div>' +
+          '</div>' +
+
+          /* features */
+          '<div class="card-features">' +
+            '<div class="features-label">Features</div>' +
+            '<ul class="features-list" aria-label="Features">' + featureItems + '</ul>' +
+          '</div>' +
+
+          /* footer: QR + button */
+          '<div class="card-foot">' +
+            '<div class="qr-wrap">' +
+              '<div id="qr-' + esc(station.id) + '"' +
+                   ' data-url="' + esc(station.demoUrl) + '"' +
+                   ' aria-label="QR code for ' + esc(station.title) + ' demo">' +
+                '<div class="qr-fallback" id="qr-fb-' + esc(station.id) + '">' +
+                  '<div class="qr-fallback-text">' + esc(station.demoUrl) + '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="card-actions">' +
+              '<a class="btn-demo"' +
+                 ' href="' + escUrl(station.demoUrl) + '"' +
+                 ' target="_blank"' +
+                 ' rel="noopener noreferrer"' +
+                 ' style="background:' + esc(accentBg) + ';"' +
+                 ' aria-label="Open ' + esc(station.title) + ' demo">' +
+                ICONS.external +
+                'Open Demo' +
+              '</a>' +
+              '<div class="demo-url" title="' + esc(station.demoUrl) + '">' +
+                esc(station.demoUrl) +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+
+        '</div>' +
+      '</article>';
+    }
+
+    /* ==============================================================
+       RENDER — FOOTER
+    ============================================================== */
+    function renderFooter() {
+      var year = new Date().getFullYear();
+      return '<footer class="site-footer" role="contentinfo">' +
+        '<div class="footer-brand">' +
+          'FPT <span class="x" aria-hidden="true">\u00D7</span> Subaru \u2014 Connected Car Services' +
+        '</div>' +
+        '<div class="footer-right">' +
+          '<div class="live-dot" aria-hidden="true" title="Session active"></div>' +
+          '<span>FPT Smart Automotive &middot; ' + year + '</span>' +
+        '</div>' +
+      '</footer>';
+    }
+
+    /* ==============================================================
+       MAIN RENDER — assembles full page from CONFIG
+    ============================================================== */
+    function renderApp() {
+      var cardsHtml = CONFIG.stations.map(renderCard).join('');
+
+      var html =
+        renderHeader() +
+        renderHero(CONFIG.session) +
+        renderAgenda(CONFIG.stations) +
+        '<main class="stations-section">' +
+          '<div class="stations-grid" id="stations-grid">' +
+            cardsHtml +
+          '</div>' +
+        '</main>' +
+        renderFooter();
+
+      document.getElementById('app').innerHTML = html;
+
+      /* QR codes — handle all timing cases:
+         - __QR_READY === true  → library loaded (cached/fast), render now
+         - __QR_READY === false → CDN failed before DOM was ready; show fallbacks now
+         - __QR_READY === undefined → still loading; onload/onerror will call renderQR / showAllFallbacks */
+      if (window.__QR_READY === true) {
+        renderQR();
+      } else if (window.__QR_READY === false) {
+        showAllFallbacks();
+      }
+
+      /* Done-toggle: event delegation avoids per-card listeners */
+      document.getElementById('stations-grid').addEventListener('click', function (e) {
+        var card = e.target.closest('.station-card');
+        if (!card) return;
+        /* Do not toggle when clicking the Open Demo link */
+        if (e.target.closest('a.btn-demo')) return;
+        card.classList.toggle('done');
+      });
+    }
+
+    /* ==============================================================
+       QR CODE GENERATION — called once library is ready
+    ============================================================== */
+    var QR_PX = Math.round(Math.min(window.innerWidth * 0.048, 66));
+    QR_PX = Math.max(QR_PX, 48);
+
+    function renderQR() {
+      if (typeof QRCode === 'undefined') { showAllFallbacks(); return; }
+
+      CONFIG.stations.forEach(function (station) {
+        var wrap = document.getElementById('qr-' + station.id);
+        if (!wrap) return;
+
+        /* Clear any previous attempt */
+        while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+
+        try {
+          /* eslint-disable no-new */
+          new QRCode(wrap, {
+            text:         station.demoUrl,
+            width:        QR_PX,
+            height:       QR_PX,
+            colorDark:    '#0B1F33',
+            colorLight:   '#FFFFFF',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        } catch (err) {
+          showFallback(station.id, station.demoUrl);
+        }
+      });
+    }
+
+    function showAllFallbacks() {
+      CONFIG.stations.forEach(function (s) { showFallback(s.id, s.demoUrl); });
+    }
+
+    function showFallback(id, url) {
+      var wrap = document.getElementById('qr-' + id);
+      if (!wrap) return;
+      while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+      var fb = document.createElement('div');
+      fb.className = 'qr-fallback';
+      fb.style.display = 'flex';
+      var txt = document.createElement('div');
+      txt.className = 'qr-fallback-text';
+      txt.textContent = url;
+      fb.appendChild(txt);
+      wrap.appendChild(fb);
+    }
+
+    /* ==============================================================
+       BOOT
+    ============================================================== */
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderApp);
+    } else {
+      renderApp();
+    }
+  </script>
+</body>
+</html>
