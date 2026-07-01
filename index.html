@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome, Subaru — FPT CCS Demo Session</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* ─────────────────────────────────────────────────────────────
+     * Brand tokens — AC-5: ONLY these five colours are used.
+     * All rgba() values below are derived from the same RGB triples.
+     * ───────────────────────────────────────────────────────────── */
+    :root {
+      --fpt-blue:   #0072BC;
+      --fpt-orange: #F37021;
+      --fpt-green:  #6CC24A;
+      --ink:        #0B1F33;
+      --paper:      #F5F8FC;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+     * Reset
+     * ───────────────────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+     * Page shell — 3-row grid (header | main | footer)
+     * overflow:hidden → no scrollbars in kiosk mode (AC-4)
+     * clamp() → scales from 1280 px → 4K without breaking (AC-8)
+     * ───────────────────────────────────────────────────────────── */
+    body {
+      height: 100dvh;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding:
+        clamp(0.625rem, 1.3vh, 1.25rem)
+        clamp(1.25rem,  2.5vw, 3.5rem);
+      gap: clamp(0.4rem, 0.8vh, 0.9rem);
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+     * Header — text wordmarks only, no images (AC-5)
+     * ───────────────────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .wordmarks {
+      display: flex;
+      align-items: baseline;
+      gap: clamp(0.4rem, 0.9vw, 1.1rem);
+    }
+
+    .wm-fpt {
+      font-size: clamp(1.3rem, 2.1vw, 2.7rem);
+      font-weight: 900;
+      letter-spacing: 0.10em;
+      color: var(--fpt-blue);
+      /* TODO: replace with official FPT logo once brand kit is supplied */
+    }
+
+    .wm-sep {
+      font-size: clamp(1rem, 1.7vw, 2.1rem);
+      font-weight: 300;
+      color: var(--fpt-orange);
+    }
+
+    .wm-subaru {
+      font-size: clamp(1.3rem, 2.1vw, 2.7rem);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      color: var(--paper);
+      /* TODO: replace with official Subaru wordmark once brand kit is supplied */
+    }
+
+    .session-pill {
+      font-size: clamp(0.55rem, 0.82vw, 0.88rem);
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--fpt-orange);
+      border: 1.5px solid var(--fpt-orange);
+      padding: 0.28em 0.9em;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+     * Main — hero + 2×2 station grid
+     * ───────────────────────────────────────────────────────────── */
+    .main {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: clamp(0.4rem, 0.9vh, 0.9rem);
+      min-height: 0;
+    }
+
+    /* ── Hero (AC-1) ─────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+    }
+
+    .hero-headline {
+      font-size: clamp(2.6rem, 5.4vw, 7.2rem);
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      color: var(--paper);
+    }
+
+    .hero-headline .accent {
+      color: var(--fpt-blue);
+    }
+
+    .hero-subtitle {
+      margin-top: clamp(0.15rem, 0.4vh, 0.45rem);
+      font-size: clamp(0.9rem, 1.65vw, 2rem);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: var(--fpt-orange);
+    }
+
+    /* ── 2×2 station grid (AC-2) ─────────────────────────────── */
+    .station-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.55rem, 1.1vw, 1.4rem);
+      min-height: 0;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+     * Station card
+     * --accent is injected per-card from CONFIG.stations[].accent
+     * ───────────────────────────────────────────────────────────── */
+    .card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: clamp(0.5rem, 0.9vw, 1rem);
+      padding: clamp(0.7rem, 1.3vw, 1.65rem);
+      /* paper at 6 % opacity → surface layer */
+      background: rgba(245, 248, 252, 0.06);
+      border: 1px solid rgba(245, 248, 252, 0.10);
+      border-top: 3px solid var(--accent, var(--fpt-blue));
+      border-radius: clamp(0.55rem, 0.9vw, 1.05rem);
+      overflow: hidden;
+      transition: background 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .card.visited {
+      /* fpt-green at 9 % opacity */
+      background: rgba(108, 194, 74, 0.09);
+      box-shadow: 0 0 0 1.5px var(--fpt-green);
+    }
+
+    /* ── Card body (left column) ─────────────────────────────── */
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.2rem, 0.45vh, 0.45rem);
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .card-label {
+      font-size: clamp(0.55rem, 0.82vw, 0.95rem);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent, var(--fpt-blue));
+    }
+
+    .card-title {
+      font-size: clamp(0.95rem, 1.55vw, 1.95rem);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--paper);
+    }
+
+    .card-desc {
+      font-size: clamp(0.62rem, 0.92vw, 1.05rem);
+      line-height: 1.5;
+      /* paper at 65 % opacity */
+      color: rgba(245, 248, 252, 0.65);
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.22em;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.45em;
+      font-size: clamp(0.58rem, 0.82vw, 0.95rem);
+      /* paper at 80 % opacity */
+      color: rgba(245, 248, 252, 0.80);
+      line-height: 1.4;
+    }
+
+    .feature-list li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 0.33em;
+      height: 0.33em;
+      border-radius: 50%;
+      background: var(--accent, var(--fpt-blue));
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65em;
+      margin-top: auto;
+      padding-top: 0.2em;
+    }
+
+    /* Open demo button — always present for AC-7 */
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.32em 0.85em;
+      background: var(--accent, var(--fpt-blue));
+      color: var(--paper);
+      font-family: inherit;
+      font-size: clamp(0.58rem, 0.82vw, 0.95rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      border: none;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .open-btn:hover,
+    .open-btn:focus-visible {
+      opacity: 0.80;
+      outline: 2px solid var(--paper);
+      outline-offset: 2px;
+    }
+
+    .visited-mark {
+      display: none;
+      font-size: clamp(0.55rem, 0.78vw, 0.88rem);
+      font-weight: 600;
+      color: var(--fpt-green);
+    }
+
+    .card.visited .visited-mark {
+      display: inline;
+    }
+
+    /* ── QR panel (right column) — AC-3, AC-7 ───────────────── */
+    .card-qr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: clamp(0.25rem, 0.45vh, 0.45rem);
+      flex-shrink: 0;
+    }
+
+    .qr-canvas-wrap {
+      background: var(--paper);
+      border-radius: 0.38rem;
+      padding: 4px;
+      line-height: 0;
+      flex-shrink: 0;
+    }
+
+    /* Offline fallback container (AC-7) */
+    .qr-fallback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.5rem;
+      /* paper at 25 % opacity border */
+      border: 1px dashed rgba(245, 248, 252, 0.25);
+      border-radius: 0.4rem;
+      text-align: center;
+    }
+
+    .qr-url-text {
+      font-size: clamp(0.48rem, 0.62vw, 0.70rem);
+      /* paper at 55 % opacity */
+      color: rgba(245, 248, 252, 0.55);
+      word-break: break-all;
+      max-width: clamp(78px, 7.8vw, 128px);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+     * Footer
+     * ───────────────────────────────────────────────────────────── */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      /* paper at 8 % opacity rule */
+      border-top: 1px solid rgba(245, 248, 252, 0.08);
+      padding-top: clamp(0.35rem, 0.65vh, 0.6rem);
+      font-size: clamp(0.55rem, 0.78vw, 0.84rem);
+      /* paper at 35 % opacity */
+      color: rgba(245, 248, 252, 0.35);
+    }
+
+    .progress-track {
+      display: flex;
+      align-items: center;
+      gap: 0.45em;
+    }
+
+    .p-dot {
+      width: 0.48em;
+      height: 0.48em;
+      border-radius: 50%;
+      /* paper at 20 % opacity */
+      background: rgba(245, 248, 252, 0.20);
+      transition: background 0.3s ease;
+    }
+
+    .p-dot.done {
+      background: var(--fpt-green);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header" id="hdr"></header>
+  <div    class="main"   id="main"></div>
+  <footer class="footer" id="ftr"></footer>
+
+  <!--
+    QR lib from CDN.
+    If this script fails (offline / CDN down), typeof QRious === 'undefined'
+    and each card renders its fallback URL text + Open demo button (AC-7).
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+  <script>
+    /* ================================================================
+     *  ██████╗ ██████╗ ███╗  ██╗███████╗██╗ ██████╗
+     * ██╔════╝██╔═══██╗████╗ ██║██╔════╝██║██╔════╝
+     * ██║     ██║   ██║██╔██╗██║█████╗  ██║██║  ███╗
+     * ██║     ██║   ██║██║╚████║██╔══╝  ██║██║   ██║
+     * ╚██████╗╚██████╔╝██║ ╚███║██║     ██║╚██████╔╝
+     *  ╚═════╝ ╚═════╝ ╚═╝  ╚══╝╚═╝     ╚═╝ ╚═════╝
+     *
+     * ═══════════════════════════════════════════════════════════════
+     * CONFIG — edit ONLY this block to update session content (AC-6)
+     * ═══════════════════════════════════════════════════════════════ */
+    var CONFIG = {
+      /** Guest name shown in hero headline: "Welcome, {welcomeGuest}" */
+      welcomeGuest: 'Subaru',
+
+      /** Full subtitle line below the headline */
+      sessionTitle: 'FPT Connected Car Services \u2014 Demo Session',
+
+      /** ISO-8601 date displayed in header badge and footer */
+      sessionDate: '2026-07-01',
+
+      /**
+       * Exactly 4 stations — rendered as a 2\xd72 grid (AC-2).
+       *
+       * accent: CSS variable name (without '--') for the station colour.
+       *         Allowed values: 'fpt-blue' | 'fpt-orange' | 'fpt-green'
+       *
+       * demoUrl: absolute URL the QR code encodes and the button opens (AC-3).
+       */
+      stations: [
+        {
+          label: '01',
+          title: 'Remote Vehicle Control',
+          description:
+            'Real-time monitoring and secure remote commands from any device.',
+          features: [
+            'Lock \u2f Unlock doors',
+            'Engine Start \u2f Stop',
+            'Climate pre-conditioning',
+          ],
+          demoUrl: 'https://demo.fpt-ccs.com/remote-control',
+          accent: 'fpt-blue',
+        },
+        {
+          label: '02',
+          title: 'OTA Software Update',
+          description:
+            'Secure over-the-air firmware and map-update campaign management.',
+          features: [
+            'Delta-patch delivery',
+            'Rollback protection',
+            'Campaign dashboard',
+          ],
+          demoUrl: 'https://demo.fpt-ccs.com/ota',
+          accent: 'fpt-orange',
+        },
+        {
+          label: '03',
+          title: 'Fleet & Telematics',
+          description:
+            'Enterprise fleet visibility, driver analytics and compliance reporting.',
+          features: [
+            'Live GPS tracking',
+            'Trip replay',
+            'Driver behaviour score',
+          ],
+          demoUrl: 'https://demo.fpt-ccs.com/fleet',
+          accent: 'fpt-green',
+        },
+        {
+          label: '04',
+          title: 'Connected Navigation',
+          description:
+            'Cloud-connected HD maps with real-time POI, traffic and EV data.',
+          features: [
+            'ADAS map layer',
+            'Live traffic overlay',
+            'EV charging finder',
+          ],
+          demoUrl: 'https://demo.fpt-ccs.com/navigation',
+          accent: 'fpt-blue',
+        },
+      ],
+    };
+    /* ═══════════════════════════════════════════════════════════════
+     * END CONFIG — do not modify below this line during a demo session
+     * ═══════════════════════════════════════════════════════════════ */
+
+
+    /* ── In-memory progress state (AC: no localStorage / backend) ── */
+    var _state = { visited: {} };
+
+
+    /* ── Utilities ─────────────────────────────────────────────────── */
+
+    /**
+     * Minimal element factory — avoids innerHTML for XSS safety.
+     *
+     * @param {string} tag
+     * @param {Object|null} attrs  — key/value pairs; 'on*' keys become event listeners
+     * @param {...(Node|string|null|undefined)} children
+     * @returns {HTMLElement}
+     */
+    function el(tag, attrs) {
+      var e = document.createElement(tag);
+      if (attrs) {
+        var keys = Object.keys(attrs);
+        for (var ki = 0; ki < keys.length; ki++) {
+          var k = keys[ki];
+          var v = attrs[k];
+          if (k === 'class') {
+            e.className = v;
+          } else if (k === 'style') {
+            e.style.cssText = v;
+          } else if (k.indexOf('on') === 0 && typeof v === 'function') {
+            e.addEventListener(k.slice(2), v);
+          } else {
+            e.setAttribute(k, v);
+          }
+        }
+      }
+      for (var ci = 2; ci < arguments.length; ci++) {
+        var c = arguments[ci];
+        if (c == null) continue;
+        e.appendChild(
+          typeof c === 'string' ? document.createTextNode(c) : c
+        );
+      }
+      return e;
+    }
+
+    /** Format an ISO date string to a human-readable form. */
+    function fmtDate(iso) {
+      try {
+        return new Intl.DateTimeFormat('en-GB', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }).format(new Date(iso + 'T00:00:00'));
+      } catch (_) {
+        return iso;
+      }
+    }
+
+
+    /* ── QR helpers ────────────────────────────────────────────────── */
+
+    /** Pixel size of the QR canvas, proportional to viewport width. */
+    function qrSize() {
+      return Math.max(88, Math.round(window.innerWidth * 0.067));
+    }
+
+    /**
+     * Build the QR-code panel for a station.
+     * Falls back to plain URL text when QRious is unavailable (AC-7).
+     *
+     * @param {{ demoUrl: string }} station
+     * @returns {HTMLElement}
+     */
+    function buildQrPanel(station) {
+      var wrap = el('div', { 'class': 'card-qr' });
+
+      if (typeof QRious !== 'undefined') {
+        try {
+          var canvas = el('canvas');
+          new QRious({
+            element: canvas,
+            value: station.demoUrl,
+            size: qrSize(),
+            foreground: '#0B1F33',   /* --ink */
+            background: '#F5F8FC',   /* --paper */
+          });
+          wrap.appendChild(el('div', { 'class': 'qr-canvas-wrap' }, canvas));
+          wrap.appendChild(el('span', { 'class': 'qr-url-text' }, station.demoUrl));
+          return wrap;
+        } catch (_) {
+          /* fall through to text fallback */
+        }
+      }
+
+      /* Offline / CDN-unavailable text fallback (AC-7) */
+      wrap.appendChild(
+        el('div', { 'class': 'qr-fallback' },
+          el('span', { 'class': 'qr-url-text' }, station.demoUrl)
+        )
+      );
+      return wrap;
+    }
+
+
+    /* ── Progress tracker ──────────────────────────────────────────── */
+
+    /** Mark station idx as visited; update card + footer dot. */
+    function markVisited(idx) {
+      _state.visited[idx] = true;
+      var card = document.querySelector('.card[data-idx="' + idx + '"]');
+      if (card) card.classList.add('visited');
+      var dot = document.querySelector('.p-dot[data-idx="' + idx + '"]');
+      if (dot) dot.classList.add('done');
+    }
+
+
+    /* ── Card renderer ─────────────────────────────────────────────── */
+
+    /**
+     * Build a station card element.
+     *
+     * @param {Object} station
+     * @param {number} idx
+     * @returns {HTMLElement}
+     */
+    function buildCard(station, idx) {
+      var accentVar = 'var(--' + station.accent + ')';
+      var card = el('article', {
+        'class': 'card',
+        'style': '--accent: ' + accentVar,
+        'data-idx': String(idx),
+      });
+
+      /* ── Left column: text content ── */
+      var body = el('div', { 'class': 'card-body' });
+
+      body.appendChild(
+        el('div', { 'class': 'card-label' }, 'Station ' + station.label)
+      );
+      body.appendChild(
+        el('h2', { 'class': 'card-title' }, station.title)
+      );
+      body.appendChild(
+        el('p', { 'class': 'card-desc' }, station.description)
+      );
+
+      var ul = el('ul', { 'class': 'feature-list' });
+      for (var fi = 0; fi < station.features.length; fi++) {
+        ul.appendChild(el('li', null, station.features[fi]));
+      }
+      body.appendChild(ul);
+
+      /* Actions row — Open demo button always present (AC-7) */
+      var actions = el('div', { 'class': 'card-actions' });
+      actions.appendChild(
+        el('a', {
+          'class': 'open-btn',
+          'href': station.demoUrl,
+          'target': '_blank',
+          'rel': 'noopener noreferrer',
+          'onclick': (function (i) {
+            return function () { markVisited(i); };
+          }(idx)),
+        }, 'Open demo')
+      );
+      actions.appendChild(
+        el('span', { 'class': 'visited-mark' }, '\u2713 Visited')
+      );
+      body.appendChild(actions);
+
+      card.appendChild(body);
+
+      /* ── Right column: QR code ── */
+      card.appendChild(buildQrPanel(station));
+
+      return card;
+    }
+
+
+    /* ── Section renderers ─────────────────────────────────────────── */
+
+    function renderHeader() {
+      var hdr = document.getElementById('hdr');
+      hdr.appendChild(
+        el('div', { 'class': 'wordmarks' },
+          el('span', { 'class': 'wm-fpt' },    'FPT'),
+          el('span', { 'class': 'wm-sep' },    '\u00d7'),
+          el('span', { 'class': 'wm-subaru' }, 'SUBARU')
+        )
+      );
+      hdr.appendChild(
+        el('div', { 'class': 'session-pill' }, fmtDate(CONFIG.sessionDate))
+      );
+    }
+
+    function renderMain() {
+      var main = document.getElementById('main');
+
+      /* Hero — AC-1 */
+      main.appendChild(
+        el('section', { 'class': 'hero' },
+          el('h1', { 'class': 'hero-headline' },
+            'Welcome, ',
+            el('span', { 'class': 'accent' }, CONFIG.welcomeGuest)
+          ),
+          el('p', { 'class': 'hero-subtitle' }, CONFIG.sessionTitle)
+        )
+      );
+
+      /* 2×2 station grid — AC-2 */
+      var grid = el('div', { 'class': 'station-grid' });
+      for (var i = 0; i < CONFIG.stations.length; i++) {
+        grid.appendChild(buildCard(CONFIG.stations[i], i));
+      }
+      main.appendChild(grid);
+    }
+
+    function renderFooter() {
+      var ftr = document.getElementById('ftr');
+      ftr.appendChild(
+        el('span', null,
+          'FPT Connected Car Services \u00b7 ' + fmtDate(CONFIG.sessionDate)
+        )
+      );
+
+      var track = el('div', { 'class': 'progress-track' });
+      track.appendChild(el('span', null, 'Stations:\u00a0'));
+      for (var i = 0; i < CONFIG.stations.length; i++) {
+        track.appendChild(
+          el('div', { 'class': 'p-dot', 'data-idx': String(i) })
+        );
+      }
+      ftr.appendChild(track);
+    }
+
+
+    /* ── Bootstrap ─────────────────────────────────────────────────── */
+    (function init() {
+      try {
+        renderHeader();
+        renderMain();
+        renderFooter();
+      } catch (err) {
+        /*
+         * Kiosk safety: absorb any render error visually without re-throwing,
+         * so the page stays stable and no uncaught exception appears (AC-4).
+         */
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = [
+          'position:fixed',
+          'bottom:1rem',
+          'right:1rem',
+          'padding:.5rem 1rem',
+          'border-radius:.5rem',
+          'background:#F37021',   /* --fpt-orange */
+          'color:#F5F8FC',        /* --paper */
+          'font-family:monospace',
+          'font-size:.75rem',
+          'max-width:32ch',
+          'z-index:9999',
+        ].join(';');
+        errDiv.textContent = 'Render error: ' + (err && err.message ? err.message : String(err));
+        document.body.appendChild(errDiv);
+      }
+    }());
+  </script>
+</body>
+</html>
