@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subaru × FPT CCS — Demo Session Welcome Board</title>
+
+  <!-- Fonts: Inter from Google Fonts (degrades to system-ui offline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CONFIG — Edit this one object to update ALL page content.
+       No layout code needs to change.
+       ═══════════════════════════════════════════════════════════ -->
+  <script>
+    var CONFIG = {
+      sessionDate:     "July 1, 2026",
+      sessionLocation: "FPT Tower, Hanoi",
+      heroSubtitle:    "Connected Car Services — Technology Partnership Demo",
+      jpGreeting:      "ようこそ、スバルの皆様へ",
+
+      stations: [
+        {
+          id:      1,
+          title:   "Remote Vehicle Monitoring",
+          icon:    "🛰",
+          accent:  "#0072BC",
+          features: [
+            "Real-time GPS tracking & geofencing",
+            "Vehicle health & diagnostics dashboard",
+            "Instant alert & notification system"
+          ],
+          demoUrl: "https://demo1.fpt-ccs.com",
+          status:  "Live"
+        },
+        {
+          id:      2,
+          title:   "OTA Firmware Updates",
+          icon:    "⬆",
+          accent:  "#F37021",
+          features: [
+            "Secure over-the-air delta packages",
+            "Automatic rollback & fail-safe protection",
+            "Campaign manager & fleet targeting"
+          ],
+          demoUrl: "https://demo2.fpt-ccs.com",
+          status:  "Ready"
+        },
+        {
+          id:      3,
+          title:   "Connected Car Mobile App",
+          icon:    "📱",
+          accent:  "#6CC24A",
+          features: [
+            "Remote lock / unlock & horn control",
+            "Climate pre-conditioning",
+            "Trip history & eco-score"
+          ],
+          demoUrl: "https://demo3.fpt-ccs.com",
+          status:  "Live"
+        },
+        {
+          id:      4,
+          title:   "Fleet Analytics Platform",
+          icon:    "📊",
+          accent:  "#0072BC",
+          features: [
+            "Aggregated fleet telemetry insights",
+            "Driver behaviour scoring & coaching",
+            "Predictive maintenance alerts"
+          ],
+          demoUrl: "https://demo4.fpt-ccs.com",
+          status:  "Ready"
+        }
+      ]
+    };
+  </script>
+
+  <style>
+    /* ── Reset ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design tokens ───────────────────────────────────────── */
+    :root {
+      /* FPT brand palette */
+      --fpt-blue:   #0072BC;
+      --fpt-orange: #F37021;
+      --fpt-green:  #6CC24A;
+
+      /* Ink / paper neutrals */
+      --ink-950: #080E18;
+      --ink-900: #0D1521;
+      --ink-800: #152133;
+      --ink-700: #1E3048;
+      --ink-500: #3E5A7A;
+      --ink-400: #5A7A99;
+      --ink-200: #C5D5E5;
+      --ink-100: #EBF1F7;
+      --ink-050: #F5F8FB;
+      --paper:   #FFFFFF;
+
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* ── Base ────────────────────────────────────────────────── */
+    html, body {
+      height: 100%;
+      overflow: hidden;          /* single viewport — no scroll */
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--ink-900);
+      color: var(--paper);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       HERO
+       ══════════════════════════════════════════════════════════ */
+    .hero {
+      background: var(--fpt-blue);
+      background-image: linear-gradient(
+        135deg,
+        #00609F 0%,
+        var(--fpt-blue) 55%,
+        #0086D4 100%
+      );
+      padding: clamp(10px, 1.6vh, 24px) clamp(24px, 3vw, 64px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      border-bottom: clamp(2px, 0.25vh, 4px) solid rgba(255 255 255 / 0.18);
+    }
+
+    /* Wordmark row */
+    .wordmarks {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 0.8vw, 14px);
+      margin-bottom: clamp(4px, 0.6vh, 10px);
+    }
+
+    .wm {
+      font-size: clamp(0.75rem, 1.2vw, 1.4rem);
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: #fff;
+      background: rgba(255 255 255 / 0.15);
+      padding: clamp(2px, 0.3vh, 5px) clamp(8px, 0.8vw, 14px);
+      border-radius: 4px;
+    }
+
+    .wm-sep {
+      font-size: clamp(0.75rem, 1.2vw, 1.4rem);
+      font-weight: 300;
+      opacity: 0.6;
+    }
+
+    /* Main headline */
+    h1.hero-headline {
+      font-size: clamp(2.6rem, 4.2vw, 5.2rem);
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -0.025em;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.8rem, 1.2vw, 1.25rem);
+      font-weight: 400;
+      opacity: 0.82;
+      margin-top: clamp(4px, 0.5vh, 8px);
+    }
+
+    /* Right column */
+    .hero-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .jp-greeting {
+      font-size: clamp(0.95rem, 1.7vw, 1.9rem);
+      font-weight: 600;
+      opacity: 0.92;
+    }
+
+    .session-meta {
+      font-size: clamp(0.7rem, 0.9vw, 0.95rem);
+      opacity: 0.65;
+      margin-top: clamp(3px, 0.4vh, 6px);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       AGENDA STRIP
+       ══════════════════════════════════════════════════════════ */
+    .agenda {
+      background: var(--ink-800);
+      border-bottom: 1px solid rgba(255 255 255 / 0.07);
+      padding: 0 clamp(24px, 3vw, 64px);
+      height: clamp(68px, 8.5vh, 108px);
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.2vw, 20px);
+      flex-shrink: 0;
+    }
+
+    .agenda-label {
+      font-size: clamp(0.6rem, 0.8vw, 0.85rem);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-400);
+      white-space: nowrap;
+    }
+
+    .agenda-steps {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 0;
+    }
+
+    .agenda-step {
+      display: flex;
+      align-items: center;
+      gap: clamp(5px, 0.7vw, 10px);
+      flex: 1;
+    }
+
+    /* Arrow connector after every step except last */
+    .agenda-step:not(:last-child)::after {
+      content: "→";
+      font-size: clamp(0.85rem, 1.2vw, 1.2rem);
+      color: var(--ink-500);
+      margin-left: clamp(5px, 0.7vw, 10px);
+      flex-shrink: 0;
+    }
+
+    .step-num {
+      width:  clamp(22px, 2.2vw, 34px);
+      height: clamp(22px, 2.2vw, 34px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.65rem, 0.9vw, 0.9rem);
+      font-weight: 800;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .step-name {
+      font-size: clamp(0.65rem, 0.95vw, 0.95rem);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       CARDS GRID  (2 × 2)
+       ══════════════════════════════════════════════════════════ */
+    .cards-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: clamp(8px, 0.9vw, 14px);
+      padding: clamp(8px, 0.9vw, 14px);
+      min-height: 0;           /* allow shrink inside flex column */
+    }
+
+    /* ── Single card ──────────────────────────────────────────── */
+    .card {
+      background: var(--paper);
+      border-radius: clamp(8px, 0.7vw, 14px);
+      border-top: clamp(5px, 0.45vw, 8px) solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+      position: relative;
+      color: var(--ink-900);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 clamp(6px, 0.8vw, 14px) clamp(20px, 2.5vw, 36px) rgba(0 0 0 / 0.32);
+    }
+
+    .card:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Done overlay */
+    .card.done { opacity: 0.72; }
+
+    .done-badge {
+      display: none;
+      position: absolute;
+      top: clamp(8px, 0.8vw, 14px);
+      right: clamp(8px, 0.8vw, 14px);
+      background: var(--fpt-green);
+      color: #fff;
+      font-size: clamp(0.6rem, 0.8vw, 0.8rem);
+      font-weight: 700;
+      padding: clamp(2px, 0.2vh, 3px) clamp(6px, 0.6vw, 10px);
+      border-radius: 20px;
+      z-index: 2;
+    }
+
+    .card.done .done-badge { display: block; }
+
+    /* Card main body */
+    .card-body {
+      padding: clamp(10px, 1.1vw, 18px) clamp(12px, 1.3vw, 20px);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 0.7vh, 10px);
+      min-height: 0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(8px, 0.9vw, 14px);
+    }
+
+    .card-icon {
+      font-size: clamp(1.4rem, 1.9vw, 2.2rem);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .card-meta { flex: 1; }
+
+    h2.card-title {
+      font-size: clamp(0.9rem, 1.25vw, 1.35rem);
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--ink-900);
+    }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: clamp(0.58rem, 0.75vw, 0.78rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: clamp(1px, 0.15vh, 3px) clamp(6px, 0.6vw, 9px);
+      border-radius: 20px;
+      margin-top: clamp(3px, 0.3vh, 5px);
+    }
+
+    .status-badge::before {
+      content: "●";
+      font-size: 0.65em;
+    }
+
+    .badge-live  { background: #E6F4EE; color: #1A6E35; }
+    .badge-ready { background: #FFF0E5; color: #B35012; }
+
+    /* Feature list */
+    .features {
+      list-style: none;
+      flex: 1;
+    }
+
+    .features li {
+      font-size: clamp(0.68rem, 0.92vw, 0.92rem);
+      color: #2B4060;
+      padding: clamp(2px, 0.25vh, 4px) 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.35;
+    }
+
+    .features li::before {
+      content: "▸";
+      color: var(--accent);
+      font-size: 0.88em;
+      flex-shrink: 0;
+      margin-top: 0.1em;
+    }
+
+    /* Card footer: QR + button */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: clamp(8px, 0.9vw, 14px);
+      padding: clamp(8px, 0.9vh, 13px) clamp(12px, 1.3vw, 20px);
+      background: var(--ink-050);
+      border-top: 1px solid var(--ink-100);
+      flex-shrink: 0;
+    }
+
+    /* QR code container */
+    .qr-box {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Scale the generated canvas/img to viewport-relative size */
+    .qr-box canvas,
+    .qr-box img {
+      display: block !important;
+      width:  clamp(60px, 5.5vw, 88px) !important;
+      height: clamp(60px, 5.5vw, 88px) !important;
+      border-radius: 4px;
+    }
+
+    /* Offline fallback text */
+    .qr-fallback {
+      font-size: clamp(0.52rem, 0.68vw, 0.68rem);
+      color: var(--ink-400);
+      word-break: break-all;
+      max-width: clamp(70px, 7vw, 110px);
+    }
+
+    .qr-fallback-label {
+      display: block;
+      font-size: 0.6em;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 2px;
+      color: var(--ink-500);
+    }
+
+    /* Actions column */
+    .card-actions {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: clamp(4px, 0.45vh, 7px);
+    }
+
+    .btn-demo {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: clamp(5px, 0.6vh, 9px) clamp(10px, 1vw, 16px);
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: clamp(0.68rem, 0.92vw, 0.92rem);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.13s;
+      white-space: nowrap;
+    }
+
+    .btn-demo:hover { opacity: 0.84; }
+
+    .url-text {
+      font-size: clamp(0.52rem, 0.68vw, 0.68rem);
+      color: var(--ink-400);
+      word-break: break-all;
+      text-align: right;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════════════════════ */
+    footer {
+      background: var(--ink-800);
+      border-top: 1px solid rgba(255 255 255 / 0.07);
+      height: clamp(38px, 5vh, 62px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0 clamp(24px, 3vw, 64px);
+    }
+
+    .footer-text {
+      font-size: clamp(0.68rem, 0.95vw, 0.95rem);
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      color: var(--ink-400);
+    }
+
+    .footer-text strong { color: var(--paper); }
+
+    .footer-sep {
+      margin: 0 clamp(8px, 1vw, 18px);
+      opacity: 0.35;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── HERO ──────────────────────────────────────────────── -->
+  <header class="hero" role="banner">
+    <div class="hero-left">
+      <div class="wordmarks">
+        <span class="wm">FPT</span>
+        <span class="wm-sep">×</span>
+        <span class="wm">SUBARU</span>
+      </div>
+      <h1 class="hero-headline">Welcome, Subaru</h1>
+      <p class="hero-subtitle" id="js-subtitle"></p>
+    </div>
+    <div class="hero-right">
+      <p class="jp-greeting" id="js-jp"></p>
+      <p class="session-meta" id="js-meta"></p>
+    </div>
+  </header>
+
+  <!-- ── AGENDA STRIP ──────────────────────────────────────── -->
+  <section class="agenda" aria-label="Session agenda">
+    <span class="agenda-label">Today&rsquo;s Agenda</span>
+    <div class="agenda-steps" id="js-agenda" role="list"></div>
+  </section>
+
+  <!-- ── CARDS GRID ────────────────────────────────────────── -->
+  <main class="cards-grid" id="js-grid" aria-label="Demo stations"></main>
+
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer role="contentinfo">
+    <p class="footer-text" id="js-footer"></p>
+  </footer>
+
+  <!-- ── QR Code library (CDN; sets QRCode=null on failure) ── -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+    crossorigin="anonymous"
+    onerror="window.QRCode=null;">
+  </script>
+
+  <!-- ── Rendering ─────────────────────────────────────────── -->
+  <script>
+    /* All rendering is driven by the CONFIG object defined in <head>. */
+
+    var doneSet = {};   /* in-memory progress tracker {stationId: bool} */
+
+    /* ── Utility ── */
+    function esc(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escAttr(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    }
+
+    /* ── Hero ── */
+    function renderHero() {
+      document.getElementById('js-subtitle').textContent = CONFIG.heroSubtitle;
+      document.getElementById('js-jp').textContent       = CONFIG.jpGreeting;
+      document.getElementById('js-meta').textContent     =
+        CONFIG.sessionDate + '  ·  ' + CONFIG.sessionLocation;
+    }
+
+    /* ── Footer ── */
+    function renderFooter() {
+      document.getElementById('js-footer').innerHTML =
+        '<strong>FPT \u00D7 Subaru \u2014 Connected Car Services</strong>' +
+        '<span class="footer-sep">\u2022</span>' +
+        esc(CONFIG.sessionDate);
+    }
+
+    /* ── Agenda ── */
+    function renderAgenda() {
+      var el = document.getElementById('js-agenda');
+      CONFIG.stations.forEach(function(st) {
+        var step = document.createElement('div');
+        step.className = 'agenda-step';
+        step.setAttribute('role', 'listitem');
+        step.innerHTML =
+          '<span class="step-num" style="background:' + escAttr(st.accent) + ';">' +
+            esc(String(st.id)) +
+          '</span>' +
+          '<span class="step-name">' + esc(st.title) + '</span>';
+        el.appendChild(step);
+      });
+    }
+
+    /* ── Cards ── */
+    function renderCards() {
+      var grid = document.getElementById('js-grid');
+      CONFIG.stations.forEach(function(st) {
+        var card = buildCard(st);
+        grid.appendChild(card);
+        generateQR(st);   /* called after card is in DOM */
+      });
+    }
+
+    function buildCard(st) {
+      var badgeClass = st.status.toLowerCase() === 'live' ? 'badge-live' : 'badge-ready';
+      var featuresHtml = st.features
+        .map(function(f) { return '<li>' + esc(f) + '</li>'; })
+        .join('');
+
+      var card = document.createElement('article');
+      card.className = 'card';
+      card.style.setProperty('--accent', st.accent);
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', 'Demo station ' + st.id + ': ' + st.title + '. Click to toggle done.');
+      card.setAttribute('data-station-id', st.id);
+
+      card.innerHTML =
+        '<span class="done-badge" aria-hidden="true">\u2713 Done</span>' +
+        '<div class="card-body">' +
+          '<div class="card-header">' +
+            '<span class="card-icon" aria-hidden="true">' + esc(st.icon) + '</span>' +
+            '<div class="card-meta">' +
+              '<h2 class="card-title">' + esc(st.title) + '</h2>' +
+              '<span class="status-badge ' + badgeClass + '">' + esc(st.status) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<ul class="features" aria-label="Features">' + featuresHtml + '</ul>' +
+        '</div>' +
+        '<div class="card-footer">' +
+          '<div class="qr-box" id="qr-' + st.id + '" aria-label="QR code: ' + esc(st.title) + '"></div>' +
+          '<div class="card-actions">' +
+            '<a class="btn-demo"' +
+               ' href="' + escAttr(st.demoUrl) + '"' +
+               ' target="_blank"' +
+               ' rel="noopener noreferrer"' +
+               ' aria-label="Open demo for ' + esc(st.title) + '">' +
+              'Open demo \u2197' +
+            '</a>' +
+            '<span class="url-text">' + esc(st.demoUrl) + '</span>' +
+          '</div>' +
+        '</div>';
+
+      /* Toggle done on click (but not when clicking the demo link) */
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('a')) return;
+        toggleDone(card, st.id);
+      });
+
+      /* Keyboard support (Enter / Space) */
+      card.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleDone(card, st.id);
+        }
+      });
+
+      return card;
+    }
+
+    function toggleDone(card, id) {
+      doneSet[id] = !doneSet[id];
+      card.classList.toggle('done', !!doneSet[id]);
+    }
+
+    /* ── QR generation with offline fallback ── */
+    function generateQR(st) {
+      var container = document.getElementById('qr-' + st.id);
+      if (!container) return;
+
+      if (typeof QRCode === 'function') {
+        try {
+          new QRCode(container, {
+            text:         st.demoUrl,
+            width:        96,
+            height:       96,
+            colorDark:    '#0D1521',
+            colorLight:   '#FFFFFF',
+            correctLevel: QRCode.CorrectLevel ? QRCode.CorrectLevel.M : 0
+          });
+          return;
+        } catch (err) {
+          /* fall through to text fallback */
+        }
+      }
+
+      /* Offline / library-failed fallback: show URL as text */
+      container.innerHTML =
+        '<div class="qr-fallback">' +
+          '<span class="qr-fallback-label">Scan / Visit</span>' +
+          esc(st.demoUrl) +
+        '</div>';
+    }
+
+    /* ── Boot ── */
+    document.addEventListener('DOMContentLoaded', function() {
+      renderHero();
+      renderFooter();
+      renderAgenda();
+      renderCards();
+    });
+  </script>
+
+</body>
+</html>
