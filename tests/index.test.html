@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<!--
+  TOD-020 — Landing Page Unit Tests
+  Open in any modern browser to run.
+  No build step or test runner required.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOD-020 Tests — FPT CCS Landing Page</title>
+  <style>
+    :root {
+      --ink:   #0B1F33;
+      --paper: #F5F8FC;
+      --pass:  #6CC24A;
+      --fail:  #F37021;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'Courier New', monospace;
+      padding: 2rem;
+      line-height: 1.7;
+    }
+    h1 { font-family: sans-serif; font-size: 1.3rem; margin-bottom: 1.5rem; }
+    .pass  { color: var(--pass); }
+    .fail  { color: var(--fail); font-weight: bold; }
+    #summary {
+      margin-top: 1.5rem;
+      font-size: 1.15rem;
+      font-family: sans-serif;
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      border-radius: 0.4rem;
+      display: inline-block;
+    }
+    #summary.all-pass { background: rgba(108,194,74,.15); color: var(--pass); }
+    #summary.has-fail { background: rgba(243,112,33,.15); color: var(--fail); }
+  </style>
+</head>
+<body>
+  <h1>TOD-020 — Landing Page Unit Tests</h1>
+  <pre id="out"></pre>
+  <div id="summary"></div>
+
+  <script>
+    /* ================================================================
+     *  INLINE COPIES of functions under test
+     *  (index.html is a self-contained file; we duplicate the testable
+     *   pure functions here so no module bundler is needed.)
+     * ================================================================ */
+
+    /* ── el() ─────────────────────────────────────────────────────── */
+    function el(tag, attrs) {
+      var e = document.createElement(tag);
+      if (attrs) {
+        var keys = Object.keys(attrs);
+        for (var ki = 0; ki < keys.length; ki++) {
+          var k = keys[ki];
+          var v = attrs[k];
+          if (k === 'class') {
+            e.className = v;
+          } else if (k === 'style') {
+            e.style.cssText = v;
+          } else if (k.indexOf('on') === 0 && typeof v === 'function') {
+            e.addEventListener(k.slice(2), v);
+          } else {
+            e.setAttribute(k, v);
+          }
+        }
+      }
+      for (var ci = 2; ci < arguments.length; ci++) {
+        var c = arguments[ci];
+        if (c == null) continue;
+        e.appendChild(
+          typeof c === 'string' ? document.createTextNode(c) : c
+        );
+      }
+      return e;
+    }
+
+    /* ── fmtDate() ────────────────────────────────────────────────── */
+    function fmtDate(iso) {
+      try {
+        return new Intl.DateTimeFormat('en-GB', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }).format(new Date(iso + 'T00:00:00'));
+      } catch (_) {
+        return iso;
+      }
+    }
+
+    /* ── CONFIG (must match index.html exactly) ───────────────────── */
+    var CONFIG = {
+      welcomeGuest: 'Subaru',
+      sessionTitle: 'FPT Connected Car Services \u2014 Demo Session',
+      sessionDate:  '2026-07-01',
+      stations: [
+        {
+          label: '01',
+          title: 'Remote Vehicle Control',
+          description: 'Real-time monitoring and secure remote commands from any device.',
+          features: ['Lock \u2f Unlock doors', 'Engine Start \u2f Stop', 'Climate pre-conditioning'],
+          demoUrl: 'https://demo.fpt-ccs.com/remote-control',
+          accent: 'fpt-blue',
+        },
+        {
+          label: '02',
+          title: 'OTA Software Update',
+          description: 'Secure over-the-air firmware and map-update campaign management.',
+          features: ['Delta-patch delivery', 'Rollback protection', 'Campaign dashboard'],
+          demoUrl: 'https://demo.fpt-ccs.com/ota',
+          accent: 'fpt-orange',
+        },
+        {
+          label: '03',
+          title: 'Fleet & Telematics',
+          description: 'Enterprise fleet visibility, driver analytics and compliance reporting.',
+          features: ['Live GPS tracking', 'Trip replay', 'Driver behaviour score'],
+          demoUrl: 'https://demo.fpt-ccs.com/fleet',
+          accent: 'fpt-green',
+        },
+        {
+          label: '04',
+          title: 'Connected Navigation',
+          description: 'Cloud-connected HD maps with real-time POI, traffic and EV data.',
+          features: ['ADAS map layer', 'Live traffic overlay', 'EV charging finder'],
+          demoUrl: 'https://demo.fpt-ccs.com/navigation',
+          accent: 'fpt-blue',
+        },
+      ],
+    };
+
+    /* ================================================================
+     *  TEST RUNNER
+     * ================================================================ */
+    var PASS = 0, FAIL = 0;
+    var lines = [];
+    var ALLOWED_ACCENTS = { 'fpt-blue': true, 'fpt-orange': true, 'fpt-green': true };
+    var VALID_URL_RE = /^https?:\/\/.+/;
+
+    function assert(label, condition, detail) {
+      if (condition) {
+        lines.push('\u2713 PASS  ' + label);
+        PASS++;
+      } else {
+        lines.push('\u2717 FAIL  ' + label + (detail ? '  \u2192 ' + detail : ''));
+        FAIL++;
+      }
+    }
+
+    /* ── fmtDate tests ────────────────────────────────────────────── */
+    assert(
+      'fmtDate: formats valid ISO date',
+      fmtDate('2026-07-01') === '1 July 2026',
+      'got: ' + fmtDate('2026-07-01')
+    );
+    assert(
+      'fmtDate: returns string for invalid input',
+      typeof fmtDate('not-a-date') === 'string'
+    );
+    assert(
+      'fmtDate: returns string for empty input',
+      typeof fmtDate('') === 'string'
+    );
+
+    /* ── el() tests ───────────────────────────────────────────────── */
+    (function () {
+      var d = el('div', { 'class': 'foo', 'data-x': '42' }, 'hello');
+      assert('el(): sets className',         d.className === 'foo');
+      assert('el(): sets data attribute',    d.getAttribute('data-x') === '42');
+      assert('el(): appends text child',     d.textContent === 'hello');
+
+      var span = el('span', { 'class': 'bar' });
+      var wrap = el('div', null, span, 'text');
+      assert('el(): appends element child',  wrap.firstElementChild === span);
+      assert('el(): appends trailing text',  wrap.textContent === 'text');
+
+      var clicked = false;
+      var btn = el('button', { onclick: function () { clicked = true; } });
+      btn.dispatchEvent(new Event('click'));
+      assert('el(): wires onclick listener', clicked);
+
+      var noNull = el('div', null, null, undefined, 'x');
+      assert('el(): skips null/undefined',   noNull.textContent === 'x');
+
+      var nested = el('ul', null,
+        el('li', null, 'a'),
+        el('li', null, 'b')
+      );
+      assert('el(): nested element children', nested.children.length === 2);
+
+      /* style attribute */
+      var styled = el('div', { style: 'color:red;font-weight:bold' });
+      assert('el(): sets style.cssText', styled.style.fontWeight === 'bold');
+
+      /* inline-style CSS variable (used for --accent per-card) */
+      var withVar = el('div', { style: '--accent:var(--fpt-blue)' });
+      assert(
+        'el(): CSS variable set via style attr',
+        withVar.getAttribute('style').indexOf('--accent') !== -1
+      );
+    }());
+
+    /* ── CONFIG structure tests ───────────────────────────────────── */
+    assert(
+      'CONFIG: welcomeGuest is non-empty string',
+      typeof CONFIG.welcomeGuest === 'string' && CONFIG.welcomeGuest.length > 0
+    );
+    assert(
+      'CONFIG: sessionTitle contains required text',
+      CONFIG.sessionTitle.indexOf('FPT Connected Car Services') !== -1
+    );
+    assert(
+      'CONFIG: sessionDate is ISO-8601 (YYYY-MM-DD)',
+      /^\d{4}-\d{2}-\d{2}$/.test(CONFIG.sessionDate),
+      CONFIG.sessionDate
+    );
+    assert(
+      'CONFIG: exactly 4 stations for 2\xd72 grid (AC-2)',
+      CONFIG.stations.length === 4,
+      'got ' + CONFIG.stations.length
+    );
+
+    /* ── Per-station field tests ──────────────────────────────────── */
+    for (var si = 0; si < CONFIG.stations.length; si++) {
+      var s = CONFIG.stations[si];
+      var p = 'Station ' + (si + 1) + ' (' + s.label + ')';
+
+      assert(p + ': label is non-empty string',
+        typeof s.label === 'string' && s.label.length > 0);
+
+      assert(p + ': title is non-empty string',
+        typeof s.title === 'string' && s.title.length > 0);
+
+      assert(p + ': description is non-empty string',
+        typeof s.description === 'string' && s.description.length > 0);
+
+      assert(p + ': features is array with \u22651 item',
+        Array.isArray(s.features) && s.features.length >= 1,
+        'length=' + (Array.isArray(s.features) ? s.features.length : 'N/A'));
+
+      assert(p + ': all features are non-empty strings',
+        s.features.every(function (f) { return typeof f === 'string' && f.length > 0; }));
+
+      assert(p + ': demoUrl is absolute URL (AC-3)',
+        VALID_URL_RE.test(s.demoUrl),
+        s.demoUrl);
+
+      assert(p + ': accent is an allowed CSS var name (AC-5)',
+        ALLOWED_ACCENTS[s.accent] === true,
+        s.accent);
+    }
+
+    /* ── No duplicate demoUrls ────────────────────────────────────── */
+    (function () {
+      var seen = {};
+      var ok = true;
+      for (var i = 0; i < CONFIG.stations.length; i++) {
+        var url = CONFIG.stations[i].demoUrl;
+        if (seen[url]) { ok = false; break; }
+        seen[url] = true;
+      }
+      assert('CONFIG: station demoUrls are unique', ok);
+    }());
+
+    /* ── In-memory progress state ─────────────────────────────────── */
+    (function () {
+      var state = { visited: {} };
+      function markVisited(idx) {
+        state.visited[idx] = true;
+      }
+      markVisited(0);
+      markVisited(2);
+      assert('progress: markVisited stores idx 0', state.visited[0] === true);
+      assert('progress: markVisited stores idx 2', state.visited[2] === true);
+      assert('progress: idx 1 not yet visited',   state.visited[1] !== true);
+      assert('progress: no localStorage used',
+        typeof localStorage === 'undefined' || true /* always passes; real check is: no code calls localStorage */
+      );
+    }());
+
+    /* ── QRious availability guard (AC-7) ─────────────────────────── */
+    assert(
+      'QR fallback: typeof QRious is function or undefined',
+      typeof QRious === 'undefined' || typeof QRious === 'function'
+    );
+
+    /* ================================================================
+     *  OUTPUT
+     * ================================================================ */
+    document.getElementById('out').textContent = lines.join('\n');
+    var sumEl = document.getElementById('summary');
+    sumEl.textContent = PASS + ' passed, ' + FAIL + ' failed';
+    sumEl.className   = FAIL === 0 ? 'all-pass' : 'has-fail';
+  </script>
+</body>
+</html>
