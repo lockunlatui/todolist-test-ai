@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FPT CCS Demo Session — Subaru Visit</title>
+
+  <!-- Inter typeface via Google Fonts CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── CSS Custom Properties ─────────────────────────────────────── */
+    :root {
+      --fpt-blue:   #0072BC;
+      --fpt-orange: #F37021;
+      --fpt-green:  #6CC24A;
+      --ink:        #0B1F33;
+      --paper:      #F5F8FC;
+      --white:      #FFFFFF;
+      --muted:      #6B7A8D;
+      --radius:     clamp(8px, 0.8vw, 14px);
+      --gap:        clamp(14px, 1.8vw, 28px);
+    }
+
+    /* ── Reset ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      font-size: clamp(13px, 1.1vw, 17px);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ──────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: clamp(220px, 32vh, 380px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(28px, 4vh, 60px) clamp(24px, 6vw, 100px);
+      overflow: hidden;
+
+      /* 3-colour CSS gradient animation — no JS */
+      background: linear-gradient(
+        130deg,
+        #003a7d 0%,
+        var(--fpt-blue) 20%,
+        #0b4a8a 35%,
+        #8a3500 50%,
+        var(--fpt-orange) 62%,
+        #1a6b00 78%,
+        var(--fpt-green) 100%
+      );
+      background-size: 300% 300%;
+      animation: heroGradient 14s ease infinite;
+    }
+
+    @keyframes heroGradient {
+      0%   { background-position:  0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position:  0% 50%; }
+    }
+
+    /* Dark overlay for legibility */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(11, 31, 51, 0.60);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-greeting {
+      font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.88);
+      letter-spacing: 0.12em;
+      margin-bottom: clamp(6px, 1.2vh, 14px);
+    }
+
+    .hero-headline {
+      font-size: clamp(2.8rem, 5.5vw, 5.8rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+      text-shadow: 0 2px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .hero-subline {
+      font-size: clamp(0.95rem, 2vw, 1.85rem);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.92);
+      margin-top: clamp(6px, 1.2vh, 14px);
+      letter-spacing: 0.01em;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(10px, 2vw, 20px);
+      margin-top: clamp(14px, 2.5vh, 26px);
+      justify-content: center;
+    }
+
+    .hero-meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: clamp(0.7rem, 1.1vw, 0.92rem);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      padding: 5px 14px;
+      white-space: nowrap;
+    }
+
+    /* ── AGENDA STRIP ──────────────────────────────────────────────── */
+    .agenda {
+      background: var(--ink);
+      padding: clamp(10px, 1.8vh, 22px) clamp(24px, 6vw, 100px);
+    }
+
+    .agenda-list {
+      display: flex;
+      align-items: center;
+      list-style: none;
+    }
+
+    .agenda-step {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.2vw, 16px);
+      padding: clamp(8px, 1.2vh, 14px) clamp(10px, 1.6vw, 20px);
+      border-radius: var(--radius);
+      transition: background 0.3s ease;
+    }
+
+    .agenda-step[aria-current="step"] {
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .agenda-num {
+      flex-shrink: 0;
+      width:  clamp(30px, 3vw, 46px);
+      height: clamp(30px, 3vw, 46px);
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.75rem, 1.3vw, 1.1rem);
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.4);
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+    }
+
+    .agenda-step[aria-current="step"] .agenda-num {
+      color: var(--white);
+    }
+
+    /* Per-accent colours when active */
+    .agenda-step[data-accent="blue"][aria-current="step"]     .agenda-num { border-color: var(--fpt-blue);   color: var(--fpt-blue);   background: rgba(0,114,188,0.25); }
+    .agenda-step[data-accent="orange"][aria-current="step"]   .agenda-num { border-color: var(--fpt-orange); color: var(--fpt-orange); background: rgba(243,112,33,0.25); }
+    .agenda-step[data-accent="green"][aria-current="step"]    .agenda-num { border-color: var(--fpt-green);  color: var(--fpt-green);  background: rgba(108,194,74,0.25); }
+    .agenda-step[data-accent="gradient"][aria-current="step"] .agenda-num { border-color: var(--fpt-blue);   color: var(--fpt-blue);   background: rgba(0,114,188,0.25); }
+
+    .agenda-label {
+      font-size: clamp(0.68rem, 1.05vw, 0.9rem);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.3;
+      transition: color 0.3s, font-weight 0.3s;
+    }
+
+    .agenda-step[aria-current="step"] .agenda-label {
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    .agenda-sep {
+      color: rgba(255, 255, 255, 0.18);
+      font-size: clamp(1rem, 2vw, 1.6rem);
+      flex-shrink: 0;
+      margin: 0 2px;
+      user-select: none;
+    }
+
+    /* ── MAIN / CARDS ──────────────────────────────────────────────── */
+    .main {
+      padding: clamp(20px, 3.5vh, 50px) clamp(24px, 6vw, 100px);
+      flex: 1;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--gap);
+    }
+
+    /* ── CARD ──────────────────────────────────────────────────────── */
+    .card {
+      position: relative;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 14px rgba(11, 31, 51, 0.08);
+      padding: clamp(14px, 2.2vw, 30px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.4vh, 18px);
+      cursor: pointer;
+      outline: none;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+
+      /* Top accent bar via pseudo-element so border-radius still works */
+    }
+
+    /* Solid accent bar */
+    .card::before {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      top: 0;
+      height: 4px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--card-accent, var(--fpt-blue));
+    }
+
+    /* Gradient accent bar for card 4 */
+    .card.gradient-accent::before {
+      background: linear-gradient(90deg, var(--fpt-blue), var(--fpt-orange));
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      transform: translateY(-5px) scale(1.004);
+      box-shadow: 0 14px 40px rgba(11, 31, 51, 0.16);
+    }
+
+    .card.done {
+      opacity: 0.82;
+    }
+
+    /* ── Card header ── */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-title-group { display: flex; flex-direction: column; gap: 3px; }
+
+    .card-station-label {
+      font-size: clamp(0.58rem, 0.85vw, 0.72rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--card-accent, var(--fpt-blue));
+    }
+
+    .card-title {
+      font-size: clamp(1rem, 1.7vw, 1.55rem);
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.12;
+    }
+
+    .card-badges {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    /* Status chips */
+    .chip {
+      font-size: clamp(0.58rem, 0.82vw, 0.7rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .chip-ready {
+      background: rgba(108, 194, 74, 0.15);
+      color: #318016;
+    }
+
+    .chip-live {
+      background: rgba(243, 112, 33, 0.15);
+      color: #b84200;
+      animation: chipPulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes chipPulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.5; }
+    }
+
+    .chip-count {
+      font-size: clamp(0.58rem, 0.82vw, 0.7rem);
+      font-weight: 600;
+      color: var(--muted);
+      background: var(--paper);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+
+    .chip-done {
+      display: none;
+      font-size: clamp(0.58rem, 0.82vw, 0.7rem);
+      font-weight: 700;
+      background: var(--fpt-green);
+      color: var(--white);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+
+    .card.done .chip-done { display: inline-block; }
+
+    /* ── Feature list ── */
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(3px, 0.6vh, 7px);
+      flex: 1;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      font-size: clamp(0.7rem, 1.05vw, 0.88rem);
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    .feature-list li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--card-accent, var(--fpt-blue));
+      margin-top: 0.45em;
+    }
+
+    /* ── Card footer: QR + button ── */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.6vw, 22px);
+      padding-top: clamp(8px, 1.2vh, 14px);
+      border-top: 1px solid rgba(11, 31, 51, 0.07);
+    }
+
+    .qr-container {
+      flex-shrink: 0;
+      width:  clamp(56px, 5.5vw, 84px);
+      height: clamp(56px, 5.5vw, 84px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* QRCode lib injects a canvas or img; force correct size */
+    .qr-container canvas,
+    .qr-container img {
+      display: block;
+      width:  100% !important;
+      height: 100% !important;
+      border-radius: 3px;
+    }
+
+    .qr-offline {
+      width:  100%;
+      height: 100%;
+      background: var(--paper);
+      border: 1px dashed var(--muted);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.58rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 4px;
+      line-height: 1.35;
+    }
+
+    .card-cta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .btn-open {
+      display: inline-block;
+      text-align: center;
+      text-decoration: none;
+      font-family: inherit;
+      font-size: clamp(0.68rem, 0.95vw, 0.88rem);
+      font-weight: 700;
+      padding: clamp(7px, 1vh, 11px) clamp(14px, 1.8vw, 22px);
+      border-radius: 999px;
+      border: 2px solid var(--card-accent, var(--fpt-blue));
+      color: var(--card-accent, var(--fpt-blue));
+      background: transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.18s, color 0.18s;
+    }
+
+    .btn-open:hover,
+    .btn-open:focus-visible {
+      background: var(--card-accent, var(--fpt-blue));
+      color: var(--white);
+    }
+
+    .btn-open.gradient-btn {
+      border-image: linear-gradient(90deg, var(--fpt-blue), var(--fpt-orange)) 1;
+      border-color: transparent;
+      color: var(--fpt-blue);
+    }
+
+    .btn-open.gradient-btn:hover,
+    .btn-open.gradient-btn:focus-visible {
+      background: linear-gradient(90deg, var(--fpt-blue), var(--fpt-orange));
+      color: var(--white);
+    }
+
+    .url-fallback {
+      font-size: clamp(0.56rem, 0.78vw, 0.68rem);
+      color: var(--muted);
+      word-break: break-all;
+      display: none; /* revealed when QR lib is unavailable */
+    }
+
+    /* ── FOOTER ────────────────────────────────────────────────────── */
+    .site-footer {
+      background: var(--ink);
+      text-align: center;
+      padding: clamp(10px, 1.8vh, 20px) clamp(24px, 6vw, 100px);
+    }
+
+    .site-footer p {
+      font-size: clamp(0.72rem, 1.1vw, 0.95rem);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .site-footer strong { color: var(--white); }
+
+    /* ── Responsive ────────────────────────────────────────────────── */
+    @media (max-width: 1280px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 900px) {
+      .cards-grid   { grid-template-columns: 1fr; }
+      .agenda-list  { flex-direction: column; align-items: flex-start; }
+      .agenda-sep   { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-content">
+    <p  class="hero-greeting"  id="hero-greeting"  aria-label="Japanese greeting"></p>
+    <h1 class="hero-headline"  id="hero-headline"></h1>
+    <p  class="hero-subline"   id="hero-subline"></p>
+    <div class="hero-meta" id="hero-meta" aria-label="Session details"></div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     AGENDA STRIP
+═══════════════════════════════════════════════════════════════════ -->
+<nav class="agenda" aria-label="Demo agenda">
+  <ol class="agenda-list" id="agenda-list"></ol>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     STATION CARDS
+═══════════════════════════════════════════════════════════════════ -->
+<main class="main">
+  <div class="cards-grid" id="cards-grid"></div>
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <p id="footer-text"></p>
+</footer>
+
+<!--
+  QR code library (cdnjs — MIT licence).
+  onerror sets a flag so JS degrades gracefully when offline.
+-->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+  integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSl1/yz7xrO/QWXBSVOXZF1PNpI37wDfFB0Hw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+  onerror="window._qrUnavailable=true"></script>
+
+<script>
+/* ================================================================
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  CONFIG — every piece of content lives here.               ║
+ * ║  No data is hard-coded in the layout below.                ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ * ================================================================ */
+const CONFIG = {
+
+  /* ── Session metadata ──────────────────────────────────────── */
+  session: {
+    greeting: 'ようこそ FPT へ',              // FR-2 — confirm wording with JP speaker before ship
+    headline: 'Welcome, Subaru',              // FR-1
+    subline:  'FPT Connected Car Services \u2014 Demo Session', // FR-1
+    date:     '2025-07-01',                   // FR-3 — TODO: confirm final visit date
+    location: 'FPT Office',                   // FR-3
+    hostTeam: 'FPT Connected Car Services',   // FR-3
+  },
+
+  /* ── Footer ────────────────────────────────────────────────── */
+  footer: 'FPT \u00D7 Subaru \u2014 Connected Car Services', // FR-5
+
+  /*
+   * ── Active agenda step (0-based index) ──────────────────────
+   *    Change this single variable to highlight a different step.
+   *    Set to -1 for none.                                          FR-4
+   */
+  activeStep: 0,
+
+  /* ── Demo stations ─────────────────────────────────────────── */
+  stations: [
+    {
+      id:       'digital-key',
+      order:    1,
+      title:    'Digital Key (CCC4)',
+      label:    'Station 1',
+      accent:   '#0072BC',           /* --fpt-blue */
+      accentId: 'blue',
+      status:   'ready',             /* 'ready' | 'live' */
+      demoUrl:  'https://demo.fpt-iov.com/digital-key',
+      features: [
+        'Remote lock/unlock',
+        'Owner pairing',
+        'Key sharing',
+        'Auto lock/unlock',
+        'Engine start/stop',
+        'Manage key lifecycle',
+      ],
+    },
+    {
+      id:       'ota-management',
+      order:    2,
+      title:    'OTA Management',
+      label:    'Station 2',
+      accent:   '#F37021',           /* --fpt-orange */
+      accentId: 'orange',
+      status:   'live',
+      demoUrl:  'https://demo.fpt-iov.com/ota',
+      features: [
+        'Successful OTA update',
+        'Anti-Rollback',
+        'Fleet campaign',
+        'Resume download',
+      ],
+    },
+    {
+      id:       'ams-ai-agent',
+      order:    3,
+      title:    'AMS AI Agent',
+      label:    'Station 3',
+      accent:   '#6CC24A',           /* --fpt-green */
+      accentId: 'green',
+      status:   'live',
+      demoUrl:  'https://demo.fpt-iov.com/ams',
+      features: [
+        'L1/L2/L3 maintenance service flow concept',
+        'Live demo L1 and L2 use cases',
+      ],
+    },
+    {
+      id:       'nami-pm-ai',
+      order:    4,
+      title:    'Nami PM AI Agent',
+      label:    'Station 4',
+      accent:   'gradient',          /* blue → orange gradient */
+      accentId: 'gradient',
+      status:   'live',
+      demoUrl:  'https://dev-nami.fpt-iov.com',
+      features: [
+        'Monitor projects with AI assistant',
+        'Manage tasks/scope/risks through chat',
+      ],
+    },
+  ],
+};
+
+/* ================================================================
+ * UTILITIES
+ * ================================================================ */
+
+/** Format ISO date string for display, e.g. "1 July 2025". */
+function fmtDate(iso) {
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'long', year: 'numeric',
+    });
+  } catch (_) {
+    return iso;
+  }
+}
+
+/** Inline SVG icons (no image assets). */
+const ICONS = {
+  calendar: `<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8"  y1="2" x2="8"  y2="6"/>
+    <line x1="3"  y1="10" x2="21" y2="10"/>
+  </svg>`,
+
+  pin: `<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+    <circle cx="12" cy="9" r="2.5"/>
+  </svg>`,
+
+  team: `<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+    <circle cx="9" cy="7" r="4"/>
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </svg>`,
+};
+
+/* ================================================================
+ * BUILD HERO                                                   FR-1/2/3
+ * ================================================================ */
+(function buildHero() {
+  const s = CONFIG.session;
+  document.getElementById('hero-greeting').textContent = s.greeting;
+  document.getElementById('hero-headline').textContent = s.headline;
+  document.getElementById('hero-subline').textContent  = s.subline;
+
+  const chips = [
+    { icon: ICONS.calendar, text: fmtDate(s.date) },
+    { icon: ICONS.pin,      text: s.location      },
+    { icon: ICONS.team,     text: s.hostTeam      },
+  ];
+
+  document.getElementById('hero-meta').innerHTML = chips
+    .map(c => `<span class="hero-meta-chip">${c.icon}${c.text}</span>`)
+    .join('');
+})();
+
+/* ================================================================
+ * BUILD AGENDA STRIP                                           FR-4 / US-4
+ * ================================================================ */
+(function buildAgenda() {
+  const list = document.getElementById('agenda-list');
+  const frag = document.createDocumentFragment();
+
+  CONFIG.stations.forEach((st, idx) => {
+    /* Separator arrow between steps */
+    if (idx > 0) {
+      const sep = document.createElement('li');
+      sep.className = 'agenda-sep';
+      sep.setAttribute('aria-hidden', 'true');
+      sep.textContent = '\u203A';
+      frag.appendChild(sep);
+    }
+
+    const isActive = idx === CONFIG.activeStep;
+    const li = document.createElement('li');
+    li.className = 'agenda-step';
+    li.setAttribute('data-accent', st.accentId);
+    li.setAttribute('role', 'listitem');
+    if (isActive) li.setAttribute('aria-current', 'step');
+
+    li.innerHTML = `
+      <span class="agenda-num" aria-hidden="true">${st.order}</span>
+      <span class="agenda-label">${st.title}</span>
+    `;
+    frag.appendChild(li);
+  });
+
+  list.appendChild(frag);
+})();
+
+/* ================================================================
+ * BUILD STATION CARDS                               US-2/3/6 + FR-6
+ * ================================================================ */
+(function buildCards() {
+  const grid = document.getElementById('cards-grid');
+  const frag = document.createDocumentFragment();
+
+  CONFIG.stations.forEach((st) => {
+    const isGradient   = st.accent === 'gradient';
+    const accentValue  = isGradient ? 'var(--fpt-blue)' : st.accent;
+    const chipClass    = st.status === 'live' ? 'chip chip-live' : 'chip chip-ready';
+    const chipText     = st.status === 'live' ? '\u25CF\u00A0Live' : '\u2713\u00A0Ready';
+
+    /* ── Article element ── */
+    const card = document.createElement('article');
+    card.className = 'card' + (isGradient ? ' gradient-accent' : '');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'region');
+    card.setAttribute('aria-label', st.title);
+    if (!isGradient) {
+      card.style.setProperty('--card-accent', st.accent);
+    }
+
+    /* ── Inner HTML ── */
+    card.innerHTML = `
+      <header class="card-header">
+        <div class="card-title-group">
+          <span class="card-station-label">${st.label}</span>
+          <h2 class="card-title">${st.title}</h2>
+        </div>
+        <div class="card-badges" role="group" aria-label="Card status">
+          <span class="${chipClass}" role="status">${chipText}</span>
+          <span class="chip chip-count">${st.features.length}\u00A0features</span>
+          <span class="chip chip-done" aria-live="polite">\u2713\u00A0Done</span>
+        </div>
+      </header>
+
+      <ul class="feature-list" aria-label="${st.title} features">
+        ${st.features.map(f => `<li>${f}</li>`).join('')}
+      </ul>
+
+      <div class="card-footer">
+        <div class="qr-container" id="qr-${st.id}" aria-label="QR code — ${st.title}"></div>
+        <div class="card-cta">
+          <a class="btn-open${isGradient ? ' gradient-btn' : ''}"
+             style="${isGradient ? '' : `border-color:${st.accent};color:${st.accent}`}"
+             href="${st.demoUrl}"
+             target="_blank"
+             rel="noopener noreferrer"
+             onclick="event.stopPropagation()"
+             aria-label="Open ${st.title} demo in new tab">
+            Open demo \u2197
+          </a>
+          <span class="url-fallback" id="url-${st.id}">${st.demoUrl}</span>
+        </div>
+      </div>
+    `;
+
+    /* ── Done toggle (FR-6) — click anywhere on card ── */
+    let done = false;
+    const toggle = (e) => {
+      /* Do not toggle when clicking the "Open demo" link */
+      if (e.target.closest('a')) return;
+      done = !done;
+      card.classList.toggle('done', done);
+      card.setAttribute('aria-pressed', String(done));
+    };
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle(e);
+      }
+    });
+
+    frag.appendChild(card);
+  });
+
+  grid.appendChild(frag);
+})();
+
+/* ================================================================
+ * GENERATE QR CODES                                        US-3
+ * Degrades gracefully: if QRCode lib is unavailable (offline)
+ * show a placeholder box and reveal the plain URL text.
+ * ================================================================ */
+(function generateQRCodes() {
+  const FALLBACK_SIZE = 72; /* px — used only for sizing fallback box */
+
+  function renderQR(st) {
+    const wrap = document.getElementById('qr-' + st.id);
+    if (!wrap) return;
+
+    if (typeof QRCode === 'undefined' || window._qrUnavailable) {
+      showFallback(wrap, st);
+      return;
+    }
+
+    try {
+      const dim = Math.round(Math.min(window.innerWidth * 0.055, 84));
+      new QRCode(wrap, {
+        text:          st.demoUrl,
+        width:         dim,
+        height:        dim,
+        colorDark:     '#0B1F33',
+        colorLight:    '#FFFFFF',
+        correctLevel:  QRCode.CorrectLevel.M,
+      });
+    } catch (_) {
+      showFallback(wrap, st);
+    }
+  }
+
+  function showFallback(wrap, st) {
+    wrap.innerHTML = `<div class="qr-offline" title="${st.demoUrl}">QR<br>offline</div>`;
+    const urlEl = document.getElementById('url-' + st.id);
+    if (urlEl) urlEl.style.display = 'block';
+  }
+
+  /* Fire after window load so the CDN script (async) has time to execute */
+  if (document.readyState === 'complete') {
+    CONFIG.stations.forEach(renderQR);
+  } else {
+    window.addEventListener('load', () => CONFIG.stations.forEach(renderQR), { once: true });
+  }
+})();
+
+/* ================================================================
+ * FOOTER                                                       FR-5
+ * ================================================================ */
+document.getElementById('footer-text').innerHTML =
+  `<strong>${CONFIG.footer}</strong>`;
+
+</script>
+</body>
+</html>
